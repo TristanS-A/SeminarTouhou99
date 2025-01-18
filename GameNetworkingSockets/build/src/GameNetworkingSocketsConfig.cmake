@@ -41,7 +41,7 @@ if(submodule STREQUAL "package")
     find_dependency(absl REQUIRED)
 endif()
 
-if(ON)
+if(O)
     include(${CMAKE_CURRENT_LIST_DIR}/steamwebrtc.cmake)
 endif()
 

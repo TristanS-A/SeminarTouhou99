@@ -8,6 +8,7 @@ public class Test : MonoBehaviour
     void Start()
     {
         Valve.Sockets.Library.Initialize();
+
     }
 
     // Update is called once per frame
