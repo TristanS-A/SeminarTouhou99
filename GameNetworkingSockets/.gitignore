@@ -31,6 +31,9 @@ perf.data.old
 # Other misc stuff
 *.VC.*
 **/.vscode
+**/build
+**/build-*
+**/build.bat
 **/log.txt
 **/.vs
 /src/steamnetworkingsockets/Messageswin64Debug/*
@@ -39,6 +42,7 @@ perf.data.old
 *.swp
 /.github/build-ci-ccache
 *.log
+*build-ci-ccache*
 vcpkg_installed
 .p4config
 P4CONFIG

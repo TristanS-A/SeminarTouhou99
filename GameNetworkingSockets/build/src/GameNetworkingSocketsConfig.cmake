@@ -37,11 +37,11 @@ if(OpenSSL STREQUAL "libsodium")
     find_dependency(sodium)
 endif()
 
-if(STEAMWEBRTC_ABSL_SOURCE-NOTFOUND STREQUAL "package")
+if(submodule STREQUAL "package")
     find_dependency(absl REQUIRED)
 endif()
 
-if(OFF)
+if(ON)
     include(${CMAKE_CURRENT_LIST_DIR}/steamwebrtc.cmake)
 endif()
 

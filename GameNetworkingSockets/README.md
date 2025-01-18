@@ -23,7 +23,7 @@ GameNetworkingSockets is a basic transport layer for games.  The features are:
   used by Google's QUIC protocol.
 * Tools for simulating packet latency/loss, and detailed stats measurement
 * Head-of-line blocking control and bandwidth sharing of multiple message
-  streams ("lanes") on the same connection.  You can use strict priority 
+  streams ("lanes") on the same connection.  You can use strict priority
   values, softer [weight values](https://en.wikipedia.org/wiki/Weighted_fair_queueing)
   that control how bandwidth is shared, or some combination of the two methods.
   See [``ISteamNetworkingSockets::ConfigureConnectionLanes``](include/steam/isteamnetworkingsockets.h).
