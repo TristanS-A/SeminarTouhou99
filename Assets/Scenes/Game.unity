@@ -371,8 +371,9 @@ GameObject:
   - component: {fileID: 1040336033}
   - component: {fileID: 1040336032}
   - component: {fileID: 1040336031}
+  - component: {fileID: 1040336034}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ClientButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -480,6 +481,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1040336029}
   m_CullTransparentMesh: 1
+--- !u!114 &1040336034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040336029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 117419270c055c941b40fe6735735379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testClientButton: {fileID: 1040336031}
 --- !u!1 &1317340762
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,9 +598,9 @@ GameObject:
   - component: {fileID: 1375196166}
   - component: {fileID: 1375196165}
   - component: {fileID: 1375196164}
-  - component: {fileID: 1375196163}
+  - component: {fileID: 1375196167}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ServerButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -612,20 +626,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 5.9717}
   m_SizeDelta: {x: 250, y: 112}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1375196163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1375196161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e925e575b6558544189fbd89a515b553, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testServerButton: {fileID: 1375196164}
-  testClientButton: {fileID: 1040336031}
 --- !u!114 &1375196164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -708,6 +708,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1375196161}
   m_CullTransparentMesh: 1
+--- !u!114 &1375196167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375196161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd69ce2606489a649b6c2318a4eca503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testServerButton: {fileID: 1375196164}
 --- !u!1 &1827160050
 GameObject:
   m_ObjectHideFlags: 0

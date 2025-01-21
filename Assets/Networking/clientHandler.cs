@@ -1,0 +1,107 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using UnityEngine.Diagnostics;
+using UnityEngine.UI;
+using Valve.Sockets;
+
+public class clientHandler : MonoBehaviour
+{
+    [SerializeField] private Button testClientButton;
+    private NetworkingSockets client;
+    private uint clientConnection = 0;
+    private StatusCallback clientStatusCallback;
+    NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Valve.Sockets.Library.Initialize();
+
+        if (testClientButton != null)
+        {
+            testClientButton.onClick.AddListener(RunClientSetUp);
+        }
+
+        DebugCallback debugCallback = (DebugType type, string message) =>
+        {
+            Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
+        };
+
+        clientNetworkingUtils.SetDebugCallback(DebugType.Everything, debugCallback);
+    }
+
+    private void RunClientSetUp()
+    {
+        Debug.Log("Starting Client...");
+
+        client = new NetworkingSockets();
+
+        clientConnection = 0;
+
+        StatusCallback status = (ref StatusInfo info) => {
+            switch (info.connectionInfo.state)
+            {
+                case ConnectionState.None:
+                    break;
+
+                case ConnectionState.Connected:
+                    Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + clientConnection);
+                    break;
+
+                case ConnectionState.ClosedByPeer:
+                case ConnectionState.ProblemDetectedLocally:
+                    client.CloseConnection(clientConnection);
+                    Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
+                    break;
+            }
+        };
+
+        clientNetworkingUtils.SetStatusCallback(status);
+
+        Address address = new Address();
+
+        address.SetAddress("::1", 5000);
+
+        clientConnection = client.Connect(ref address);
+
+//#if VALVESOCKETS_SPAN
+//	MessageCallback message = (in NetworkingMessage netMessage) => {
+//		Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+//	};
+//#else
+//        const int maxMessages = 20;
+
+//        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+//#endif
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (client != null)
+        {
+            client.RunCallbacks();
+
+            /*#if VALVESOCKETS_SPAN
+                    client.ReceiveMessagesOnConnection(connection, message, 20);
+            #else
+                        int netMessagesCount = client.ReceiveMessagesOnConnection(clientConnection, netMessages, maxMessages);
+
+                        if (netMessagesCount > 0)
+                        {
+                            for (int i = 0; i < netMessagesCount; i++)
+                            {
+                                ref NetworkingMessage netMessage = ref netMessages[i];
+
+                                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+                                netMessage.Destroy();
+                            }
+                        }
+            #endif*/
+        }
+    }
+}
