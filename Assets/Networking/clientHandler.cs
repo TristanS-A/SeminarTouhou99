@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Diagnostics;
 using UnityEngine.UI;
 using Valve.Sockets;
 
@@ -42,20 +39,28 @@ public class clientHandler : MonoBehaviour
         clientConnection = 0;
 
         StatusCallback status = (ref StatusInfo info) => {
-            switch (info.connectionInfo.state)
+            try
             {
-                case ConnectionState.None:
-                    break;
+                switch (info.connectionInfo.state)
+                {
+                    case ConnectionState.None:
+                        break;
 
-                case ConnectionState.Connected:
-                    Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + clientConnection);
-                    break;
+                    case ConnectionState.Connected:
+                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + clientConnection);
+                        break;
 
-                case ConnectionState.ClosedByPeer:
-                case ConnectionState.ProblemDetectedLocally:
-                    client.CloseConnection(clientConnection);
-                    Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
-                    break;
+                    case ConnectionState.ClosedByPeer:
+                    case ConnectionState.ProblemDetectedLocally:
+                        client.CloseConnection(clientConnection);
+                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("ERRROR: " +  e);
+                return;
             }
         };
 
