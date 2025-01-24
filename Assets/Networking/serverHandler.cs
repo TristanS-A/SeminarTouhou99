@@ -19,7 +19,7 @@ public class serverHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Valve.Sockets.Library.Initialize();
+        Valve.Sockets.Library.Initialize();
 
         if (testServerButton != null)
         {
