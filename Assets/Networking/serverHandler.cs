@@ -2,6 +2,9 @@ using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using UnityEditor.MemoryProfiler;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 using Valve.Sockets;
@@ -13,6 +16,8 @@ public class serverHandler : MonoBehaviour
     private uint pollGroup;
     private NetworkingUtils serverNetworkingUtils = new NetworkingUtils();
     private uint listenSocket;
+    MessageCallback message;
+    string inputString;
 
     List<uint> connectedClients = new();
 
@@ -61,15 +66,15 @@ public class serverHandler : MonoBehaviour
 
         listenSocket = server.CreateListenSocket(ref address);
 
-//#if VALVESOCKETS_SPAN
-//	MessageCallback message = (in NetworkingMessage netMessage) => {
-//		Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-//	};
-//#else
-//        const int maxMessages = 20;
+#if VALVESOCKETS_SPAN
+        message = (in NetworkingMessage netMessage) => {
+            Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+        };
+#else
+	const int maxMessages = 20;
 
-//        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-//#endif
+	NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+#endif
     }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
@@ -106,23 +111,21 @@ void Update()
             server.RunCallbacks();
 
             //Enable SPAN for this next part
-            /*#if VALVESOCKETS_SPAN
-                    server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
-            #else
-                        int netMessagesCount = server.ReceiveMessagesOnPollGroup(pollGroup, netMessages, maxMessages);
+#if VALVESOCKETS_SPAN
+            server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
+#else
+		int netMessagesCount = server.ReceiveMessagesOnPollGroup(pollGroup, netMessages, maxMessages);
 
-                        if (netMessagesCount > 0)
-                        {
-                            for (int i = 0; i < netMessagesCount; i++)
-                            {
-                                ref NetworkingMessage netMessage = ref netMessages[i];
+		if (netMessagesCount > 0) {
+			for (int i = 0; i < netMessagesCount; i++) {
+				ref NetworkingMessage netMessage = ref netMessages[i];
 
-                                Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+				Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
 
-                                netMessage.Destroy();
-                            }
-                        }
-            #endif*/
+				netMessage.Destroy();
+			}
+		}
+#endif
         }
     }
 
@@ -139,6 +142,13 @@ void Update()
             }
         }
 
+        inputString = GUI.TextField(new Rect(200, 470, 400, 50), inputString);
+        if (GUI.Button(new Rect(200, 530, 100, 50), "send"))
+        {
+            SendChatMessage(inputString);
+            inputString = "";
+        }
+
         //if (server != null)
         //{
         //    if (GUI.Button(new Rect(150, 550, 100, 20), "Stop Sever"))
@@ -149,5 +159,19 @@ void Update()
         //        serverNetworkingUtils.Dispose();
         //    }
         //}
+    }
+
+    void SendChatMessage(string message)
+    {
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                byte[] bytes = Encoding.ASCII.GetBytes(message);
+                server.SendMessageToConnection(connectedClients[i], bytes);
+
+                //messages.Add(message);
+            }
+        }
     }
 }

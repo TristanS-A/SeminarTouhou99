@@ -11,6 +11,7 @@ public class clientHandler : MonoBehaviour
     private uint clientConnection = 0;
     private StatusCallback clientStatusCallback;
     NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
+    MessageCallback message;
 
     // Start is called before the first frame update
     void Start()
@@ -72,15 +73,16 @@ public class clientHandler : MonoBehaviour
 
         clientConnection = client.Connect(ref address);
 
-//#if VALVESOCKETS_SPAN
-//	MessageCallback message = (in NetworkingMessage netMessage) => {
-//		Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-//	};
-//#else
-//        const int maxMessages = 20;
+#if VALVESOCKETS_SPAN
+        message = (in NetworkingMessage netMessage) =>
+        {
+            Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+        };
+#else
+        const int maxMessages = 20;
 
-//        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-//#endif
+        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+#endif
     }
 
     // Update is called once per frame
@@ -90,8 +92,8 @@ public class clientHandler : MonoBehaviour
         {
             client.RunCallbacks();
 
-            /*#if VALVESOCKETS_SPAN
-                    client.ReceiveMessagesOnConnection(connection, message, 20);
+            #if VALVESOCKETS_SPAN
+                    client.ReceiveMessagesOnConnection(clientConnection, message, 20);
             #else
                         int netMessagesCount = client.ReceiveMessagesOnConnection(clientConnection, netMessages, maxMessages);
 
@@ -106,7 +108,7 @@ public class clientHandler : MonoBehaviour
                                 netMessage.Destroy();
                             }
                         }
-            #endif*/
+            #endif
         }
     }
 }
