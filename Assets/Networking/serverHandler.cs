@@ -16,7 +16,11 @@ public class serverHandler : MonoBehaviour
     private uint pollGroup;
     private NetworkingUtils serverNetworkingUtils = new NetworkingUtils();
     private uint listenSocket;
-    MessageCallback message;
+
+    //MessageCallback message;
+    const int maxMessages = 20;
+    NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+
     string inputString;
 
     List<uint> connectedClients = new();

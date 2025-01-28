@@ -600,7 +600,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Standalone: VALVESOCKETS_SPAN
+    Standalone: 
   additionalCompilerArguments:
     Standalone: []
   platformArchitecture: {}

@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Text;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 using Valve.Sockets;
@@ -11,7 +13,12 @@ public class clientHandler : MonoBehaviour
     private uint clientConnection = 0;
     private StatusCallback clientStatusCallback;
     NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
-    MessageCallback message;
+
+    //MessageCallback message;
+    const int maxMessages = 20;
+    NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+
+    byte[] messageDataBuffer = new byte[256];
 
     // Start is called before the first frame update
     void Start()
@@ -77,6 +84,12 @@ public class clientHandler : MonoBehaviour
         message = (in NetworkingMessage netMessage) =>
         {
             Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+            netMessage.CopyTo(messageDataBuffer);
+            //netMessage.Destroy();
+
+            string result = Encoding.ASCII.GetString(messageDataBuffer);
+            Debug.Log(result);
         };
 #else
         const int maxMessages = 20;
@@ -97,18 +110,24 @@ public class clientHandler : MonoBehaviour
             #else
                         int netMessagesCount = client.ReceiveMessagesOnConnection(clientConnection, netMessages, maxMessages);
 
-                        if (netMessagesCount > 0)
-                        {
-                            for (int i = 0; i < netMessagesCount; i++)
-                            {
-                                ref NetworkingMessage netMessage = ref netMessages[i];
+            if (netMessagesCount > 0)
+            {
+                for (int i = 0; i < netMessagesCount; i++)
+                {
+                    ref NetworkingMessage netMessage = ref netMessages[i];
 
-                                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+                    Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
 
-                                netMessage.Destroy();
-                            }
-                        }
-            #endif
+                    netMessage.CopyTo(messageDataBuffer);
+                    netMessage.Destroy();
+
+                    string result = Encoding.ASCII.GetString(messageDataBuffer, 0, netMessage.length);
+                    //string result = Encoding.ASCII.GetString(messageDataBuffer, 0, netMessage.length);
+
+                    Debug.Log(result);
+                }
+            }
+#endif
         }
     }
 }
