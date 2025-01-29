@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEditor.VersionControl;
 using UnityEngine;
@@ -19,6 +20,12 @@ public class clientHandler : MonoBehaviour
     NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 
     byte[] messageDataBuffer = new byte[256];
+
+    public struct PlayerData
+    {
+        public Vector2 pos;
+        public float speed;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -121,10 +128,18 @@ public class clientHandler : MonoBehaviour
                     netMessage.CopyTo(messageDataBuffer);
                     netMessage.Destroy();
 
-                    string result = Encoding.ASCII.GetString(messageDataBuffer, 0, netMessage.length);
                     //string result = Encoding.ASCII.GetString(messageDataBuffer, 0, netMessage.length);
 
-                    Debug.Log(result);
+                    ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                    IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                    Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                    PlayerData x = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                    Marshal.FreeHGlobal(ptPoit);
+
+                    Debug.Log(x.pos);
+                    Debug.Log(x.speed);
                 }
             }
 #endif

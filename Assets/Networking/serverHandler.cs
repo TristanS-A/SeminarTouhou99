@@ -2,6 +2,7 @@ using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEditor.MemoryProfiler;
 using UnityEditor.VersionControl;
@@ -171,8 +172,25 @@ void Update()
         {
             for (int i = 0; i < connectedClients.Count; i++)
             {
-                byte[] bytes = Encoding.ASCII.GetBytes(message);
-                server.SendMessageToConnection(connectedClients[i], bytes);
+                clientHandler.PlayerData playerData = new clientHandler.PlayerData();
+                playerData.pos = new Vector2(0, 10);
+                playerData.speed = 12;
+
+
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
+                GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+                try
+                {
+                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                }
+                finally
+                {
+                    server.SendMessageToConnection(connectedClients[i], bytes);
+                    pinStructure.Free();
+                }
+
+                //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
+                //server.SendMessageToConnection(connectedClients[i], bytes);
 
                 //messages.Add(message);
             }
