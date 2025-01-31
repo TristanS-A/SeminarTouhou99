@@ -157,6 +157,7 @@ MonoBehaviour:
   movementSpeed: 3
   focusSpeed: 1.5
   focusKey: 304
+  circleChild: {fileID: 934910222}
 --- !u!212 &62068251
 SpriteRenderer:
   m_ObjectHideFlags: 0
