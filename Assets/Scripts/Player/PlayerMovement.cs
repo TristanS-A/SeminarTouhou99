@@ -10,7 +10,9 @@ public class PlayerMovement : MonoBehaviour {
     public float focusSpeed;
     public KeyCode focusKey = KeyCode.LeftShift;
 
-    private GameObject circleChild;
+    [Tooltip("I'm Jerry and I hate how it's styled")]
+    [SerializeField] private GameObject circleChild;
+
     private SpriteRenderer circleRenderer;
 
     private bool isInFocusTime = false;
@@ -21,7 +23,8 @@ public class PlayerMovement : MonoBehaviour {
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
-        circleChild = FindFirstObjectByType<SpriteRenderer>().gameObject;
+
+        // Collider Visual - will automatically reset the visual to represent an accurate radius shape
         circleChild.transform.localScale = FloatToVec3(GetComponent<CircleCollider2D>().radius);
         circleRenderer = circleChild.GetComponent<SpriteRenderer>();
     }
@@ -40,11 +43,13 @@ public class PlayerMovement : MonoBehaviour {
 
         input.Normalize();
 
+        // Switches between two movement
         currentMoveSpeed = isInFocusTime ? focusSpeed : movementSpeed;
         rb.velocity = input * currentMoveSpeed;
     }
 
     private void HandleFocusTime() {
+        // Handles the switch between if player is holding down the focus key and sets the isInFocusTime bool
         if (Input.GetKeyDown(focusKey)) {
             isInFocusTime |= !isInFocusTime;
         }
@@ -52,6 +57,7 @@ public class PlayerMovement : MonoBehaviour {
             isInFocusTime &= !isInFocusTime;
         }
 
+        // Enables the circle sprite depending if the player isInFocusTime
         circleRenderer.enabled = isInFocusTime;
     }
 
