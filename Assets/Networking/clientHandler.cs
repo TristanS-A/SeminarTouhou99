@@ -21,8 +21,23 @@ public class clientHandler : MonoBehaviour
 
     byte[] messageDataBuffer = new byte[256];
 
+    public enum PacketType
+    {
+        PlayerData,
+        SomethingElse
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TypeFinder
+    {
+        public int type;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct PlayerData
     {
+        public int type;
+        public int playerid;
         public Vector2 pos;
         public float speed;
     }
@@ -74,7 +89,7 @@ public class clientHandler : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log("ERRROR: " +  e);
+                Debug.Log("ERRROR: " + e);
                 return;
             }
         };
@@ -112,10 +127,10 @@ public class clientHandler : MonoBehaviour
         {
             client.RunCallbacks();
 
-            #if VALVESOCKETS_SPAN
+#if VALVESOCKETS_SPAN
                     client.ReceiveMessagesOnConnection(clientConnection, message, 20);
-            #else
-                        int netMessagesCount = client.ReceiveMessagesOnConnection(clientConnection, netMessages, maxMessages);
+#else
+            int netMessagesCount = client.ReceiveMessagesOnConnection(clientConnection, netMessages, maxMessages);
 
             if (netMessagesCount > 0)
             {
@@ -135,9 +150,14 @@ public class clientHandler : MonoBehaviour
                     IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
                     Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
+                    //Debug.Log("Type First: ");
+                    //Debug.Log(Marshal.ReadIntPtr(ptPoit, 0));
+
+                    TypeFinder type = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
                     PlayerData x = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
                     Marshal.FreeHGlobal(ptPoit);
 
+                    Debug.Log("Type: " + type.type);
                     Debug.Log(x.pos);
                     Debug.Log(x.speed);
                 }

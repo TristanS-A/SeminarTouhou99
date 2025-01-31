@@ -76,9 +76,9 @@ public class serverHandler : MonoBehaviour
             Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
         };
 #else
-	const int maxMessages = 20;
+        const int maxMessages = 20;
 
-	NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 #endif
     }
 
@@ -108,8 +108,8 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-// Update is called once per frame
-void Update()
+    // Update is called once per frame
+    void Update()
     {
         if (server != null)
         {
@@ -119,17 +119,19 @@ void Update()
 #if VALVESOCKETS_SPAN
             server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
 #else
-		int netMessagesCount = server.ReceiveMessagesOnPollGroup(pollGroup, netMessages, maxMessages);
+            int netMessagesCount = server.ReceiveMessagesOnPollGroup(pollGroup, netMessages, maxMessages);
 
-		if (netMessagesCount > 0) {
-			for (int i = 0; i < netMessagesCount; i++) {
-				ref NetworkingMessage netMessage = ref netMessages[i];
+            if (netMessagesCount > 0)
+            {
+                for (int i = 0; i < netMessagesCount; i++)
+                {
+                    ref NetworkingMessage netMessage = ref netMessages[i];
 
-				Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+                    Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
 
-				netMessage.Destroy();
-			}
-		}
+                    netMessage.Destroy();
+                }
+            }
 #endif
         }
     }
@@ -147,8 +149,8 @@ void Update()
             }
         }
 
-        inputString = GUI.TextField(new Rect(200, 470, 400, 50), inputString);
-        if (GUI.Button(new Rect(200, 530, 100, 50), "send"))
+        inputString = GUI.TextField(new Rect(200, 370, 400, 50), inputString);
+        if (GUI.Button(new Rect(200, 450, 100, 50), "send"))
         {
             SendChatMessage(inputString);
             inputString = "";
@@ -175,6 +177,8 @@ void Update()
                 clientHandler.PlayerData playerData = new clientHandler.PlayerData();
                 playerData.pos = new Vector2(0, 10);
                 playerData.speed = 12;
+                playerData.type = 1;
+                playerData.playerid = 1;
 
 
                 Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
