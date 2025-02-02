@@ -9,11 +9,16 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 using Valve.Sockets;
+using static clientHandler;
 
 public class serverHandler : MonoBehaviour
 {
     [SerializeField] private Button testServerButton;
+    [SerializeField] private GameObject m_PlayerPrefab;
+    [SerializeField] private GameObject m_PlayerHologramPrefab;
+    Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
     private NetworkingSockets server;
+    private uint serverPlayerID = 0;
     private uint pollGroup;
     private NetworkingUtils serverNetworkingUtils = new NetworkingUtils();
     private uint listenSocket;
@@ -21,6 +26,7 @@ public class serverHandler : MonoBehaviour
     //MessageCallback message;
     const int maxMessages = 20;
     NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+    byte[] messageDataBuffer = new byte[256];
 
     string inputString;
 
@@ -69,6 +75,8 @@ public class serverHandler : MonoBehaviour
 
         address.SetAddress("::0", 5000);
 
+        players.Add(0, Instantiate(m_PlayerPrefab));
+
         listenSocket = server.CreateListenSocket(ref address);
 
 #if VALVESOCKETS_SPAN
@@ -96,13 +104,13 @@ public class serverHandler : MonoBehaviour
                 break;
 
             case ConnectionState.Connected:
-                connectedClients.Add(info.connection);
+                handlePlayerJoining(info.connection);
                 Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
 
             case ConnectionState.ClosedByPeer:
             case ConnectionState.ProblemDetectedLocally:
-                server.CloseConnection(info.connection);
+                handlePlayerLeaving(info.connection);
                 Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
         }
@@ -114,6 +122,10 @@ public class serverHandler : MonoBehaviour
         if (server != null)
         {
             server.RunCallbacks();
+
+            handleMovePlayer();
+
+            SendChatMessage();
 
             //Enable SPAN for this next part
 #if VALVESOCKETS_SPAN
@@ -129,7 +141,25 @@ public class serverHandler : MonoBehaviour
 
                     Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
 
+                    netMessage.CopyTo(messageDataBuffer);
                     netMessage.Destroy();
+
+                    ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                    IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                    Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                    TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+
+                    switch ((PacketType)packetType.type)
+                    {
+                        case PacketType.PLAYER_DATA:
+                            PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                            handlePlayerData(packetData);
+                            break;
+                    }
+
+                    Marshal.FreeHGlobal(ptPoit);
                 }
             }
 #endif
@@ -149,12 +179,12 @@ public class serverHandler : MonoBehaviour
             }
         }
 
-        inputString = GUI.TextField(new Rect(200, 370, 400, 50), inputString);
-        if (GUI.Button(new Rect(200, 450, 100, 50), "send"))
-        {
-            SendChatMessage(inputString);
-            inputString = "";
-        }
+        //inputString = GUI.TextField(new Rect(200, 370, 400, 50), inputString);
+        //if (GUI.Button(new Rect(200, 450, 100, 50), "send"))
+        //{
+        //    SendChatMessage(inputString);
+        //    inputString = "";
+        //}
 
         //if (server != null)
         //{
@@ -168,36 +198,97 @@ public class serverHandler : MonoBehaviour
         //}
     }
 
-    void SendChatMessage(string message)
+    void SendChatMessage()
     {
         if (server != null)
         {
             for (int i = 0; i < connectedClients.Count; i++)
             {
-                clientHandler.PlayerData playerData = new clientHandler.PlayerData();
-                playerData.pos = new Vector2(0, 10);
-                playerData.speed = 12;
-                playerData.type = 1;
-                playerData.playerid = 1;
-
-
-                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
-                GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
-                try
+                foreach (uint playerID in players.Keys)
                 {
-                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                }
-                finally
-                {
-                    server.SendMessageToConnection(connectedClients[i], bytes);
-                    pinStructure.Free();
-                }
+                    clientHandler.PlayerData playerData = new clientHandler.PlayerData();
+                    GameObject player = players[playerID];
+                    playerData.pos = player.transform.position;
+                    playerData.speed = 12;
+                    playerData.type = (int)clientHandler.PacketType.PLAYER_DATA;
+                    playerData.playerID = playerID;
 
-                //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
-                //server.SendMessageToConnection(connectedClients[i], bytes);
 
-                //messages.Add(message);
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
+                    GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+                    try
+                    {
+                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                    }
+                    finally
+                    {
+                        Debug.Log("SENDING PLAYER DATA");
+                        server.SendMessageToConnection(connectedClients[i], bytes);
+                        pinStructure.Free();
+                    }
+
+                    //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
+                    //server.SendMessageToConnection(connectedClients[i], bytes);
+
+                    //messages.Add(message);
+                }
             }
+        }
+    }
+
+    private void handlePlayerJoining(uint playerID)
+    {
+        if (!players.ContainsKey(playerID))
+        {
+            connectedClients.Add(playerID);
+            players.Add(playerID, Instantiate(m_PlayerPrefab));
+        }
+    }
+
+    private void handlePlayerLeaving(uint playerID)
+    {
+        if (players.ContainsKey(playerID))
+        {
+            connectedClients.Remove(playerID);
+            players.Remove(playerID);
+            server.CloseConnection(playerID);
+        }
+    }
+
+    private void handlePlayerData(clientHandler.PlayerData playerData)
+    {
+        GameObject playerOBJ;
+        if (!players.ContainsKey(playerData.playerID))
+        {
+            playerOBJ = Instantiate(m_PlayerHologramPrefab);
+            players.Add(playerData.playerID, playerOBJ);
+        }
+        else
+        {
+            playerOBJ = players[playerData.playerID];
+        }
+
+        playerOBJ.transform.position = playerData.pos;
+    }
+
+    private void handleMovePlayer()
+    {
+        Transform serverPlayerTransform = players[serverPlayerID].transform;
+        if (Input.GetKey(KeyCode.W))
+        {
+            serverPlayerTransform.position += new Vector3(0, 0.01f, 0);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            serverPlayerTransform.position += new Vector3(0.01f, 0, 0);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            serverPlayerTransform.position += new Vector3(0, -0.01f, 0);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            serverPlayerTransform.position += new Vector3(-0.01f, 0, 0);
         }
     }
 }

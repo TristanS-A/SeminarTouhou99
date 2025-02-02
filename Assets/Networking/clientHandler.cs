@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEditor.VersionControl;
@@ -10,10 +11,14 @@ using Valve.Sockets;
 public class clientHandler : MonoBehaviour
 {
     [SerializeField] private Button testClientButton;
+    [SerializeField] private GameObject m_PlayerPrefab;
+    [SerializeField] private GameObject m_PlayerHologramPrefab;
     private NetworkingSockets client;
     private uint clientConnection = 0;
+    private uint serverConnection = 0;
     private StatusCallback clientStatusCallback;
     NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
+    Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -23,8 +28,8 @@ public class clientHandler : MonoBehaviour
 
     public enum PacketType
     {
-        PlayerData,
-        SomethingElse
+        PLAYER_DATA,
+        SOMETHING_ELSE
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -37,7 +42,7 @@ public class clientHandler : MonoBehaviour
     public struct PlayerData
     {
         public int type;
-        public int playerid;
+        public uint playerID;
         public Vector2 pos;
         public float speed;
     }
@@ -77,6 +82,7 @@ public class clientHandler : MonoBehaviour
                         break;
 
                     case ConnectionState.Connected:
+                        serverConnection = info.connection;
                         Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + clientConnection);
                         break;
 
@@ -127,6 +133,8 @@ public class clientHandler : MonoBehaviour
         {
             client.RunCallbacks();
 
+            handleMovePlayer();
+
 #if VALVESOCKETS_SPAN
                     client.ReceiveMessagesOnConnection(clientConnection, message, 20);
 #else
@@ -143,26 +151,99 @@ public class clientHandler : MonoBehaviour
                     netMessage.CopyTo(messageDataBuffer);
                     netMessage.Destroy();
 
-                    //string result = Encoding.ASCII.GetString(messageDataBuffer, 0, netMessage.length);
-
                     ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
 
                     IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
                     Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
-                    //Debug.Log("Type First: ");
-                    //Debug.Log(Marshal.ReadIntPtr(ptPoit, 0));
+                    TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
 
-                    TypeFinder type = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-                    PlayerData x = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                    switch ((PacketType)packetType.type)
+                    {
+                        case PacketType.PLAYER_DATA:
+                            PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                            handlePlayerData(packetData);
+                            break;
+                    }
+
                     Marshal.FreeHGlobal(ptPoit);
-
-                    Debug.Log("Type: " + type.type);
-                    Debug.Log(x.pos);
-                    Debug.Log(x.speed);
                 }
             }
 #endif
+        }
+    }
+
+    void SendChatMessage()
+    {
+        if (client != null)
+        {
+            PlayerData playerData = new PlayerData();
+            GameObject player = players[clientConnection];
+            playerData.pos = player.transform.position;
+            playerData.speed = 12;
+            playerData.type = (int)PacketType.PLAYER_DATA;
+            playerData.playerID = clientConnection;
+
+
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(PlayerData))];
+            GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+            try
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            }
+            finally
+            {
+                Debug.Log("SENDING PLAYER DATA");
+                client.SendMessageToConnection(serverConnection, bytes);
+                pinStructure.Free();
+            }
+
+            //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
+            //server.SendMessageToConnection(connectedClients[i], bytes);
+
+            //messages.Add(message);
+        }
+    }
+
+    private void handlePlayerData(PlayerData playerData)
+    {
+        GameObject playerOBJ;
+        if (!players.ContainsKey(playerData.playerID))
+        {
+            playerOBJ = playerData.playerID != clientConnection ? Instantiate(m_PlayerHologramPrefab) : Instantiate(m_PlayerPrefab);
+            players.Add(playerData.playerID, playerOBJ);
+        }
+        else
+        {
+            playerOBJ = players[playerData.playerID];
+        }
+
+        playerOBJ.transform.position = playerData.pos;
+    }
+
+    private void handleMovePlayer()
+    {
+        Debug.Log("Client " + clientConnection);
+        Debug.Log("Server: " + serverConnection);
+        if (players.ContainsKey(clientConnection))
+        {
+            Transform serverPlayerTransform = players[clientConnection].transform;
+            if (Input.GetKey(KeyCode.W))
+            {
+                serverPlayerTransform.position += new Vector3(0, 0.01f, 0);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                serverPlayerTransform.position += new Vector3(0.01f, 0, 0);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                serverPlayerTransform.position += new Vector3(0, -0.01f, 0);
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                serverPlayerTransform.position += new Vector3(-0.01f, 0, 0);
+            }
         }
     }
 }
