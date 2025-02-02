@@ -6,18 +6,21 @@ using UnityEngine.Timeline;
 
 public class testForTimeLines : MonoBehaviour
 {
-    [SerializeField] TimelineAsset timeline;
+    [SerializeField] PlayableDirector assest;
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("test");
+       
         //testFun();
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        assest.transform.position += new Vector3(-1, -1, 0);
+
     }
     public void testFun()
     {
