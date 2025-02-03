@@ -7,6 +7,7 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 using Valve.Sockets;
+using static clientHandler;
 
 public class clientHandler : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class clientHandler : MonoBehaviour
     [SerializeField] private GameObject m_PlayerPrefab;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
     private NetworkingSockets client;
-    private uint clientConnection = 0;
+    private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
     private StatusCallback clientStatusCallback;
     NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
@@ -29,7 +30,7 @@ public class clientHandler : MonoBehaviour
     public enum PacketType
     {
         PLAYER_DATA,
-        SOMETHING_ELSE
+        REGISTER_PLAYER
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -45,6 +46,13 @@ public class clientHandler : MonoBehaviour
         public uint playerID;
         public Vector2 pos;
         public float speed;
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RegisterPlayer
+    {
+        public int type;
+        public uint playerID;
     }
 
     // Start is called before the first frame update
@@ -71,7 +79,7 @@ public class clientHandler : MonoBehaviour
 
         client = new NetworkingSockets();
 
-        clientConnection = 0;
+        serverConnection = 0;
 
         StatusCallback status = (ref StatusInfo info) => {
             try
@@ -83,12 +91,12 @@ public class clientHandler : MonoBehaviour
 
                     case ConnectionState.Connected:
                         serverConnection = info.connection;
-                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + clientConnection);
+                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + serverConnection);
                         break;
 
                     case ConnectionState.ClosedByPeer:
                     case ConnectionState.ProblemDetectedLocally:
-                        client.CloseConnection(clientConnection);
+                        client.CloseConnection(serverConnection);
                         Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
                         break;
                 }
@@ -106,7 +114,7 @@ public class clientHandler : MonoBehaviour
 
         address.SetAddress("::1", 5000);
 
-        clientConnection = client.Connect(ref address);
+        serverConnection = client.Connect(ref address);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) =>
@@ -133,12 +141,12 @@ public class clientHandler : MonoBehaviour
         {
             client.RunCallbacks();
 
-            handleMovePlayer();
+            SendChatMessage();
 
 #if VALVESOCKETS_SPAN
-                    client.ReceiveMessagesOnConnection(clientConnection, message, 20);
+                    client.ReceiveMessagesOnConnection(serverConnection, message, 20);
 #else
-            int netMessagesCount = client.ReceiveMessagesOnConnection(clientConnection, netMessages, maxMessages);
+            int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
 
             if (netMessagesCount > 0)
             {
@@ -164,6 +172,10 @@ public class clientHandler : MonoBehaviour
                             PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
                             handlePlayerData(packetData);
                             break;
+                        case PacketType.REGISTER_PLAYER:
+                            RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
+                            handleRegisterPlayer(playerRegisterPacketData);
+                            break;
                     }
 
                     Marshal.FreeHGlobal(ptPoit);
@@ -173,16 +185,21 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        handleMovePlayer();
+    }
+
     void SendChatMessage()
     {
-        if (client != null)
+        if (client != null && players.ContainsKey(connectionIDOnServer))
         {
             PlayerData playerData = new PlayerData();
-            GameObject player = players[clientConnection];
+            GameObject player = players[connectionIDOnServer];
             playerData.pos = player.transform.position;
             playerData.speed = 12;
             playerData.type = (int)PacketType.PLAYER_DATA;
-            playerData.playerID = clientConnection;
+            playerData.playerID = connectionIDOnServer;
 
 
             Byte[] bytes = new Byte[Marshal.SizeOf(typeof(PlayerData))];
@@ -207,42 +224,49 @@ public class clientHandler : MonoBehaviour
 
     private void handlePlayerData(PlayerData playerData)
     {
-        GameObject playerOBJ;
-        if (!players.ContainsKey(playerData.playerID))
+        if (playerData.playerID != connectionIDOnServer)
         {
-            playerOBJ = playerData.playerID != clientConnection ? Instantiate(m_PlayerHologramPrefab) : Instantiate(m_PlayerPrefab);
-            players.Add(playerData.playerID, playerOBJ);
-        }
-        else
-        {
-            playerOBJ = players[playerData.playerID];
-        }
+            GameObject playerOBJ;
+            if (!players.ContainsKey(playerData.playerID))
+            {
+                playerOBJ = Instantiate(m_PlayerHologramPrefab);
+                players.Add(playerData.playerID, playerOBJ);
+            }
+            else
+            {
+                playerOBJ = players[playerData.playerID];
+            }
 
-        playerOBJ.transform.position = playerData.pos;
+            playerOBJ.transform.position = playerData.pos;
+        }
+    }
+
+    private void handleRegisterPlayer(RegisterPlayer playerData)
+    {
+        connectionIDOnServer = playerData.playerID;
+        players.Add(connectionIDOnServer, Instantiate(m_PlayerPrefab));
     }
 
     private void handleMovePlayer()
     {
-        Debug.Log("Client " + clientConnection);
-        Debug.Log("Server: " + serverConnection);
-        if (players.ContainsKey(clientConnection))
+        if (players.ContainsKey(connectionIDOnServer))
         {
-            Transform serverPlayerTransform = players[clientConnection].transform;
+            Transform serverPlayerTransform = players[connectionIDOnServer].transform;
             if (Input.GetKey(KeyCode.W))
             {
-                serverPlayerTransform.position += new Vector3(0, 0.01f, 0);
+                serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                serverPlayerTransform.position += new Vector3(0.01f, 0, 0);
+                serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
             }
             if (Input.GetKey(KeyCode.S))
             {
-                serverPlayerTransform.position += new Vector3(0, -0.01f, 0);
+                serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
             }
             if (Input.GetKey(KeyCode.A))
             {
-                serverPlayerTransform.position += new Vector3(-0.01f, 0, 0);
+                serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
             }
         }
     }

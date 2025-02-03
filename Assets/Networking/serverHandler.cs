@@ -123,8 +123,6 @@ public class serverHandler : MonoBehaviour
         {
             server.RunCallbacks();
 
-            handleMovePlayer();
-
             SendChatMessage();
 
             //Enable SPAN for this next part
@@ -164,6 +162,11 @@ public class serverHandler : MonoBehaviour
             }
 #endif
         }
+    }
+
+    private void FixedUpdate()
+    {
+        handleMovePlayer();
     }
 
     private void OnGUI()
@@ -241,7 +244,25 @@ public class serverHandler : MonoBehaviour
         if (!players.ContainsKey(playerID))
         {
             connectedClients.Add(playerID);
-            players.Add(playerID, Instantiate(m_PlayerPrefab));
+            players.Add(playerID, Instantiate(m_PlayerHologramPrefab));
+
+            clientHandler.RegisterPlayer playerData = new clientHandler.RegisterPlayer();
+            playerData.type = (int)clientHandler.PacketType.REGISTER_PLAYER;
+            playerData.playerID = playerID;
+
+
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.RegisterPlayer))];
+            GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+            try
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            }
+            finally
+            {
+                Debug.Log("SENDING PLAYER DATA");
+                server.SendMessageToConnection(playerID, bytes);
+                pinStructure.Free();
+            }
         }
     }
 
@@ -273,22 +294,25 @@ public class serverHandler : MonoBehaviour
 
     private void handleMovePlayer()
     {
-        Transform serverPlayerTransform = players[serverPlayerID].transform;
-        if (Input.GetKey(KeyCode.W))
+        if (players.ContainsKey(serverPlayerID))
         {
-            serverPlayerTransform.position += new Vector3(0, 0.01f, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            serverPlayerTransform.position += new Vector3(0.01f, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            serverPlayerTransform.position += new Vector3(0, -0.01f, 0);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            serverPlayerTransform.position += new Vector3(-0.01f, 0, 0);
+            Transform serverPlayerTransform = players[serverPlayerID].transform;
+            if (Input.GetKey(KeyCode.W))
+            {
+                serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
+            }
         }
     }
 }
