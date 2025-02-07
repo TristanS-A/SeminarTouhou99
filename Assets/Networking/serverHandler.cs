@@ -22,6 +22,7 @@ public class serverHandler : MonoBehaviour
     private uint pollGroup;
     private NetworkingUtils serverNetworkingUtils = new NetworkingUtils();
     private uint listenSocket;
+    private float mPacketSendTime = 0.0f;
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -123,7 +124,12 @@ public class serverHandler : MonoBehaviour
         {
             server.RunCallbacks();
 
-            SendChatMessage();
+            if (mPacketSendTime > 0.033)
+            {
+                SendChatMessage();
+                mPacketSendTime = 0.0f;
+            }
+            mPacketSendTime += Time.deltaTime;
 
             //Enable SPAN for this next part
 #if VALVESOCKETS_SPAN

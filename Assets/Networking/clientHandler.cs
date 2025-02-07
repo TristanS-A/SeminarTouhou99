@@ -20,6 +20,7 @@ public class clientHandler : MonoBehaviour
     private StatusCallback clientStatusCallback;
     NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
     Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
+    private float mPacketSendTime = 0.0f;
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -141,7 +142,12 @@ public class clientHandler : MonoBehaviour
         {
             client.RunCallbacks();
 
-            SendChatMessage();
+            if (mPacketSendTime > 0.033)
+            {
+                SendChatMessage();
+                mPacketSendTime = 0.0f;
+            }
+            mPacketSendTime += Time.deltaTime;
 
 #if VALVESOCKETS_SPAN
                     client.ReceiveMessagesOnConnection(serverConnection, message, 20);
