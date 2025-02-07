@@ -9,7 +9,9 @@ public class SampleScript : MonoBehaviour
     int radius = 3;
 
     Vector2 center = Vector2.zero;
-    float scaler = 10.0f;
+    float scaler = 0.005f;
+
+    List<BaseBullet> bullets = new List<BaseBullet>();
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +24,19 @@ public class SampleScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //UpdateProjectile();
+    }
+    private void FixedUpdate()
+    {
+        UpdateProjectile();
+    }
+
+    void UpdateProjectile()
+    {
+        foreach (BaseBullet go in bullets)
+        {
+           go.UpdatePorjectile();
+        }
     }
     IEnumerator SpawnCircle()
     {
@@ -38,8 +52,19 @@ public class SampleScript : MonoBehaviour
             Vector2 directionVector = center - spawnPos;
 
             Rigidbody2D rb = dummy.AddComponent<Rigidbody2D>();
+
+            rb.isKinematic = true;
+
             rb.gravityScale = 0;
+
+            Streght proj = dummy.AddComponent<Streght>();
+            proj.scaler = 0.05f;
+            proj.initProj(center);
+
+            bullets.Add(proj);
+
             rb.AddForce(-directionVector * scaler);
+
 
             yield return wait;
         }
