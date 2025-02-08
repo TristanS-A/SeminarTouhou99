@@ -68,7 +68,7 @@ public class SingleShotPattern : MonoBehaviour
             bul.rb.gravityScale = 0.0f;
             bul.initProj(this.transform.position);
          
-
+            bul.scaler = 0.05f;
             bullets.Add(bul);
 
 

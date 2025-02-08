@@ -24,7 +24,7 @@ public class BaseBullet : MonoBehaviour
         direction.Normalize();
 
         //does this need to be done here?
-        transform.up = -direction;
+        //transform.up = -direction;
         //Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
 
         //this.transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 360);

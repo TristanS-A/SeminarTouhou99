@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3080c6bef4e75544894f2115859002b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diretion: {x: 1, y: 1}
+  diretion: {x: 0, y: 0}
   bullet: {fileID: 705364644}
   ammountToSpawn: 1
   timeInbetweenShot: 1

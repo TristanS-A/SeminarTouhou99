@@ -5,24 +5,29 @@ using UnityEngine;
 public class Wave : BaseBullet
 {
     int sinDirection = 1;
-    [SerializeField] public float amplitude = 10.0f;
-    [SerializeField] public float frequency = 10.0f;
+    [SerializeField] public float amplitude = 6.0f;
+    [SerializeField] public float frequency = 20.0f;
+
+    [SerializeField] public float angleFromSource = 180.0f;
     // Start is called before the first frame update
     void Start()
     {
         rb = this.GetComponent<Rigidbody2D>();
-        rb.isKinematic = false;
-        rb.gravityScale = 0.0f; 
+        rb.isKinematic = true;
     }
 
     public override void UpdatePorjectile()
     {
         float wave = Mathf.Sin((Time.time) * frequency) * amplitude;
+        float waveX = Mathf.Cos((Time.time) * frequency) * amplitude;
 
-        Debug.Log("transfrom " + transform.up);
-        transform.position += transform.up;
+        //local space transformation
+        transform.Translate(new Vector3(1 * scaler, wave * scaler, 0), Space.Self);
+
+        transform.rotation = Quaternion.Euler(0, 0, angleFromSource);
 
     }
+
     //inversts the direction of the bullet
     public void InvertDirection()
     {
