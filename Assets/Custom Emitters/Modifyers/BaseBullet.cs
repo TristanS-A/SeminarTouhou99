@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BaseBullet : MonoBehaviour
 {
@@ -11,13 +12,20 @@ public class BaseBullet : MonoBehaviour
 
     private void Start() 
     {
+        rb = this.GetComponent<Rigidbody2D>();
         rb.isKinematic = true;
+
     }
     public void initProj(Vector2 origin)
     {
         //gets the inital direction 
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
+    
+
+        Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
+
+       this.transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 360);
     }
     public virtual void UpdatePorjectile() { }
 }

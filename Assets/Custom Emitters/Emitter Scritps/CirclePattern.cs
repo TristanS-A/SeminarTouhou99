@@ -6,7 +6,7 @@ public class SampleScript : MonoBehaviour
 {
     [SerializeField] GameObject bullet;
 
-    int radius = 3;
+    [SerializeField] float  radius = 3;
 
     Vector2 center = Vector2.zero;
     float scaler = 0.005f;
@@ -38,6 +38,7 @@ public class SampleScript : MonoBehaviour
            go.UpdatePorjectile();
         }
     }
+    //creation of the pattern
     IEnumerator SpawnCircle()
     {
         WaitForSeconds wait = new WaitForSeconds(0.25f);
@@ -57,7 +58,7 @@ public class SampleScript : MonoBehaviour
 
             rb.gravityScale = 0;
 
-            Streght proj = dummy.AddComponent<Streght>();
+            Wave proj = dummy.AddComponent<Wave>();
             proj.scaler = 0.05f;
             proj.initProj(center);
 
