@@ -20,7 +20,10 @@ public class clientHandler : MonoBehaviour
     private StatusCallback clientStatusCallback;
     NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
     Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
+    Dictionary<uint, List<Vector3>> playerPoses = new Dictionary<uint, List<Vector3>>();
+    Dictionary<uint, float> playerInterpolationTracker = new Dictionary<uint, float>();
     private float mPacketSendTime = 0.0f;
+    private const float PACKET_TARGET_SEND_TIME = 0.033f;
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -142,7 +145,8 @@ public class clientHandler : MonoBehaviour
         {
             client.RunCallbacks();
 
-            if (mPacketSendTime > 0.033)
+            handleInterpolatePlayerPoses();
+            if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
             {
                 SendChatMessage();
                 mPacketSendTime = 0.0f;
@@ -237,13 +241,34 @@ public class clientHandler : MonoBehaviour
             {
                 playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 players.Add(playerData.playerID, playerOBJ);
-            }
-            else
-            {
-                playerOBJ = players[playerData.playerID];
+                playerPoses.Add(playerData.playerID, new());
+                playerInterpolationTracker.Add(playerData.playerID, 0.0f);
             }
 
-            playerOBJ.transform.position = playerData.pos;
+            playerPoses[playerData.playerID].Clear();
+            playerPoses[playerData.playerID].Add(players[playerData.playerID].transform.position);
+            playerPoses[playerData.playerID].Add(playerData.pos);
+
+            playerInterpolationTracker[playerData.playerID] = 0.0f;
+        }
+    }
+
+    private void handleInterpolatePlayerPoses()
+    {
+        foreach (uint key in playerPoses.Keys)
+        {
+            if (playerPoses[key].Count > 0)
+            {
+                GameObject playerOBJ = players[key];
+                playerOBJ.transform.position = Vector3.Lerp(playerPoses[key][0], playerPoses[key][1], playerInterpolationTracker[key] / PACKET_TARGET_SEND_TIME);
+
+                playerInterpolationTracker[key] += Time.deltaTime;
+
+                if (playerInterpolationTracker[key] >= PACKET_TARGET_SEND_TIME)
+                {
+                    playerPoses[key].Clear();
+                }
+            }
         }
     }
 
@@ -251,6 +276,8 @@ public class clientHandler : MonoBehaviour
     {
         connectionIDOnServer = playerData.playerID;
         players.Add(connectionIDOnServer, Instantiate(m_PlayerPrefab));
+        playerPoses.Add(connectionIDOnServer, new());
+        playerInterpolationTracker.Add(connectionIDOnServer, 0.0f);
     }
 
     private void handleMovePlayer()

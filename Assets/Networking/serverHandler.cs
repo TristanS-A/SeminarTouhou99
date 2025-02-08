@@ -17,12 +17,15 @@ public class serverHandler : MonoBehaviour
     [SerializeField] private GameObject m_PlayerPrefab;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
     Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
+    Dictionary<uint, List<Vector3>> playerPoses = new Dictionary<uint, List<Vector3>>();
+    Dictionary<uint, float> playerInterpolationTracker = new Dictionary<uint, float>();
     private NetworkingSockets server;
     private uint serverPlayerID = 0;
     private uint pollGroup;
     private NetworkingUtils serverNetworkingUtils = new NetworkingUtils();
     private uint listenSocket;
     private float mPacketSendTime = 0.0f;
+    private const float PACKET_TARGET_SEND_TIME = 0.033f;
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -124,7 +127,8 @@ public class serverHandler : MonoBehaviour
         {
             server.RunCallbacks();
 
-            if (mPacketSendTime > 0.033)
+            handleInterpolatePlayerPoses();
+            if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
             {
                 SendChatMessage();
                 mPacketSendTime = 0.0f;
@@ -251,6 +255,8 @@ public class serverHandler : MonoBehaviour
         {
             connectedClients.Add(playerID);
             players.Add(playerID, Instantiate(m_PlayerHologramPrefab));
+            playerPoses.Add(playerID, new());
+            playerInterpolationTracker.Add(playerID, 0.0f);
 
             clientHandler.RegisterPlayer playerData = new clientHandler.RegisterPlayer();
             playerData.type = (int)clientHandler.PacketType.REGISTER_PLAYER;
@@ -289,13 +295,34 @@ public class serverHandler : MonoBehaviour
         {
             playerOBJ = Instantiate(m_PlayerHologramPrefab);
             players.Add(playerData.playerID, playerOBJ);
-        }
-        else
-        {
-            playerOBJ = players[playerData.playerID];
+            playerPoses.Add(playerData.playerID, new());
+            playerInterpolationTracker.Add(playerData.playerID, 0.0f);
         }
 
-        playerOBJ.transform.position = playerData.pos;
+        playerPoses[playerData.playerID].Clear();
+        playerPoses[playerData.playerID].Add(players[playerData.playerID].transform.position);
+        playerPoses[playerData.playerID].Add(playerData.pos);
+
+        playerInterpolationTracker[playerData.playerID] = 0.0f;
+    }
+
+    private void handleInterpolatePlayerPoses()
+    {
+        foreach (uint key in playerPoses.Keys)
+        {
+            if (playerPoses[key].Count > 0)
+            {
+                GameObject playerOBJ = players[key];
+                playerOBJ.transform.position = Vector3.Lerp(playerPoses[key][0], playerPoses[key][1], playerInterpolationTracker[key] / PACKET_TARGET_SEND_TIME);
+
+                playerInterpolationTracker[key] += Time.deltaTime;
+
+                if (playerInterpolationTracker[key] >= PACKET_TARGET_SEND_TIME)
+                {
+                    playerPoses[key].Clear();
+                }
+            }
+        }
     }
 
     private void handleMovePlayer()
