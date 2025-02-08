@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SingleShotPattern : MonoBehaviour
@@ -45,17 +46,32 @@ public class SingleShotPattern : MonoBehaviour
 
         for (int i = 0; i < ammountToSpawn; i++)
         {
-            
-            var obj = Instantiate(bullet, GetDirection(), Quaternion.identity);
+            //float offsetX = this.transform.position.x - diretion.x;
+            //float offsetY = this.transform.position.y - diretion.y;
+
+            //var obj = Instantiate(bullet, new Vector3(offsetX, offsetY, 0), Quaternion.identity);
 
             
-            BaseBullet baseBullet = obj.AddComponent<Wave>();
-            baseBullet.rb = obj.AddComponent<Rigidbody2D>();
-            baseBullet.rb.gravityScale = 0.0f;
-            baseBullet.initProj(this.transform.position);
-            baseBullet.scaler = 0.05f;
-            bullets.Add(baseBullet);
-            
+            //BaseBullet baseBullet = obj.AddComponent<Wave>();
+            //baseBullet.rb = obj.AddComponent<Rigidbody2D>();
+            //baseBullet.rb.gravityScale = 0.0f;
+
+            //baseBullet.initProj(this.transform.position);
+
+            //baseBullet.scaler = 0.05f;
+            //bullets.Add(baseBullet);
+
+            var obj = Instantiate(bullet, diretion, Quaternion.identity);
+
+            BaseBullet bul = obj.AddComponent<Wave>();
+            bul.rb = bul.AddComponent<Rigidbody2D>();
+            bul.rb.gravityScale = 0.0f;
+            bul.initProj(this.transform.position);
+         
+
+            bullets.Add(bul);
+
+
             yield return wait;
         }
 

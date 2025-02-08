@@ -16,16 +16,18 @@ public class BaseBullet : MonoBehaviour
         rb.isKinematic = true;
 
     }
+    //gets the inial direction and sets the correct orrienction
     public void initProj(Vector2 origin)
     {
         //gets the inital direction 
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
-    
 
-        Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
+        //does this need to be done here?
+        transform.up = -direction;
+        //Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
 
-       this.transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 360);
+        //this.transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 360);
     }
     public virtual void UpdatePorjectile() { }
 }

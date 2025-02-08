@@ -12,30 +12,16 @@ public class Wave : BaseBullet
     {
         rb = this.GetComponent<Rigidbody2D>();
         rb.isKinematic = false;
-        rb.gravityScale = 0.0f;
-
-        //transform.forward = -direction;
+        rb.gravityScale = 0.0f; 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public override void UpdatePorjectile()
     {
-        //float wave = Mathf.Sin((Time.time) * frequency) * amplitude;
-
-        //float x =  -direction.x * scaler;
-        //float y =  -direction.y * scaler;
-
-        //this.transform.position += new Vector3(x, y, 0) * wave;
-
-        //this.transform.rotation = Quaternion.Euler(0, 0, 90);
-
         float wave = Mathf.Sin((Time.time) * frequency) * amplitude;
 
-        rb.velocity = new Vector2((-direction.x + transform.position.x) * scaler, wave);
+        Debug.Log("transfrom " + transform.up);
+        transform.position += transform.up;
+
     }
     //inversts the direction of the bullet
     public void InvertDirection()
