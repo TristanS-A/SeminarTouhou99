@@ -1,3 +1,4 @@
+using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ public class clientHandler : MonoBehaviour
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
-    private StatusCallback clientStatusCallback;
     private StatusCallback clientNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
     Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
@@ -86,34 +86,7 @@ public class clientHandler : MonoBehaviour
 
         serverConnection = 0;
 
-        StatusCallback status = (StatusInfo info, System.IntPtr context) => {
-            try
-            {
-                switch (info.connectionInfo.state)
-                {
-                    case ConnectionState.None:
-                        break;
-
-                    case ConnectionState.Connected:
-                        serverConnection = info.connection;
-                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + serverConnection);
-                        break;
-
-                    case ConnectionState.ClosedByPeer:
-                    case ConnectionState.ProblemDetectedLocally:
-                        client.CloseConnection(serverConnection);
-                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log("ERRROR: " + e);
-                return;
-            }
-        };
-
-        clientNetworkingUtils = status;
+        clientNetworkingUtils = OnClientStatusUpdate;
 
         Address address = new Address();
 
@@ -139,12 +112,33 @@ public class clientHandler : MonoBehaviour
 #endif
     }
 
+    [MonoPInvokeCallback(typeof(StatusCallback))]
+    void OnClientStatusUpdate(StatusInfo info, System.IntPtr context)
+    {
+        switch (info.connectionInfo.state)
+        {
+            case ConnectionState.None:
+                break;
+
+            case ConnectionState.Connected:
+                serverConnection = info.connection;
+                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + serverConnection);
+                break;
+
+            case ConnectionState.ClosedByPeer:
+            case ConnectionState.ProblemDetectedLocally:
+                client.CloseConnection(serverConnection);
+                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
+                break;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (client != null)
         {
-            client.DispatchCallback(clientStatusCallback);
+            client.DispatchCallback(clientNetworkingUtils);
 
             handleInterpolatePlayerPoses();
             if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
