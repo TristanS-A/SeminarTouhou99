@@ -9,6 +9,7 @@ public class BaseBullet : MonoBehaviour
     [SerializeField] public float scaler = 1.0f;
     [SerializeField] public Vector2 velocity;
     [SerializeField] protected float lifeTime;
+    protected Transform parentTrans;
     public Vector2 direction;
 
     private void Start() 
@@ -23,11 +24,13 @@ public class BaseBullet : MonoBehaviour
         lifeTime -= Time.deltaTime;
     }
     //gets the inial direction and sets the correct orrienction
-    public void initProj(Vector2 origin)
+    public void initProj(Vector2 origin, Transform parnet)
     {
         //gets the inital direction 
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
+
+        parentTrans = parnet;
 
         //does this need to be done here?
         //transform.up = -direction;

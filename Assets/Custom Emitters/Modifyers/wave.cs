@@ -9,6 +9,8 @@ public class Wave : BaseBullet
     [SerializeField] public float frequency = 20.0f;
 
     [SerializeField] public float angleFromSource = 180.0f;
+
+    bool angleCalculated = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,8 +26,24 @@ public class Wave : BaseBullet
         //local space transformation
         transform.Translate(new Vector3(1 * scaler, wave * scaler, 0), Space.Self);
 
-        transform.rotation = Quaternion.Euler(0, 0, angleFromSource);
+        //get angle 
+        if(!angleCalculated)
+        transform.parent.rotation *= Quaternion.Euler(0, 0, getAngle());
+      
 
+
+    }
+    //make sure this is calculated once
+    float getAngle()
+    {
+        if (!angleCalculated)
+        {
+            angleFromSource = Vector2.SignedAngle(direction, parentTrans.position);
+            angleCalculated = true;
+        }
+        //angleFromSource = Vector2.Angle(parentTrans.position, direction);
+        
+        return angleFromSource; 
     }
 
     //inversts the direction of the bullet

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SampleScript : MonoBehaviour
+public class CirlcePattern : Pattern
 {
     [SerializeField] GameObject bullet;
 
@@ -82,7 +82,7 @@ public class SampleScript : MonoBehaviour
                 bul.scaler = scaler;
             }
 
-            bul.initProj(center);
+            bul.initProj(center, transform);
 
             bullets.Add(bul);
 

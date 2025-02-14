@@ -292,7 +292,7 @@ Transform:
   m_GameObject: {fileID: 489820774}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 2.39, z: 0}
+  m_LocalPosition: {x: 3.54, y: 2.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -308,11 +308,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3662759449070770954, guid: e010a78490667b04a9b3222be63f6a2c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.54
+      value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: 3662759449070770954, guid: e010a78490667b04a9b3222be63f6a2c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.98
+      value: -1.47
       objectReference: {fileID: 0}
     - target: {fileID: 3662759449070770954, guid: e010a78490667b04a9b3222be63f6a2c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -350,6 +350,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CircleEmitter
       objectReference: {fileID: 0}
+    - target: {fileID: 6224333239488190002, guid: e010a78490667b04a9b3222be63f6a2c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9003960000671102645, guid: e010a78490667b04a9b3222be63f6a2c, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 4285272338807687441, guid: 81840f17489898d4aaf6fda5113adc2e, type: 3}
     - target: {fileID: 9003960000671102645, guid: e010a78490667b04a9b3222be63f6a2c, type: 3}
       propertyPath: scaler
       value: 0.02
@@ -369,11 +377,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3662759449070770954, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.019999996
+      value: -1.75
       objectReference: {fileID: 0}
     - target: {fileID: 3662759449070770954, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.6
+      value: -1.95
       objectReference: {fileID: 0}
     - target: {fileID: 3662759449070770954, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -412,7 +420,15 @@ PrefabInstance:
       value: SingleShotEmmiter
       objectReference: {fileID: 0}
     - target: {fileID: 7200883922211189626, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 8125960993297909659, guid: aacb4eaaf811e194ebb5eee61f0f3f35, type: 3}
+    - target: {fileID: 7200883922211189626, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
       propertyPath: diretion.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7200883922211189626, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
+      propertyPath: diretion.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7200883922211189626, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}

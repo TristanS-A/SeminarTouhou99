@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class SingleShotPattern : MonoBehaviour
+public class SingleShotPattern : Pattern
 {
 
     [SerializeField] Vector2 diretion;
@@ -67,13 +67,19 @@ public class SingleShotPattern : MonoBehaviour
         for (int i = 0; i < ammountToSpawn; i++)
         {
             
-            var obj = Instantiate(bullet, diretion, Quaternion.identity);
+            var obj = Instantiate(bullet, (Vector2)this.transform.position, Quaternion.identity);
             
             //get the compenet of type
+            
             var comp = obj.GetComponent<BaseBullet>();
 
+            if (comp == null)
+            {
+                //try the child
+                comp = obj.GetComponentInChildren<BaseBullet>();
+            }
             //init the direction of the poj
-            comp.initProj(this.transform.position);
+            comp.initProj(diretion, transform);
 
             if(modifyScaler > 0)
             {
