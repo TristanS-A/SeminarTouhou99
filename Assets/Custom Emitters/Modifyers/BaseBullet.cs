@@ -8,6 +8,7 @@ public class BaseBullet : MonoBehaviour
     [SerializeField] public Rigidbody2D rb;
     [SerializeField] public float scaler = 1.0f;
     [SerializeField] public Vector2 velocity;
+    [SerializeField] protected float lifeTime;
     public Vector2 direction;
 
     private void Start() 
@@ -15,6 +16,11 @@ public class BaseBullet : MonoBehaviour
         rb = this.GetComponent<Rigidbody2D>();
         rb.isKinematic = true;
 
+    }
+    private void Update()
+    {
+        //tick down life time
+        lifeTime -= Time.deltaTime;
     }
     //gets the inial direction and sets the correct orrienction
     public void initProj(Vector2 origin)
@@ -28,6 +34,10 @@ public class BaseBullet : MonoBehaviour
         //Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
 
         //this.transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 360);
+    }
+    public float getLifeTime()
+    {
+        return lifeTime;
     }
     public virtual void UpdatePorjectile() { }
 }
