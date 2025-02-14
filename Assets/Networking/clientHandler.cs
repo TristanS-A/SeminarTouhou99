@@ -1,3 +1,4 @@
+using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ public class clientHandler : MonoBehaviour
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
-    private StatusCallback clientStatusCallback;
-    NetworkingUtils clientNetworkingUtils = new NetworkingUtils();
+    private StatusCallback clientNetworkingUtils;
+    NetworkingUtils utils = new NetworkingUtils();
     Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
     Dictionary<uint, List<Vector3>> playerPoses = new Dictionary<uint, List<Vector3>>();
     Dictionary<uint, float> playerInterpolationTracker = new Dictionary<uint, float>();
@@ -74,7 +75,7 @@ public class clientHandler : MonoBehaviour
             Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
         };
 
-        clientNetworkingUtils.SetDebugCallback(DebugType.Everything, debugCallback);
+        utils.SetDebugCallback(DebugType.Everything, debugCallback);
     }
 
     private void RunClientSetUp()
@@ -85,40 +86,13 @@ public class clientHandler : MonoBehaviour
 
         serverConnection = 0;
 
-        StatusCallback status = (ref StatusInfo info) => {
-            try
-            {
-                switch (info.connectionInfo.state)
-                {
-                    case ConnectionState.None:
-                        break;
-
-                    case ConnectionState.Connected:
-                        serverConnection = info.connection;
-                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + serverConnection);
-                        break;
-
-                    case ConnectionState.ClosedByPeer:
-                    case ConnectionState.ProblemDetectedLocally:
-                        client.CloseConnection(serverConnection);
-                        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log("ERRROR: " + e);
-                return;
-            }
-        };
-
-        clientNetworkingUtils.SetStatusCallback(status);
+        clientNetworkingUtils = OnClientStatusUpdate;
 
         Address address = new Address();
 
         address.SetAddress("::1", 5000);
 
-        serverConnection = client.Connect(ref address);
+        serverConnection = client.Connect(address);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) =>
@@ -138,12 +112,33 @@ public class clientHandler : MonoBehaviour
 #endif
     }
 
+    [MonoPInvokeCallback(typeof(StatusCallback))]
+    void OnClientStatusUpdate(StatusInfo info, System.IntPtr context)
+    {
+        switch (info.connectionInfo.state)
+        {
+            case ConnectionState.None:
+                break;
+
+            case ConnectionState.Connected:
+                serverConnection = info.connection;
+                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + serverConnection);
+                break;
+
+            case ConnectionState.ClosedByPeer:
+            case ConnectionState.ProblemDetectedLocally:
+                client.CloseConnection(serverConnection);
+                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
+                break;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (client != null)
         {
-            client.RunCallbacks();
+            client.DispatchCallback(clientNetworkingUtils);
 
             handleInterpolatePlayerPoses();
             if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)

@@ -22,7 +22,8 @@ public class serverHandler : MonoBehaviour
     private NetworkingSockets server;
     private uint serverPlayerID = 0;
     private uint pollGroup;
-    private NetworkingUtils serverNetworkingUtils = new NetworkingUtils();
+    private StatusCallback serverNetworkingUtils;
+    NetworkingUtils utils = new NetworkingUtils();
     private uint listenSocket;
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
@@ -51,16 +52,11 @@ public class serverHandler : MonoBehaviour
             Debug.Log("Sever Debug - Type: " + type + ", Message: " + message);
         };
 
-        serverNetworkingUtils.SetDebugCallback(DebugType.Everything, debugCallback);
+        utils.SetDebugCallback(DebugType.Everything, debugCallback);
     }
 
     private void OnApplicationQuit()
     {
-        if (server != null)
-        {
-            server.DestroyPollGroup(pollGroup);
-        }
-
         Valve.Sockets.Library.Deinitialize();
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
@@ -71,9 +67,7 @@ public class serverHandler : MonoBehaviour
 
         server = new NetworkingSockets();
 
-        pollGroup = server.CreatePollGroup();
-
-        serverNetworkingUtils.SetStatusCallback(serverStatusCallback);
+        serverNetworkingUtils = serverStatusCallback;
 
         Address address = new Address();
 
@@ -81,7 +75,7 @@ public class serverHandler : MonoBehaviour
 
         players.Add(0, Instantiate(m_PlayerPrefab));
 
-        listenSocket = server.CreateListenSocket(ref address);
+        listenSocket = server.CreateListenSocket(address);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) => {
@@ -95,7 +89,7 @@ public class serverHandler : MonoBehaviour
     }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
-    private void serverStatusCallback(ref StatusInfo info)
+    private void serverStatusCallback(StatusInfo info, System.IntPtr context)
     {
         switch (info.connectionInfo.state)
         {
@@ -104,7 +98,6 @@ public class serverHandler : MonoBehaviour
 
             case ConnectionState.Connecting:
                 server.AcceptConnection(info.connection);
-                server.SetConnectionPollGroup(pollGroup, info.connection);
                 break;
 
             case ConnectionState.Connected:
@@ -125,7 +118,7 @@ public class serverHandler : MonoBehaviour
     {
         if (server != null)
         {
-            server.RunCallbacks();
+            server.DispatchCallback(serverNetworkingUtils);
 
             handleInterpolatePlayerPoses();
             if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
@@ -139,7 +132,7 @@ public class serverHandler : MonoBehaviour
 #if VALVESOCKETS_SPAN
             server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
 #else
-            int netMessagesCount = server.ReceiveMessagesOnPollGroup(pollGroup, netMessages, maxMessages);
+            int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, maxMessages);
 
             if (netMessagesCount > 0)
             {
