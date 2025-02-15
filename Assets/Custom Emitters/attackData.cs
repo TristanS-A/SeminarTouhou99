@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "AttackData", menuName = "Touhou/AttackData")]
@@ -16,6 +18,7 @@ public class AttackData : ScriptableObject
     Pattern attackPattern;
     [SerializeField] GameObject bulletType;
     [SerializeField] GameObject emmiter;
+    
 
     [SerializeField] float angle;
 

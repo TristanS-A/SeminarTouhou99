@@ -97,22 +97,24 @@ public class Sequencer : MonoBehaviour
     }
     private void CleanList()
     {
-        List<int> deadList = new List<int>();
-        int index = 0;
+        //List<int> deadList = new List<int>();
+        //int index = 0;
 
-        foreach (var emitter in activeEmmiter)
-        {
-            if(emitter.Equals(null))
-            {
-                deadList.Add(index);
-            }
-            index++;
-        }
+        //foreach (var emitter in activeEmmiter)
+        //{
+        //    if(emitter.Equals(null))
+        //    {
+        //        deadList.Add(index);
+        //    }
+        //    index++;
+        //}
 
-        foreach (var dead in deadList)
-        {
-            activeEmmiter.RemoveAt(dead);
-        }
+        //foreach (var dead in deadList)
+        //{
+        //    activeEmmiter.RemoveAt(dead);
+        //}
+
+        activeEmmiter.RemoveAll(x => x == null);
     }
 
     //determains if the emmiter is using custom time or  default time

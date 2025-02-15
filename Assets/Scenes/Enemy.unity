@@ -224,6 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 489820776}
   - component: {fileID: 489820775}
+  - component: {fileID: 489820777}
   m_Layer: 0
   m_Name: Man
   m_TagString: Untagged
@@ -298,6 +299,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &489820777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489820774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45757a6997b56744c9a099c3fdd22f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+  - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
+  shouldLoop: 0
 --- !u!1001 &2040606612
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -418,6 +436,10 @@ PrefabInstance:
     - target: {fileID: 6224333239488190002, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
       propertyPath: m_Name
       value: SingleShotEmmiter
+      objectReference: {fileID: 0}
+    - target: {fileID: 6224333239488190002, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7200883922211189626, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
       propertyPath: bullet

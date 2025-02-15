@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 0}
   radius: 1
+  scaler: 0
 --- !u!114 &7200883922211189626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3080c6bef4e75544894f2115859002b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diretion: {x: 0, y: 0}
   bullet: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
+  diretion: {x: 0, y: 1}
   ammountToSpawn: 1
   timeInbetweenShot: 1
+  modifyScaler: 0
