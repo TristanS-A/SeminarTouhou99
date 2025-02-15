@@ -23,11 +23,14 @@ public class Wave : BaseBullet
         float wave = Mathf.Sin((Time.time) * frequency) * amplitude;
         float waveX = Mathf.Cos((Time.time) * frequency) * amplitude;
 
-        //local space transformation
-        transform.Translate(new Vector3(1 * scaler, wave * scaler, 0), Space.Self);
+        //local space transformation (move up and down)
+        transform.Translate(new Vector3(0, wave * scaler, 0), Space.Self);
 
-        //get angle 
-        if(!angleCalculated)
+        //move parent in a direction
+        transform.parent.Translate(new Vector3(direction.x * scaler, direction.y * scaler, 0), Space.World);
+        
+        //get angle and rotate parent
+        if (!angleCalculated)
         transform.parent.rotation *= Quaternion.Euler(0, 0, getAngle());
       
 
@@ -36,9 +39,15 @@ public class Wave : BaseBullet
     //make sure this is calculated once
     float getAngle()
     {
+        //this get angle function is wrong :(((((
         if (!angleCalculated)
         {
-            angleFromSource = Vector2.SignedAngle(direction, parentTrans.position);
+            //for the angle I need to 
+            //1. get the postion of the object
+            //2. get the postion of my direction relitive to the spawned emitter
+            //3. get the angle
+            angleFromSource = Vector2.Angle((Vector2)this.transform.parent.right + (Vector2)this.transform.position, (Vector2)parentTrans.position + direction);
+
             angleCalculated = true;
         }
         //angleFromSource = Vector2.Angle(parentTrans.position, direction);

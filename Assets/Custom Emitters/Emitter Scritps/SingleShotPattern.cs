@@ -79,7 +79,7 @@ public class SingleShotPattern : Pattern
                 comp = obj.GetComponentInChildren<BaseBullet>();
             }
             //init the direction of the poj
-            comp.initProj(diretion, transform);
+            comp.initProj(diretion + (Vector2)transform.position, transform);
 
             if(modifyScaler > 0)
             {
