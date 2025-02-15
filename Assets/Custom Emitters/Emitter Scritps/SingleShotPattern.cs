@@ -8,7 +8,7 @@ public class SingleShotPattern : Pattern
 {
 
     [SerializeField] Vector2 diretion;
-    [SerializeField] GameObject bullet;
+    //[SerializeField] GameObject bullet;
     List<BaseBullet> bullets = new List<BaseBullet>();
     [SerializeField] int ammountToSpawn = 1;
     //in seconds

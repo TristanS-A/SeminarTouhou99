@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CirlcePattern : Pattern
 {
-    [SerializeField] GameObject bullet;
+    
 
     [SerializeField] float  radius = 3;
 
@@ -55,6 +55,12 @@ public class CirlcePattern : Pattern
         if (removalIndex.Count > 0)
         {
             CleanList(removalIndex, bullets);
+        }
+
+        if(bullets.Count <= 0)
+        {
+            //if we have no bullets destroy self
+            Destroy(gameObject);
         }
 
     }

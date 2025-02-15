@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Pattern : MonoBehaviour
 {
-
+    [SerializeField] public GameObject bullet;
 }
