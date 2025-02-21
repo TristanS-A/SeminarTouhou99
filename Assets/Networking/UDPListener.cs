@@ -14,6 +14,8 @@ public static class UDPListener {
 
     private const int PORT = 20000;
 
+    private static bool isReciving = false;
+
     public static void StartClient(bool receive) {
         Debug.Log("UDP - Starting Client");
         ip = new IPEndPoint(IPAddress.Any, PORT);
@@ -21,7 +23,7 @@ public static class UDPListener {
         client = new UdpClient(ip);
         client.JoinMulticastGroup(groupAddress);
 
-        if (receive)
+        if (isReciving)
         {
             client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
         }
@@ -42,6 +44,7 @@ public static class UDPListener {
         } else {
             Debug.Log(data);
             eventSystem.fireEvent(new ReceiveIPEvent(data));
+            isReciving = true;
         }
 
         client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
