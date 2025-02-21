@@ -91,13 +91,15 @@ public class serverHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress(Dns.GetHostAddresses(Environment.MachineName).ToString(), 5000);
+        Debug.Log(Dns.GetHostAddresses(Environment.MachineName).ToString());
+
+        address.SetAddress("172.20.1.106", 5000);
 
         listenSocket = server.CreateListenSocket(address);
 
         UDPListener.StartClient();
 
-        UDPListener.SendIP(address.GetIP());
+        UDPListener.SendIP("172.20.1.106");
 
         SceneManager.LoadScene(1);
 
