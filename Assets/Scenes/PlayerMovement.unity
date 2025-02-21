@@ -396,9 +396,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1182033745}
     - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: rotateSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
       propertyPath: screenObject
       value: 
       objectReference: {fileID: 1968492547}
+    - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: isHomingBullet
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3875593617490493976, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.004999995

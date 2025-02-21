@@ -28,7 +28,10 @@ public class PlayerAttacks : MonoBehaviour {
     private List<GameObject> bullets = new();
     private bool isShooting = false/*, isHomingBullet = false*/;
 
+    private PlayerMovement playerMovement;
+
     private void Start() {
+        playerMovement = GetComponent<PlayerMovement>();
         target = GameObject.FindGameObjectWithTag("Enemy").transform;
     }
 
@@ -46,7 +49,7 @@ public class PlayerAttacks : MonoBehaviour {
             if (bullets[i] != null) {
                 bullets[i].transform.position += bulletSpeed * Time.deltaTime * Vector3.up;
 
-                if (isHomingBullet) {
+                if (playerMovement.IsInFocusTime()) {
                     GameObject bullet = bullets[i];
                     Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
 
