@@ -37,6 +37,7 @@ public static class UDPListener {
             Debug.Log("No Data Recieved");
         } else {
             Debug.Log(data);
+            eventSystem.fireEvent(new ReceiveIPEvent(data));
         }
 
         client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);

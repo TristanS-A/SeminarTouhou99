@@ -64,11 +64,13 @@ public class clientHandler : MonoBehaviour
     private void OnEnable()
     {
         eventSystem.playerJoined += AddClientPlayer;
+        eventSystem.ipReceived += InitClientJoin;
     }
 
     private void OnDisable()
     {
         eventSystem.playerJoined -= AddClientPlayer;
+        eventSystem.ipReceived -= InitClientJoin;
     }
 
     private void OnApplicationQuit()
@@ -101,6 +103,11 @@ public class clientHandler : MonoBehaviour
 
         DontDestroyOnLoad(transform.gameObject);
 
+        SceneManager.LoadScene(1);
+    }
+
+    private void InitClientJoin(string ip)
+    {
         client = new NetworkingSockets();
 
         serverConnection = 0;
@@ -109,13 +116,11 @@ public class clientHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress("::1", 5000);
+        address.SetAddress(ip, 5000);
 
         serverConnection = client.Connect(address);
 
         UDPListener.StartClient();
-
-        SceneManager.LoadScene(1);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) =>

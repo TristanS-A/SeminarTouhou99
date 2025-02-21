@@ -2,6 +2,7 @@ using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -91,15 +92,17 @@ public class serverHandler : MonoBehaviour
 
         Address address = new Address();
 
-        Debug.Log(Dns.GetHostAddresses(Environment.MachineName).ToString());
 
-        address.SetAddress("172.20.1.106", 5000);
+        var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+
+
+        address.SetAddress(ip.ToString(), 5000);
 
         listenSocket = server.CreateListenSocket(address);
 
         UDPListener.StartClient();
 
-        UDPListener.SendIP("172.20.1.106");
+        UDPListener.SendIP(ip.ToString());
 
         SceneManager.LoadScene(1);
 
