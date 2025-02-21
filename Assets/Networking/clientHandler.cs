@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
 using static clientHandler;
@@ -13,8 +14,8 @@ using static clientHandler;
 public class clientHandler : MonoBehaviour
 {
     [SerializeField] private Button testClientButton;
-    [SerializeField] private GameObject m_PlayerPrefab;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
+    private GameObject mClientPlayerReference;
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
@@ -49,7 +50,7 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
-        public Vector2 pos;
+        public Vector3 pos;
         public float speed;
     };
 
@@ -58,6 +59,24 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
+    }
+
+    private void OnEnable()
+    {
+        eventSystem.playerJoined += AddClientPlayer;
+        eventSystem.ipReceived += InitClientJoin;
+    }
+
+    private void OnDisable()
+    {
+        eventSystem.playerJoined -= AddClientPlayer;
+        eventSystem.ipReceived -= InitClientJoin;
+    }
+
+    private void OnApplicationQuit()
+    {
+        Valve.Sockets.Library.Deinitialize();
+        Debug.Log("Quit and Socket Lib Deanitialized");
     }
 
     // Start is called before the first frame update
@@ -82,6 +101,15 @@ public class clientHandler : MonoBehaviour
     {
         Debug.Log("Starting Client...");
 
+        DontDestroyOnLoad(transform.gameObject);
+
+        UDPListener.StartClient(true);
+
+        SceneManager.LoadScene(1);
+    }
+
+    private void InitClientJoin(string ip)
+    {
         client = new NetworkingSockets();
 
         serverConnection = 0;
@@ -90,7 +118,7 @@ public class clientHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress("::1", 5000);
+        address.SetAddress(ip, 5000);
 
         serverConnection = client.Connect(address);
 
@@ -192,7 +220,7 @@ public class clientHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        handleMovePlayer();
+        //handleMovePlayer();
     }
 
     void SendChatMessage()
@@ -267,35 +295,42 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    public void AddClientPlayer(GameObject player)
+    {
+        mClientPlayerReference = player;
+        Debug.Log("Client Player Added");
+    }
+
+    //Bad archatecture for now (this function should ONLY be called after AddClientPlayer). Look into refactoring.
     private void handleRegisterPlayer(RegisterPlayer playerData)
     {
         connectionIDOnServer = playerData.playerID;
-        players.Add(connectionIDOnServer, Instantiate(m_PlayerPrefab));
+        players.Add(connectionIDOnServer, mClientPlayerReference);
         playerPoses.Add(connectionIDOnServer, new());
         playerInterpolationTracker.Add(connectionIDOnServer, 0.0f);
     }
 
-    private void handleMovePlayer()
-    {
-        if (players.ContainsKey(connectionIDOnServer))
-        {
-            Transform serverPlayerTransform = players[connectionIDOnServer].transform;
-            if (Input.GetKey(KeyCode.W))
-            {
-                serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
-            }
-        }
-    }
+    //private void handleMovePlayer()
+    //{
+    //    if (players.ContainsKey(connectionIDOnServer))
+    //    {
+    //        Transform serverPlayerTransform = players[connectionIDOnServer].transform;
+    //        if (Input.GetKey(KeyCode.W))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
+    //        }
+    //        if (Input.GetKey(KeyCode.D))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
+    //        }
+    //        if (Input.GetKey(KeyCode.S))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
+    //        }
+    //        if (Input.GetKey(KeyCode.A))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
+    //        }
+    //    }
+    //}
 }

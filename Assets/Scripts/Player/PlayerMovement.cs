@@ -27,6 +27,8 @@ public class PlayerMovement : MonoBehaviour {
         // Collider Visual - will automatically reset the visual to represent an accurate radius shape
         circleChild.transform.localScale = FloatToVec3(GetComponent<CircleCollider2D>().radius);
         circleRenderer = circleChild.GetComponent<SpriteRenderer>();
+
+        eventSystem.fireEvent(new PlayerJoinedEvent(gameObject));
     }
 
     void Update() {
