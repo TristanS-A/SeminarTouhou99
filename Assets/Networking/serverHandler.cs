@@ -93,7 +93,10 @@ public class serverHandler : MonoBehaviour
         address.SetAddress("::0", 5000);
 
         listenSocket = server.CreateListenSocket(address);
+
         UDPListener.StartClient();
+
+        UDPListener.SendIP();
 
         SceneManager.LoadScene(1);
 

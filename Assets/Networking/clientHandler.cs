@@ -113,6 +113,8 @@ public class clientHandler : MonoBehaviour
 
         serverConnection = client.Connect(address);
 
+        UDPListener.StartClient();
+
         SceneManager.LoadScene(1);
 
 #if VALVESOCKETS_SPAN

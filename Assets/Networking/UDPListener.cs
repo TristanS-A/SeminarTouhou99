@@ -22,6 +22,12 @@ public static class UDPListener {
         client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
     }
 
+    public static void SendIP()
+    {
+        byte[] dataBytes = { 3 };
+        client.BeginSend(dataBytes, 1, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
+    }
+
     public static void RecieveServerInfo(IAsyncResult result) {
         byte[] recievedData = client.EndReceive(result, ref ip);
         data = Encoding.ASCII.GetString(recievedData);
