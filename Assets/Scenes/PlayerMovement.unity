@@ -465,6 +465,7 @@ GameObject:
   - component: {fileID: 1182033743}
   - component: {fileID: 1182033742}
   - component: {fileID: 1182033746}
+  - component: {fileID: 1182033747}
   m_Layer: 0
   m_Name: 9-Sliced
   m_TagString: Enemy
@@ -543,7 +544,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 2
+  m_Constraints: 7
 --- !u!212 &1182033744
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -623,6 +624,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b36b6772c69a7cb4498ef4cff924fb01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1182033747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182033741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45757a6997b56744c9a099c3fdd22f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
+  - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+  shouldLoop: 1
 --- !u!1 &1330584512
 GameObject:
   m_ObjectHideFlags: 0
