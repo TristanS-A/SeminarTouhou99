@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public static class UDPListener {
@@ -22,10 +23,10 @@ public static class UDPListener {
         client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
     }
 
-    public static void SendIP()
+    public static void SendIP(string ip)
     {
-        byte[] dataBytes = { 51 };
-        client.BeginSend(dataBytes, 1, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
+        byte[] bytes = Encoding.ASCII.GetBytes(ip);
+        client.BeginSend(bytes, 1, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
     }
 
     public static void RecieveServerInfo(IAsyncResult result) {

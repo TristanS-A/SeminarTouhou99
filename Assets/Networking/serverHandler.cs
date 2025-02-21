@@ -2,6 +2,7 @@ using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEditor.MemoryProfiler;
@@ -90,13 +91,13 @@ public class serverHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress("::0", 5000);
+        address.SetAddress(Dns.GetHostAddresses(Environment.MachineName).ToString(), 5000);
 
         listenSocket = server.CreateListenSocket(address);
 
         UDPListener.StartClient();
 
-        UDPListener.SendIP();
+        UDPListener.SendIP(address.GetIP());
 
         SceneManager.LoadScene(1);
 
