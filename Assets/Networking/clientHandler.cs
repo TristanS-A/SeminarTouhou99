@@ -50,7 +50,7 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
-        public Vector2 pos;
+        public Vector3 pos;
         public float speed;
     };
 
