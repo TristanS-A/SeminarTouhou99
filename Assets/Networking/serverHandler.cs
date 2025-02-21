@@ -92,15 +92,15 @@ public class serverHandler : MonoBehaviour
 
         Address address = new Address();
 
-
         var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
 
+        Debug.Log("This is the ip " + ip);
 
         address.SetAddress(ip.ToString(), 5000);
 
         listenSocket = server.CreateListenSocket(address);
 
-        UDPListener.StartClient(true);
+        UDPListener.StartClient(false);
 
         UDPListener.SendIP(ip.ToString());
 

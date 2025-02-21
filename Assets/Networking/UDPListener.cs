@@ -23,10 +23,10 @@ public static class UDPListener {
         client = new UdpClient(ip);
         client.JoinMulticastGroup(groupAddress);
 
-        if (isReciving)
-        {
-            client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
-        }
+        isReciving = receive;
+        
+        client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
+        
     }
 
     public static void SendIP(string ip)
@@ -42,9 +42,12 @@ public static class UDPListener {
         if (String.IsNullOrEmpty(data)) {
             Debug.Log("No Data Recieved");
         } else {
-            Debug.Log(data);
-            eventSystem.fireEvent(new ReceiveIPEvent(data));
-            isReciving = true;
+            Debug.Log("data recived: " + data);
+            if (isReciving)
+            {
+                eventSystem.fireEvent(new ReceiveIPEvent(data));
+            }
+           
         }
 
         client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
