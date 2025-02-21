@@ -103,6 +103,8 @@ public class clientHandler : MonoBehaviour
 
         DontDestroyOnLoad(transform.gameObject);
 
+        UDPListener.StartClient(true);
+
         SceneManager.LoadScene(1);
     }
 
@@ -119,8 +121,6 @@ public class clientHandler : MonoBehaviour
         address.SetAddress(ip, 5000);
 
         serverConnection = client.Connect(address);
-
-        UDPListener.StartClient(true);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) =>
