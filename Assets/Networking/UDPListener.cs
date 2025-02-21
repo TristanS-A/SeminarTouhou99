@@ -14,13 +14,17 @@ public static class UDPListener {
 
     private const int PORT = 20000;
 
-    public static void StartClient() {
+    public static void StartClient(bool receive) {
         Debug.Log("UDP - Starting Client");
         ip = new IPEndPoint(IPAddress.Any, PORT);
         
         client = new UdpClient(ip);
         client.JoinMulticastGroup(groupAddress);
-        client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
+
+        if (receive)
+        {
+            client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
+        }
     }
 
     public static void SendIP(string ip)

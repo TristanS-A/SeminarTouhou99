@@ -100,7 +100,7 @@ public class serverHandler : MonoBehaviour
 
         listenSocket = server.CreateListenSocket(address);
 
-        UDPListener.StartClient();
+        UDPListener.StartClient(false);
 
         UDPListener.SendIP(ip.ToString());
 

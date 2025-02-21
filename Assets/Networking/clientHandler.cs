@@ -120,7 +120,7 @@ public class clientHandler : MonoBehaviour
 
         serverConnection = client.Connect(address);
 
-        UDPListener.StartClient();
+        UDPListener.StartClient(true);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) =>
