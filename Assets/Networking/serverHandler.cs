@@ -7,6 +7,7 @@ using System.Text;
 using UnityEditor.MemoryProfiler;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
 using static clientHandler;
@@ -37,6 +38,16 @@ public class serverHandler : MonoBehaviour
 
     List<uint> connectedClients = new();
 
+    private void OnEnable()
+    {
+        eventSystem.playerJoined += AddServerPlayer;
+    }
+
+    private void OnDisable()
+    {
+        eventSystem.playerJoined -= AddServerPlayer;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -61,9 +72,17 @@ public class serverHandler : MonoBehaviour
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
 
+    public void AddServerPlayer(GameObject player)
+    {
+        players.Add(0, player);
+        Debug.Log("Server Player Added");
+    }
+
     private void RunServerSetUp()
     {
         Debug.Log("Starting Server...");
+
+        DontDestroyOnLoad(transform.gameObject);
 
         server = new NetworkingSockets();
 
@@ -73,9 +92,9 @@ public class serverHandler : MonoBehaviour
 
         address.SetAddress("::0", 5000);
 
-        players.Add(0, Instantiate(m_PlayerPrefab));
-
         listenSocket = server.CreateListenSocket(address);
+
+        SceneManager.LoadScene(1);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) => {
@@ -169,7 +188,7 @@ public class serverHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        handleMovePlayer();
+        //handleMovePlayer();
     }
 
     private void OnGUI()
@@ -318,27 +337,27 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    private void handleMovePlayer()
-    {
-        if (players.ContainsKey(serverPlayerID))
-        {
-            Transform serverPlayerTransform = players[serverPlayerID].transform;
-            if (Input.GetKey(KeyCode.W))
-            {
-                serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
-            }
-        }
-    }
+    //private void handleMovePlayer()
+    //{
+    //    if (players.ContainsKey(serverPlayerID))
+    //    {
+    //        Transform serverPlayerTransform = players[serverPlayerID].transform;
+    //        if (Input.GetKey(KeyCode.W))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
+    //        }
+    //        if (Input.GetKey(KeyCode.D))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
+    //        }
+    //        if (Input.GetKey(KeyCode.S))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
+    //        }
+    //        if (Input.GetKey(KeyCode.A))
+    //        {
+    //            serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
+    //        }
+    //    }
+    //}
 }
