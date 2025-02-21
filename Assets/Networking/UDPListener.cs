@@ -24,7 +24,7 @@ public static class UDPListener {
 
     public static void SendIP()
     {
-        byte[] dataBytes = { 3 };
+        byte[] dataBytes = { 51 };
         client.BeginSend(dataBytes, 1, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
     }
 
