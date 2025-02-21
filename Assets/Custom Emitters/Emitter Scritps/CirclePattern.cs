@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CirlcePattern : Pattern
-{
-    
-
-    [SerializeField] float  radius = 3;
+{ 
+    [SerializeField] float radius = 3;
 
     [SerializeField] float scaler = 0;
 
