@@ -17,8 +17,7 @@ public class PlayerAttacks : MonoBehaviour {
     [Header("Homing Missle")]
     public Transform target;
     [Range(1, 8)]
-    public float rotateSpeed = 2f;
-    public bool isHomingBullet = false;
+    public int rotateSpeed = 2;
 
     [Header("Other")]
     [SerializeField] private GameObject bulletPrefab;
@@ -26,7 +25,7 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private Transform leftBulletSpawn, rightBulletSpawn;
 
     private List<GameObject> bullets = new();
-    private bool isShooting = false/*, isHomingBullet = false*/;
+    private bool isShooting = false;
 
     private PlayerMovement playerMovement;
 
