@@ -6,7 +6,7 @@ public class EnemyUI : MonoBehaviour {
 
     private TempEnemy enemyHealth;
 
-    private void Start() {
+    private void Awake() {
         enemyHealth = FindObjectOfType<TempEnemy>();
 
         if (enemyHealth != null) {
@@ -19,7 +19,7 @@ public class EnemyUI : MonoBehaviour {
 
     private void Update() {
         enemyHealth.OnRespawnUpdate += UpdateRespawnUI;
-        UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
+        //UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
     }
 
     // UPDATES UI ON EVENT INVOKE

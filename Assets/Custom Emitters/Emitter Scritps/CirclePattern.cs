@@ -11,7 +11,7 @@ public class CirlcePattern : Pattern
     Vector2 center = Vector2.zero;
     
 
-    List<BaseBullet> bullets = new List<BaseBullet>();
+    //List<BaseBullet> bullets = new List<BaseBullet>();
     // Start is called before the first frame update
     void Start()
     {
@@ -104,8 +104,8 @@ public class CirlcePattern : Pattern
         }
     }
     //this can be used for bombs and other things consider making this a base class for emitters
-    public void ClearBullets()
-    {
-        bullets.Clear();
-    }
+    //public void ClearBullets()
+    //{
+    //    bullets.Clear();
+    //}
 }

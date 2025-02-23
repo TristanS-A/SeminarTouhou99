@@ -177,6 +177,7 @@ MonoBehaviour:
     respawnTime: 10
   - maxHealth: 500
     respawnTime: 25
+  sqr: {fileID: 0}
 --- !u!61 &41835801
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1682,6 +1683,7 @@ GameObject:
   - component: {fileID: 1726933917}
   - component: {fileID: 1726933916}
   - component: {fileID: 1726933915}
+  - component: {fileID: 1726933919}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1754,6 +1756,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1726933919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726933914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d192dcb73331f4649bb3d9981845b9f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthText: {fileID: 170456410}
+  reviveText: {fileID: 1224364162}
 --- !u!4 &1809746878 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3875593617490493976, guid: 9e420922873800c45b29c592c046c0a7, type: 3}

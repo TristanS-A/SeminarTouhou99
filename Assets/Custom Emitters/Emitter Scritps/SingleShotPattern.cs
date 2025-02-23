@@ -9,7 +9,7 @@ public class SingleShotPattern : Pattern
 
     [SerializeField] Vector2 diretion;
     //[SerializeField] GameObject bullet;
-    List<BaseBullet> bullets = new List<BaseBullet>();
+    //List<BaseBullet> bullets = new List<BaseBullet>();
     [SerializeField] int ammountToSpawn = 1;
     //in seconds
     [SerializeField] float timeInbetweenShot = 1.0f;
@@ -102,8 +102,8 @@ public class SingleShotPattern : Pattern
             listToRemoveFrom.RemoveAt(index);
         }
     }
-    public void ClearBullets()
-    {
-        bullets.Clear();
-    }
+    //public void ClearBullets()
+    //{
+    //    bullets.Clear();
+    //}
 }

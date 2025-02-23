@@ -177,4 +177,17 @@ public class Sequencer : MonoBehaviour
         timeTillNextAttack.RemoveAll(t => t <= 0);
 
     }
+
+    public void CleanSequencer()
+    {
+        foreach (var emitter in activeEmmiter)
+        {
+            Destroy(emitter);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        CleanSequencer();
+    }
 }

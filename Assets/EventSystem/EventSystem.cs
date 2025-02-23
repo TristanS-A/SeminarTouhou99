@@ -13,7 +13,7 @@ public static class eventSystem
         {
             case eventType.EventTypes.PLAYER_JOINED:
                 PlayerJoinedEvent player = (PlayerJoinedEvent)(type);
-                playerJoined.Invoke(player.getPlayer());    //THIS BREAKS WHEN STARTING A SCENE AND TRIGERING THE EVENT ON START FOR SOME REASON
+                playerJoined.Invoke(player.getPlayer());    //THIS BREAKS WHEN STARTING A SCENE AND TRIGERING THE EVENT ON START FOR SOME REASON <-- sub scripting timing(most likly calling a event befor it is subscriped)
                 break;
             case eventType.EventTypes.RECEIVED_IP:
                 ReceiveIPEvent ip = (ReceiveIPEvent)(type);
