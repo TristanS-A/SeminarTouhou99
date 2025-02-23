@@ -23,13 +23,14 @@ public class serverHandler : MonoBehaviour
     Dictionary<uint, List<Vector3>> playerPoses = new Dictionary<uint, List<Vector3>>();
     Dictionary<uint, float> playerInterpolationTracker = new Dictionary<uint, float>();
     private NetworkingSockets server;
-    private uint serverPlayerID = 0;
+    //private uint serverPlayerID = 0;
     private uint pollGroup;
     private StatusCallback serverNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
     private uint listenSocket;
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
+    private System.Net.IPAddress mServerIP;
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -39,6 +40,9 @@ public class serverHandler : MonoBehaviour
     string inputString;
 
     List<uint> connectedClients = new();
+
+    bool mSearchingForPlayers = false;
+    bool mGameStarted = false;
 
     private void OnEnable()
     {
@@ -84,26 +88,28 @@ public class serverHandler : MonoBehaviour
     {
         Debug.Log("Starting Server...");
 
+        //Makes sure server handler persists scenes
         DontDestroyOnLoad(transform.gameObject);
 
+        //Creates server socket
         server = new NetworkingSockets();
 
+        //Sets callbacks
         serverNetworkingUtils = serverStatusCallback;
 
         Address address = new Address();
 
-        var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+        //Gets IP address to host from
+        mServerIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
 
-        Debug.Log("This is the ip " + ip);
-
-        address.SetAddress(ip.ToString(), 5000);
+        address.SetAddress(mServerIP.ToString(), 5000);
 
         listenSocket = server.CreateListenSocket(address);
 
+        //Starts UDP client to broadcast host IP
         UDPListener.StartClient(false);
 
-        UDPListener.SendIP(ip.ToString());
-
+        //Switches to game scene
         SceneManager.LoadScene(1);
 
 #if VALVESOCKETS_SPAN
@@ -147,15 +153,31 @@ public class serverHandler : MonoBehaviour
     {
         if (server != null)
         {
-            server.DispatchCallback(serverNetworkingUtils);
-
-            handleInterpolatePlayerPoses();
-            if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+            ////Rafactor into switch statment with game states
+            if (mGameStarted)                 //Handles gameplay networking
             {
-                SendChatMessage();
-                mPacketSendTime = 0.0f;
+                server.DispatchCallback(serverNetworkingUtils);
+
+                handleInterpolatePlayerPoses();
+                if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+                {
+                    SendChatMessage();
+                    mPacketSendTime = 0.0f;
+                }
+                mPacketSendTime += Time.deltaTime;
             }
-            mPacketSendTime += Time.deltaTime;
+            else if (mSearchingForPlayers)    //Handles joining players
+            {
+                server.DispatchCallback(serverNetworkingUtils);
+
+                handleInterpolatePlayerPoses();
+                if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    ////Refactor this to reset packet send time for actual game maybe (and to look better)
+                {
+                    SendGameJoinMessage();
+                    mPacketSendTime = 0.0f;
+                }
+                mPacketSendTime += Time.deltaTime;
+            }
 
             //Enable SPAN for this next part
 #if VALVESOCKETS_SPAN
@@ -268,6 +290,14 @@ public class serverHandler : MonoBehaviour
                     //messages.Add(message);
                 }
             }
+        }
+    }
+
+    private void SendGameJoinMessage()
+    {
+        if (mServerIP != null)
+        {
+            UDPListener.SendIP(mServerIP.ToString());
         }
     }
 
