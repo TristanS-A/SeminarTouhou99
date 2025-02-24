@@ -51,14 +51,11 @@ public class TempEnemy : MonoBehaviour {
             Debug.Log("Checking current health "  +  currentHealth);
             Debug.Log("Stage: " + currentStage + " " + stages.Count);
             if (currentStage != stages.Count - 1) {
-                Debug.Log("NEXT STAGE");
-
                 // GETS RID OF THE CURRENT SEQUENCE OF ATTACKS
                 Destroy(sequencer);
                 StartCoroutine(Respawn(stages[currentStage].respawnTime));
-            } else if (currentStage == stages.Count - 1) {
+            } else if (currentStage == stages.Count - 1 && currentHealth == 0) {
                 // KILLS ENEMY :)
-                Debug.Log("Killing Enemy");
                 Kill();
             }
         }

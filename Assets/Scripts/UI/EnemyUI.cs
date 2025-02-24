@@ -12,6 +12,7 @@ public class EnemyUI : MonoBehaviour {
         if (enemyHealth != null) {
             enemyHealth.OnHealthUpdate += UpdateHealthUI;
             enemyHealth.OnRespawnUpdate += UpdateRespawnUI;
+            enemyHealth.OnPlayerDeath += UpdateDeathUI;
             UpdateHealthUI(enemyHealth.GetCurrentMaxHealth());
             UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
         }
@@ -30,10 +31,17 @@ public class EnemyUI : MonoBehaviour {
         reviveText.text = respawnTime.ToString("F2");
     }
 
+    private void UpdateDeathUI() {
+        healthText.enabled = false;
+        reviveText.enabled = false;
+    }
+
     // OFFLOADS UI FROM EVENT
     private void OnDestroy() {
         if (enemyHealth != null) {
             enemyHealth.OnHealthUpdate -= UpdateHealthUI;
+            enemyHealth.OnRespawnUpdate -= UpdateRespawnUI;
+            enemyHealth.OnPlayerDeath -= UpdateDeathUI;
         }
     }
 }
