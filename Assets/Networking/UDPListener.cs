@@ -58,7 +58,7 @@ public static class UDPListener
         }
         else
         {
-            Debug.Log("data recived: " + data);
+            //Debug.Log("data recived: " + data);
             if (isReciving)
             {
                 eventSystem.fireEvent(new ReceiveIPEvent(data));

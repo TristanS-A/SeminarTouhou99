@@ -17,7 +17,7 @@ public static class eventSystem
                 break;
             case eventType.EventTypes.RECEIVED_IP:
                 ReceiveIPEvent ip = (ReceiveIPEvent)(type);
-                ipReceived.Invoke(ip.getIP());    //THIS BREAKS WHEN STARTING A SCENE AND TRIGERING THE EVENT ON START FOR SOME REASON
+                ipReceived.Invoke(ip.getIP());   
                 break;
         }
     }

@@ -217,7 +217,6 @@ public class serverHandler : MonoBehaviour
             {
                 server.DispatchCallback(serverNetworkingUtils);
 
-                handleInterpolatePlayerPoses();
                 if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    ////Refactor this to reset packet send time for actual game maybe (and to look better)
                 {
                     SendGameJoinMessage();

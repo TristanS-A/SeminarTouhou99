@@ -2,11 +2,13 @@ using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using TMPro;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
@@ -109,6 +111,8 @@ public class clientHandler : MonoBehaviour
 
         DontDestroyOnLoad(transform.gameObject);
 
+        client = new NetworkingSockets();
+
         UDPListener.StartClient(true);
         mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
 
@@ -117,13 +121,14 @@ public class clientHandler : MonoBehaviour
 
     private void AddIP(string ip)
     {
-        mJoinableIPs.Add(ip, Instantiate(m_IPDisplay));
+        if (!mJoinableIPs.ContainsKey(ip))
+        {
+            mJoinableIPs.Add(ip, null);
+        }
     }
 
     private void InitClientJoin(string ip)
     {
-        client = new NetworkingSockets();
-
         serverConnection = 0;
 
         clientNetworkingUtils = OnClientStatusUpdate;
@@ -150,6 +155,8 @@ public class clientHandler : MonoBehaviour
 
         NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 #endif
+
+        SceneManager.LoadScene(2);
     }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
@@ -175,19 +182,49 @@ public class clientHandler : MonoBehaviour
 
     private void DisplayJoinableIPs()
     {
-        int ipYCord = 0;
-        foreach (string ip in mJoinableIPs.Keys)
+        int ipYCord = 220;
+        if (SceneManager.GetActiveScene().buildIndex == 1)
         {
-            GameObject displayOBJ = mJoinableIPs[ip];
-            TextMeshProUGUI hostName = displayOBJ.GetComponent<TextMeshProUGUI>();
-            Button joinButton = displayOBJ.GetComponent<Button>();
-            TextMeshProUGUI joinButtonTextOBJ = joinButton.GetComponent<TextMeshProUGUI>();
+            var keys = mJoinableIPs.Keys;
+            for (int i = 0; i < keys.Count; i++)
+            {
+                if (mJoinableIPs[keys.ElementAt(i)] == null)
+                {
+                    Canvas canvas = FindObjectOfType<Canvas>();
+                    GameObject newIPDisplay = Instantiate(m_IPDisplay, canvas.transform);
+                    mJoinableIPs[keys.ElementAt(i)] = newIPDisplay;
 
-            displayOBJ.transform.position = new Vector3(0, ipYCord, 0);
-            hostName.text = ip;
-            joinButtonTextOBJ.text = "Join!";
+                    Button joinB = newIPDisplay.GetComponentInChildren<Button>();
+                    TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
+
+                    EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
+                    EventTrigger.Entry entry = new EventTrigger.Entry();
+                    entry.eventID = EventTriggerType.PointerDown;
+                    entry.callback.AddListener((data) => { JoinHost((BaseEventData)data); });
+                    trigger.triggers.Add(entry);
+                }
+
+                GameObject displayOBJ = mJoinableIPs[keys.ElementAt(i)];
+                TextMeshProUGUI hostName = displayOBJ.GetComponentInChildren<TextMeshProUGUI>();
+                Button joinButton = displayOBJ.GetComponentInChildren<Button>();
+                TextMeshProUGUI joinButtonTextOBJ = joinButton.GetComponentInChildren<TextMeshProUGUI>();
+
+                displayOBJ.transform.position = new Vector3(displayOBJ.transform.position.x, ipYCord, displayOBJ.transform.position.z);
+                hostName.text = keys.ElementAt(i);
+                joinButtonTextOBJ.text = "Join!";
+                ipYCord -= (int)hostName.rectTransform.rect.height;
+            }
         }
     }
+
+    public void JoinHost(BaseEventData eventData)
+    {
+        if (eventData.selectedObject != null)
+        {
+            InitClientJoin(eventData.selectedObject.GetComponentInParent<TextMeshProUGUI>().text);
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
