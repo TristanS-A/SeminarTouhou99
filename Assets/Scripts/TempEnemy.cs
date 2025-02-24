@@ -48,13 +48,11 @@ public class TempEnemy : MonoBehaviour {
         OnHealthUpdate?.Invoke(currentHealth);
 
         if (currentHealth <= 0) {
-            Debug.Log("Checking current health "  +  currentHealth);
-            Debug.Log("Stage: " + currentStage + " " + stages.Count);
             if (currentStage != stages.Count - 1) {
                 // GETS RID OF THE CURRENT SEQUENCE OF ATTACKS
                 Destroy(sequencer);
-                StartCoroutine(Respawn(stages[currentStage].respawnTime));
-            } else if (currentStage == stages.Count - 1 && currentHealth == 0) {
+                StartCoroutine(Respawn());
+            } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
                 Kill();
             }
@@ -64,8 +62,7 @@ public class TempEnemy : MonoBehaviour {
     //I think this naming is wrong?
     private void Kill() {
         isDead = true;
-        OnPlayerDeath?.Invoke();  
-        Debug.Log("Enemy Died");
+        OnPlayerDeath?.Invoke();
     }
 
     public void Revive() {
@@ -80,17 +77,15 @@ public class TempEnemy : MonoBehaviour {
     }
     
     //might want to change this to be a  flag in the update loop (this seems like a lot of overhead)
-    private IEnumerator Respawn(float delay) {
+    private IEnumerator Respawn() {
         isInvincible = true;
         isDead = true;
 
-        WaitForSeconds local = new WaitForSeconds(0);
+        WaitForSeconds local = new(0);
         
-        while (currentRespawnTime >= 0){
-
+        while (currentRespawnTime >= 0) {
             currentRespawnTime -= Time.deltaTime;
             OnRespawnUpdate?.Invoke(currentRespawnTime);
-
             yield return local;
         }
         isInvincible = false;
