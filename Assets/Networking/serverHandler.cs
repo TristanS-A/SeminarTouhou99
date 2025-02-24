@@ -83,6 +83,7 @@ public class serverHandler : MonoBehaviour
     private void OnApplicationQuit()
     {
         Valve.Sockets.Library.Deinitialize();
+        UDPListener.CloseClient();
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
 

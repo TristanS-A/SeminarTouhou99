@@ -69,18 +69,19 @@ public class clientHandler : MonoBehaviour
     private void OnEnable()
     {
         eventSystem.playerJoined += AddClientPlayer;
-        eventSystem.ipReceived += InitClientJoin;
+        eventSystem.ipReceived += AddIP;
     }
 
     private void OnDisable()
     {
         eventSystem.playerJoined -= AddClientPlayer;
-        eventSystem.ipReceived -= InitClientJoin;
+        eventSystem.ipReceived -= AddIP;
     }
 
     private void OnApplicationQuit()
     {
         Valve.Sockets.Library.Deinitialize();
+        UDPListener.CloseClient();
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
 
