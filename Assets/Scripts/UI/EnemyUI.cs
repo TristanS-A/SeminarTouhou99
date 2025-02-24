@@ -19,7 +19,6 @@ public class EnemyUI : MonoBehaviour {
 
     private void Update() {
         enemyHealth.OnRespawnUpdate += UpdateRespawnUI;
-        //UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
     }
 
     // UPDATES UI ON EVENT INVOKE
@@ -28,7 +27,7 @@ public class EnemyUI : MonoBehaviour {
     }
 
     private void UpdateRespawnUI(float respawnTime) {
-        reviveText.text = respawnTime.ToString();
+        reviveText.text = respawnTime.ToString("F2");
     }
 
     // OFFLOADS UI FROM EVENT

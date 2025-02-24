@@ -21,7 +21,7 @@ public class TempEnemy : MonoBehaviour {
     private float currentRespawnTime;
     private bool isInvincible = false;
 
-    [SerializeField] Sequencer sqr;
+    [SerializeField] private Sequencer sequencer;
     
     private void Start() {
         currentHealth = stages[0].maxHealth;
@@ -32,8 +32,8 @@ public class TempEnemy : MonoBehaviour {
 
         isDead = false;
 
-        //this is to get the squecer so we can know about it
-        sqr = gameObject.GetComponent<Sequencer>();
+        // WILL NYE THE SCIENCE GUY
+        sequencer = gameObject.GetComponent<Sequencer>();
     }
 
     public void TakeDamage(int stage, int damage) {
@@ -53,11 +53,9 @@ public class TempEnemy : MonoBehaviour {
             if (currentStage != stages.Count - 1) {
                 Debug.Log("NEXT STAGE");
 
-                //get rid of the current sequece of attacks
-                Destroy(sqr);
-
+                // GETS RID OF THE CURRENT SEQUENCE OF ATTACKS
+                Destroy(sequencer);
                 StartCoroutine(Respawn(stages[currentStage].respawnTime));
-                //OnRespawnUpdate.Invoke(currentRespawnTime);
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
                 Debug.Log("Killing Enemy");
@@ -82,8 +80,6 @@ public class TempEnemy : MonoBehaviour {
         currentRespawnTime = stages[currentStage].respawnTime;
 
         OnRespawnUpdate?.Invoke(currentRespawnTime);
-        //update respawn timer
-        Debug.Log("RESURECTRION " + currentHealth);
     }
     
     //might want to change this to be a  flag in the update loop (this seems like a lot of overhead)
@@ -96,12 +92,10 @@ public class TempEnemy : MonoBehaviour {
         while (currentRespawnTime >= 0){
 
             currentRespawnTime -= Time.deltaTime;
-            Debug.Log("time left" + currentRespawnTime);
             OnRespawnUpdate?.Invoke(currentRespawnTime);
 
             yield return local;
         }
-        //yield return new WaitForSeconds(delay);
         isInvincible = false;
         Revive();
         yield return null;
