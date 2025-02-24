@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using TMPro;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,7 @@ public class clientHandler : MonoBehaviour
 {
     [SerializeField] private Button testClientButton;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
+    [SerializeField] private GameObject m_IPDisplay;
     private GameObject mClientPlayerReference;
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
@@ -26,6 +28,9 @@ public class clientHandler : MonoBehaviour
     Dictionary<uint, float> playerInterpolationTracker = new Dictionary<uint, float>();
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
+
+    private Dictionary<string, GameObject> mJoinableIPs = new Dictionary<string, GameObject>();
+    serverHandler.GameState mGameState = serverHandler.GameState.NONE;
 
     //MessageCallback message;
     const int maxMessages = 20;
@@ -104,8 +109,14 @@ public class clientHandler : MonoBehaviour
         DontDestroyOnLoad(transform.gameObject);
 
         UDPListener.StartClient(true);
+        mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
 
         SceneManager.LoadScene(1);
+    }
+
+    private void AddIP(string ip)
+    {
+        mJoinableIPs.Add(ip, Instantiate(m_IPDisplay));
     }
 
     private void InitClientJoin(string ip)
@@ -161,6 +172,22 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    private void DisplayJoinableIPs()
+    {
+        int ipYCord = 0;
+        foreach (string ip in mJoinableIPs.Keys)
+        {
+            GameObject displayOBJ = mJoinableIPs[ip];
+            TextMeshProUGUI hostName = displayOBJ.GetComponent<TextMeshProUGUI>();
+            Button joinButton = displayOBJ.GetComponent<Button>();
+            TextMeshProUGUI joinButtonTextOBJ = joinButton.GetComponent<TextMeshProUGUI>();
+
+            displayOBJ.transform.position = new Vector3(0, ipYCord, 0);
+            hostName.text = ip;
+            joinButtonTextOBJ.text = "Join!";
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -168,53 +195,63 @@ public class clientHandler : MonoBehaviour
         {
             client.DispatchCallback(clientNetworkingUtils);
 
-            handleInterpolatePlayerPoses();
-            if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+            switch (mGameState)
             {
-                SendChatMessage();
-                mPacketSendTime = 0.0f;
-            }
-            mPacketSendTime += Time.deltaTime;
+                case serverHandler.GameState.GAME_STARTED:
+                    handleInterpolatePlayerPoses();
+                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+                    {
+                        SendChatMessage();
+                        mPacketSendTime = 0.0f;
+                    }
+                    mPacketSendTime += Time.deltaTime;
+
 
 #if VALVESOCKETS_SPAN
                     client.ReceiveMessagesOnConnection(serverConnection, message, 20);
 #else
-            int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
+                    int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
 
-            if (netMessagesCount > 0)
-            {
-                for (int i = 0; i < netMessagesCount; i++)
-                {
-                    ref NetworkingMessage netMessage = ref netMessages[i];
-
-                    Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-
-                    netMessage.CopyTo(messageDataBuffer);
-                    netMessage.Destroy();
-
-                    ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
-
-                    IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
-                    Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
-
-                    TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-
-                    switch ((PacketType)packetType.type)
+                    if (netMessagesCount > 0)
                     {
-                        case PacketType.PLAYER_DATA:
-                            PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
-                            handlePlayerData(packetData);
-                            break;
-                        case PacketType.REGISTER_PLAYER:
-                            RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
-                            handleRegisterPlayer(playerRegisterPacketData);
-                            break;
-                    }
+                        for (int i = 0; i < netMessagesCount; i++)
+                        {
+                            ref NetworkingMessage netMessage = ref netMessages[i];
 
-                    Marshal.FreeHGlobal(ptPoit);
-                }
-            }
+                            Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+                            netMessage.CopyTo(messageDataBuffer);
+                            netMessage.Destroy();
+
+                            ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                            IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                            Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                            TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+
+                            switch ((PacketType)packetType.type)
+                            {
+                                case PacketType.PLAYER_DATA:
+                                    PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                                    handlePlayerData(packetData);
+                                    break;
+                                case PacketType.REGISTER_PLAYER:
+                                    RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
+                                    handleRegisterPlayer(playerRegisterPacketData);
+                                    break;
+                            }
+
+                            Marshal.FreeHGlobal(ptPoit);
+                        }
+                    }
 #endif
+                    break;
+
+                    case serverHandler.GameState.LOOKING_FOR_HOST:
+                        DisplayJoinableIPs();
+                        break;
+            }
         }
     }
 

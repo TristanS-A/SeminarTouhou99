@@ -44,6 +44,14 @@ public class serverHandler : MonoBehaviour
     bool mSearchingForPlayers = false;
     bool mGameStarted = false;
 
+    public enum GameState
+    {
+        NONE,
+        LOOKING_FOR_HOST,
+        SEARCHING_FOR_PLAYERS,
+        GAME_STARTED
+    }
+
     private void OnEnable()
     {
         eventSystem.playerJoined += AddServerPlayer;
@@ -108,9 +116,10 @@ public class serverHandler : MonoBehaviour
 
         //Starts UDP client to broadcast host IP
         UDPListener.StartClient(false);
+        mSearchingForPlayers = true;
 
         //Switches to game scene
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) => {
@@ -165,6 +174,43 @@ public class serverHandler : MonoBehaviour
                     mPacketSendTime = 0.0f;
                 }
                 mPacketSendTime += Time.deltaTime;
+
+                //Enable SPAN for this next part
+#if VALVESOCKETS_SPAN
+            server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
+#else
+                int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, maxMessages);
+
+                if (netMessagesCount > 0)
+                {
+                    for (int i = 0; i < netMessagesCount; i++)
+                    {
+                        ref NetworkingMessage netMessage = ref netMessages[i];
+
+                        Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+                        netMessage.CopyTo(messageDataBuffer);
+                        netMessage.Destroy();
+
+                        ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                        IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                        Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                        TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+
+                        switch ((PacketType)packetType.type)
+                        {
+                            case PacketType.PLAYER_DATA:
+                                PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                                handlePlayerData(packetData);
+                                break;
+                        }
+
+                        Marshal.FreeHGlobal(ptPoit);
+                    }
+                }
+#endif
             }
             else if (mSearchingForPlayers)    //Handles joining players
             {
@@ -178,43 +224,6 @@ public class serverHandler : MonoBehaviour
                 }
                 mPacketSendTime += Time.deltaTime;
             }
-
-            //Enable SPAN for this next part
-#if VALVESOCKETS_SPAN
-            server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
-#else
-            int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, maxMessages);
-
-            if (netMessagesCount > 0)
-            {
-                for (int i = 0; i < netMessagesCount; i++)
-                {
-                    ref NetworkingMessage netMessage = ref netMessages[i];
-
-                    Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-
-                    netMessage.CopyTo(messageDataBuffer);
-                    netMessage.Destroy();
-
-                    ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
-
-                    IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
-                    Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
-
-                    TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-
-                    switch ((PacketType)packetType.type)
-                    {
-                        case PacketType.PLAYER_DATA:
-                            PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
-                            handlePlayerData(packetData);
-                            break;
-                    }
-
-                    Marshal.FreeHGlobal(ptPoit);
-                }
-            }
-#endif
         }
     }
 
