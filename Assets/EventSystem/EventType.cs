@@ -8,7 +8,8 @@ public class eventType
     public enum EventTypes
     {
         PLAYER_JOINED,
-        RECEIVED_IP
+        RECEIVED_IP,
+        NUMBER_OF_PLAYERS_JOINED_CHANGED
     }
 
     private EventTypes _type;

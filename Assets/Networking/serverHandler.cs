@@ -336,6 +336,8 @@ public class serverHandler : MonoBehaviour
                 server.SendMessageToConnection(playerID, bytes);
                 pinStructure.Free();
             }
+
+            eventSystem.fireEvent(new PlayersJoinedChangedEvent(players.Count));
         }
     }
 
