@@ -264,7 +264,7 @@ public class serverHandler : MonoBehaviour
         //}
     }
 
-    void SendChatMessage()
+    private void SendChatMessage()
     {
         if (server != null)
         {
@@ -302,6 +302,34 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    private void BroadcastPlayerCount()
+    {
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                foreach (uint playerID in players.Keys)
+                {
+                    clientHandler.PlayerCountData playerCount = new clientHandler.PlayerCountData();
+                    playerCount.type = (int)clientHandler.PacketType.PLAYER_COUNT;
+                    playerCount.playerCount = connectedClients.Count + 1;
+
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerCountData))];
+                    GCHandle pinStructure = GCHandle.Alloc(playerCount, GCHandleType.Pinned);
+                    try
+                    {
+                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                    }
+                    finally
+                    {
+                        server.SendMessageToConnection(connectedClients[i], bytes);
+                        pinStructure.Free();
+                    }
+                }
+            }
+        }
+    }
+
     private void SendGameJoinMessage()
     {
         if (mServerIP != null)
@@ -315,7 +343,7 @@ public class serverHandler : MonoBehaviour
         if (!players.ContainsKey(playerID))
         {
             connectedClients.Add(playerID);
-            players.Add(playerID, Instantiate(m_PlayerHologramPrefab));
+            players.Add(playerID, null);
             playerPoses.Add(playerID, new());
             playerInterpolationTracker.Add(playerID, 0.0f);
 
@@ -337,7 +365,7 @@ public class serverHandler : MonoBehaviour
                 pinStructure.Free();
             }
 
-            eventSystem.fireEvent(new PlayersJoinedChangedEvent(players.Count + 1));
+            eventSystem.fireEvent(new PlayersJoinedChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
         }
     }
 

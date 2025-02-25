@@ -43,7 +43,8 @@ public class clientHandler : MonoBehaviour
     public enum PacketType
     {
         PLAYER_DATA,
-        REGISTER_PLAYER
+        REGISTER_PLAYER,
+        PLAYER_COUNT
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -66,7 +67,14 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
-    }
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PlayerCountData
+    {
+        public int type;
+        public int playerCount;
+    };
 
     private void OnEnable()
     {
@@ -222,6 +230,7 @@ public class clientHandler : MonoBehaviour
         if (eventData.selectedObject != null)
         {
             InitClientJoin(eventData.selectedObject.GetComponentInParent<TextMeshProUGUI>().text);
+            mGameState = serverHandler.GameState.SEARCHING_FOR_PLAYERS;
         }
     }
 
@@ -243,54 +252,60 @@ public class clientHandler : MonoBehaviour
                         mPacketSendTime = 0.0f;
                     }
                     mPacketSendTime += Time.deltaTime;
-
-
-#if VALVESOCKETS_SPAN
-                    client.ReceiveMessagesOnConnection(serverConnection, message, 20);
-#else
-                    int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
-
-                    if (netMessagesCount > 0)
-                    {
-                        for (int i = 0; i < netMessagesCount; i++)
-                        {
-                            ref NetworkingMessage netMessage = ref netMessages[i];
-
-                            Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-
-                            netMessage.CopyTo(messageDataBuffer);
-                            netMessage.Destroy();
-
-                            ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
-
-                            IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
-                            Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
-
-                            TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-
-                            switch ((PacketType)packetType.type)
-                            {
-                                case PacketType.PLAYER_DATA:
-                                    PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
-                                    handlePlayerData(packetData);
-                                    break;
-                                case PacketType.REGISTER_PLAYER:
-                                    RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
-                                    handleRegisterPlayer(playerRegisterPacketData);
-                                    break;
-                            }
-
-                            Marshal.FreeHGlobal(ptPoit);
-                        }
-                    }
-#endif
+                    HandleNetMessages();
                     break;
 
                     case serverHandler.GameState.LOOKING_FOR_HOST:
                         DisplayJoinableIPs();
                         break;
+                    case serverHandler.GameState.SEARCHING_FOR_PLAYERS:
+                    HandleNetMessages();
+                    break;
             }
         }
+    }
+
+    private void HandleNetMessages()
+    {
+#if VALVESOCKETS_SPAN
+                    client.ReceiveMessagesOnConnection(serverConnection, message, 20);
+#else
+        int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
+
+        if (netMessagesCount > 0)
+        {
+            for (int i = 0; i < netMessagesCount; i++)
+            {
+                ref NetworkingMessage netMessage = ref netMessages[i];
+
+                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+                netMessage.CopyTo(messageDataBuffer);
+                netMessage.Destroy();
+
+                ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+
+                switch ((PacketType)packetType.type)
+                {
+                    case PacketType.PLAYER_DATA:
+                        PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                        handlePlayerData(packetData);
+                        break;
+                    case PacketType.REGISTER_PLAYER:
+                        RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
+                        handleRegisterPlayer(playerRegisterPacketData);
+                        break;
+                }
+
+                Marshal.FreeHGlobal(ptPoit);
+            }
+        }
+#endif
     }
 
     private void FixedUpdate()
