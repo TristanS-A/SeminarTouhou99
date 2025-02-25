@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour {
         circleChild.transform.localScale = FloatToVec3(GetComponent<CircleCollider2D>().radius);
         circleRenderer = circleChild.GetComponent<SpriteRenderer>();
 
+        //eventSystem.fireEvent(new EventType(eventSystem.))
         eventSystem.fireEvent(new PlayerJoinedEvent(gameObject));
     }
 

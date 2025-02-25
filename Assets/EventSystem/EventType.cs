@@ -9,7 +9,8 @@ public class eventType
     {
         PLAYER_JOINED,
         RECEIVED_IP,
-        NUMBER_OF_PLAYERS_JOINED_CHANGED
+        NUMBER_OF_PLAYERS_JOINED_CHANGED,
+        GAME_STARTED
     }
 
     private EventTypes _type;

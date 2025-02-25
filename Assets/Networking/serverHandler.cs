@@ -377,6 +377,8 @@ public class serverHandler : MonoBehaviour
             connectedClients.Remove(playerID);
             players.Remove(playerID);
             server.CloseConnection(playerID);
+
+            eventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
         }
     }
 

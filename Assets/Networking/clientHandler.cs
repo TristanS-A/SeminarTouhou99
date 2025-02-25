@@ -361,6 +361,12 @@ public class clientHandler : MonoBehaviour
                 playerPoses.Add(playerData.playerID, new());
                 playerInterpolationTracker.Add(playerData.playerID, 0.0f);
             }
+            else if (players[playerData.playerID] == null)
+            {
+                playerOBJ = Instantiate(m_PlayerHologramPrefab);
+                playerPoses.Add(playerData.playerID, new());
+                playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+            }
 
             playerPoses[playerData.playerID].Clear();
             playerPoses[playerData.playerID].Add(players[playerData.playerID].transform.position);

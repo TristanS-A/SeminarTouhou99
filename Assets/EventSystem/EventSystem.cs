@@ -7,6 +7,7 @@ public static class eventSystem
     public static event Action<GameObject> playerJoined; //Rename this to game start event
     public static event Action<string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
+    public static event Action gameStarted;
 
     public static void fireEvent(eventType type)
     {
@@ -23,6 +24,9 @@ public static class eventSystem
             case eventType.EventTypes.NUMBER_OF_PLAYERS_JOINED_CHANGED:
                 PlayerCountChangedEvent newPlayerCountEvent = (PlayerCountChangedEvent)(type);
                 numberOfJoinedPlayersChanged.Invoke(newPlayerCountEvent.getNewPlayerCount());
+                break;
+            case eventType.EventTypes.GAME_STARTED:
+                gameStarted.Invoke();
                 break;
         }
     }
