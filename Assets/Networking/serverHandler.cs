@@ -220,6 +220,7 @@ public class serverHandler : MonoBehaviour
                 if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    ////Refactor this to reset packet send time for actual game maybe (and to look better)
                 {
                     SendGameJoinMessage();
+                    BroadcastPlayerCount();
                     mPacketSendTime = 0.0f;
                 }
                 mPacketSendTime += Time.deltaTime;
@@ -365,7 +366,7 @@ public class serverHandler : MonoBehaviour
                 pinStructure.Free();
             }
 
-            eventSystem.fireEvent(new PlayersJoinedChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+            eventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
         }
     }
 

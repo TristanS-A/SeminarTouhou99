@@ -21,7 +21,7 @@ public static class eventSystem
                 ipReceived.Invoke(ip.getIP());   
                 break;
             case eventType.EventTypes.NUMBER_OF_PLAYERS_JOINED_CHANGED:
-                PlayersJoinedChangedEvent newPlayerCountEvent = (PlayersJoinedChangedEvent)(type);
+                PlayerCountChangedEvent newPlayerCountEvent = (PlayerCountChangedEvent)(type);
                 numberOfJoinedPlayersChanged.Invoke(newPlayerCountEvent.getNewPlayerCount());
                 break;
         }

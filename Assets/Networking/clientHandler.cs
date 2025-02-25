@@ -300,6 +300,10 @@ public class clientHandler : MonoBehaviour
                         RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
                         handleRegisterPlayer(playerRegisterPacketData);
                         break;
+                    case PacketType.PLAYER_COUNT:
+                        PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
+                        eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        break;
                 }
 
                 Marshal.FreeHGlobal(ptPoit);
