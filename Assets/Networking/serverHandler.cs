@@ -337,9 +337,7 @@ public class serverHandler : MonoBehaviour
                 pinStructure.Free();
             }
 
-            Debug.Log("HERHE");
-            Debug.Log(players.Count);
-            eventSystem.fireEvent(new PlayersJoinedChangedEvent(players.Count));
+            eventSystem.fireEvent(new PlayersJoinedChangedEvent(players.Count + 1));
         }
     }
 

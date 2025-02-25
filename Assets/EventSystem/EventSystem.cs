@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public static class eventSystem
 {
-    public static event Action<GameObject> playerJoined;
+    public static event Action<GameObject> playerJoined; //Rename this to game start event
     public static event Action<string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
 
