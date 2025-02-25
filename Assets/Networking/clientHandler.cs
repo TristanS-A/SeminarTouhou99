@@ -90,8 +90,9 @@ public class clientHandler : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        Valve.Sockets.Library.Deinitialize();
+        client.CloseConnection(serverConnection);
         UDPListener.CloseClient();
+        Valve.Sockets.Library.Deinitialize();
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
 
@@ -120,6 +121,7 @@ public class clientHandler : MonoBehaviour
         DontDestroyOnLoad(transform.gameObject);
 
         client = new NetworkingSockets();
+        clientNetworkingUtils = OnClientStatusUpdate;
 
         UDPListener.StartClient(true);
         mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
@@ -138,8 +140,6 @@ public class clientHandler : MonoBehaviour
     private void InitClientJoin(string ip)
     {
         serverConnection = 0;
-
-        clientNetworkingUtils = OnClientStatusUpdate;
 
         Address address = new Address();
 

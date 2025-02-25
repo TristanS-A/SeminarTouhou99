@@ -38,6 +38,7 @@ public static class UDPListener
         if (client != null)
         {
             client.Close();
+            client.Dispose();
         }
     }
 
@@ -49,23 +50,26 @@ public static class UDPListener
 
     public static void RecieveServerInfo(IAsyncResult result)
     {
-        byte[] recievedData = client.EndReceive(result, ref ip);
-        data = Encoding.ASCII.GetString(recievedData);
+        if (result != null)
+        {
+            byte[] recievedData = client.EndReceive(result, ref ip);
+            data = Encoding.ASCII.GetString(recievedData);
 
-        if (String.IsNullOrEmpty(data))
-        {
-            Debug.Log("No Data Recieved");
-        }
-        else
-        {
-            //Debug.Log("data recived: " + data);
-            if (isReciving)
+            if (String.IsNullOrEmpty(data))
             {
-                eventSystem.fireEvent(new ReceiveIPEvent(data));
+                Debug.Log("No Data Recieved");
+            }
+            else
+            {
+                //Debug.Log("data recived: " + data);
+                if (isReciving)
+                {
+                    eventSystem.fireEvent(new ReceiveIPEvent(data));
+                }
+
             }
 
+            client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
         }
-
-        client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
     }
 }
