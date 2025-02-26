@@ -38,7 +38,7 @@ public class Sequencer : MonoBehaviour
         if (currentAttackIndex >= attacks.Count)
         {
             //just retrun a null
-            if (shouldLoop)
+            if (shouldLoop && attacks.Count != 0)
             {
                 currentAttackIndex = 0;
                 return attacks[currentAttackIndex];
@@ -189,9 +189,18 @@ public class Sequencer : MonoBehaviour
             Destroy(emitter);
         }
     }
+    public void ClearAttackList()
+    {
+        attacks.Clear();
+    }
 
     private void OnDestroy()
     {
         CleanSequencer();
+    }
+
+    public void SetSequeceList(List<AttackData> sequeceList)
+    {
+        this.attacks = sequeceList;
     }
 }

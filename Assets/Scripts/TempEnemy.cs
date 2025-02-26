@@ -10,6 +10,12 @@ public class TempEnemy : MonoBehaviour {
         public float respawnTime = 1.5f;
     }
 
+    [Serializable]public class SequeceContainer
+    {
+        public List<AttackData> attacks;
+        float customTime;
+    }
+
     public List<BossStage> stages;
     public event Action<int> OnHealthUpdate;
     public event Action<float> OnRespawnUpdate;
@@ -22,7 +28,8 @@ public class TempEnemy : MonoBehaviour {
     private bool isInvincible = false;
 
     [SerializeField] private Sequencer sequencer;
-    
+    [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
+    private int conIndex = 0;
     private void Start() {
         currentHealth = stages[0].maxHealth;
         currentRespawnTime = stages[0].respawnTime;
@@ -50,7 +57,8 @@ public class TempEnemy : MonoBehaviour {
         if (currentHealth <= 0) {
             if (currentStage != stages.Count - 1) {
                 // GETS RID OF THE CURRENT SEQUENCE OF ATTACKS
-                Destroy(sequencer);
+                sequencer.ClearAttackList();
+                sequencer.CleanSequencer();
                 StartCoroutine(Respawn());
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
@@ -72,7 +80,8 @@ public class TempEnemy : MonoBehaviour {
         currentStage++;
         currentHealth = stages[currentStage].maxHealth;
         currentRespawnTime = stages[currentStage].respawnTime;
-
+        sequencer.SetSequeceList(containter[conIndex].attacks);
+        conIndex++;
         OnRespawnUpdate?.Invoke(currentRespawnTime);
     }
     

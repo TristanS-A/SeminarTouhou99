@@ -312,10 +312,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
-  waitTime: 0
-  ammount: 40
-  radius: 1
-  scaler: 0
+  waitTime: 0.025
+  ammount: 100
+  radius: 0.5
+  scaler: 0.01
+  k: 5
 --- !u!1001 &2040606612
 PrefabInstance:
   m_ObjectHideFlags: 0
