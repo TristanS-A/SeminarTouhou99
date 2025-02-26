@@ -129,7 +129,7 @@ MonoBehaviour:
   rb: {fileID: 283368629567986362}
   scaler: 0.005
   velocity: {x: 0, y: 0}
-  lifeTime: 19
+  lifeTime: 10
   direction: {x: 0, y: 0}
 --- !u!58 &9161421241968994894
 CircleCollider2D:

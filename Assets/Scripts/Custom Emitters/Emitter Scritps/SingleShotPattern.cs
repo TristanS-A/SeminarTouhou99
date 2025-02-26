@@ -50,6 +50,12 @@ public class SingleShotPattern : Pattern
             CleanList(removalIndex, bullets);
         }
 
+        if (bullets.Count <= 0)
+        {
+            //if we have no bullets destroy self
+            Destroy(gameObject);
+        }
+
     }
     //gets the direction that we want to fire our bullets
     Vector3 GetDirection()

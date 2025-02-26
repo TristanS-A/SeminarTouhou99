@@ -41,6 +41,8 @@ public class Sequencer : MonoBehaviour
             if (shouldLoop)
             {
                 currentAttackIndex = 0;
+                return attacks[currentAttackIndex];
+
             }
             return null;
 
