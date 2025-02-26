@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour {
     public int maxHealth = 3;
@@ -23,6 +25,7 @@ public class PlayerHealth : MonoBehaviour {
         // CHECKING IF PLAYER IS ALREADY DEAD
         if (isDead || isInvincible) return;
 
+        Debug.Log("Took Dmanadge");
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -59,6 +62,7 @@ public class PlayerHealth : MonoBehaviour {
         isDead = true;
         OnPlayerDeath?.Invoke();
         Debug.Log("Player died");
+        Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

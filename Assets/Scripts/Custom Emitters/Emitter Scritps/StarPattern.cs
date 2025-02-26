@@ -25,6 +25,10 @@ public class StarPattern : Pattern
     // Update is called once per frame
     void Update()
     {
+     
+    }
+    private void FixedUpdate()
+    {
         if (!cIsRunning)
         {
             UpdateProjectile();

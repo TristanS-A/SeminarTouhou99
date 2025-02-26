@@ -48,5 +48,5 @@ MonoBehaviour:
   waitTime: 0.037
   ammount: 150
   radius: 0.5
-  scaler: 0.005
+  scaler: 0.03
   k: 5
