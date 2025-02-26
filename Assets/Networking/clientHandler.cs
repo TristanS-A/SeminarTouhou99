@@ -20,7 +20,6 @@ public class clientHandler : MonoBehaviour
     [SerializeField] private Button testClientButton;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
     [SerializeField] private GameObject m_IPDisplay;
-    private GameObject mClientPlayerReference;
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
