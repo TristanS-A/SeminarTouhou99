@@ -155,6 +155,31 @@ public class serverHandler : MonoBehaviour
     private void HandleGameStart(GameObject player)
     {
         players.Add(0, player);
+
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                foreach (uint playerID in players.Keys)
+                {
+                    clientHandler.GameStartData gameState = new clientHandler.GameStartData();
+                    gameState.type = (int)clientHandler.PacketType.GAME_STATE;
+                    gameState.gameState = eventType.EventTypes.START_GAME;
+
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStartData))];
+                    GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
+                    try
+                    {
+                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                    }
+                    finally
+                    {
+                        server.SendMessageToConnection(connectedClients[i], bytes);
+                        pinStructure.Free();
+                    }
+                }
+            }
+        }
     }
 
     // Update is called once per frame

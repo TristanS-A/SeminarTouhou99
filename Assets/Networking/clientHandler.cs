@@ -44,7 +44,8 @@ public class clientHandler : MonoBehaviour
     {
         PLAYER_DATA,
         REGISTER_PLAYER,
-        PLAYER_COUNT
+        PLAYER_COUNT,
+        GAME_STATE
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -74,6 +75,13 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public int playerCount;
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GameStartData
+    {
+        public int type;
+        public eventType.EventTypes gameState;
     };
 
     private void OnEnable()
@@ -303,6 +311,15 @@ public class clientHandler : MonoBehaviour
                     case PacketType.PLAYER_COUNT:
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
                         eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        break;
+                    case PacketType.GAME_STATE:
+                        GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
+                        switch (gameStateData.gameState)
+                        {
+                            case eventType.EventTypes.GAME_STARTED:
+                                SceneManager.LoadScene(3);
+                                break;
+                        }
                         break;
                 }
 
