@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
 using static clientHandler;
+using static serverHandler;
 
 public class clientHandler : MonoBehaviour
 {
@@ -256,7 +257,7 @@ public class clientHandler : MonoBehaviour
                     handleInterpolatePlayerPoses();
                     if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
                     {
-                        SendChatMessage();
+                        SendPlayerData();
                         mPacketSendTime = 0.0f;
                     }
                     mPacketSendTime += Time.deltaTime;
@@ -334,7 +335,7 @@ public class clientHandler : MonoBehaviour
         //handleMovePlayer();
     }
 
-    void SendChatMessage()
+    void SendPlayerData()
     {
         if (client != null && players.ContainsKey(connectionIDOnServer))
         {
@@ -414,20 +415,22 @@ public class clientHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
+        mGameState = GameState.GAME_STARTED;
+
         var keys = players.Keys;
         for (int i = 0; i < players.Count; i++)
         {
             players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
         }
 
-        mClientPlayerReference = player;
+        players[connectionIDOnServer] = player;
     }
 
     //Bad archatecture for now (this function should ONLY be called after AddClientPlayer). Look into refactoring.
     private void handleRegisterPlayer(RegisterPlayer playerData)
     {
         connectionIDOnServer = playerData.playerID;
-        players.Add(connectionIDOnServer, mClientPlayerReference);
+        players.Add(connectionIDOnServer, null);
         playerPoses.Add(connectionIDOnServer, new());
         playerInterpolationTracker.Add(connectionIDOnServer, 0.0f);
     }

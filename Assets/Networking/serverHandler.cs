@@ -196,7 +196,7 @@ public class serverHandler : MonoBehaviour
                     handleInterpolatePlayerPoses();
                     if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
                     {
-                        SendChatMessage();
+                        SendPlayerData();
                         mPacketSendTime = 0.0f;
                     }
                     mPacketSendTime += Time.deltaTime;
@@ -274,7 +274,7 @@ public class serverHandler : MonoBehaviour
         //inputString = GUI.TextField(new Rect(200, 370, 400, 50), inputString);
         //if (GUI.Button(new Rect(200, 450, 100, 50), "send"))
         //{
-        //    SendChatMessage(inputString);
+        //    SendPlayerData(inputString);
         //    inputString = "";
         //}
 
@@ -290,7 +290,7 @@ public class serverHandler : MonoBehaviour
         //}
     }
 
-    private void SendChatMessage()
+    private void SendPlayerData()
     {
         if (server != null)
         {
@@ -298,31 +298,34 @@ public class serverHandler : MonoBehaviour
             {
                 foreach (uint playerID in players.Keys)
                 {
-                    clientHandler.PlayerData playerData = new clientHandler.PlayerData();
-                    GameObject player = players[playerID];
-                    playerData.pos = player.transform.position;
-                    playerData.speed = 12;
-                    playerData.type = (int)clientHandler.PacketType.PLAYER_DATA;
-                    playerData.playerID = playerID;
-
-
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
-                    GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
-                    try
+                    if (playerID != connectedClients[i])
                     {
-                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                    }
-                    finally
-                    {
-                        Debug.Log("SENDING PLAYER DATA");
-                        server.SendMessageToConnection(connectedClients[i], bytes);
-                        pinStructure.Free();
-                    }
+                        clientHandler.PlayerData playerData = new clientHandler.PlayerData();
+                        GameObject player = players[playerID];
+                        playerData.pos = player.transform.position;
+                        playerData.speed = 12;
+                        playerData.type = (int)clientHandler.PacketType.PLAYER_DATA;
+                        playerData.playerID = playerID;
 
-                    //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
-                    //server.SendMessageToConnection(connectedClients[i], bytes);
 
-                    //messages.Add(message);
+                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
+                        GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+                        try
+                        {
+                            Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                        }
+                        finally
+                        {
+                            Debug.Log("SENDING PLAYER DATA FOR PLAYER: " + playerID);
+                            server.SendMessageToConnection(connectedClients[i], bytes);
+                            pinStructure.Free();
+                        }
+
+                        //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
+                        //server.SendMessageToConnection(connectedClients[i], bytes);
+
+                        //messages.Add(message);
+                    }
                 }
             }
         }
