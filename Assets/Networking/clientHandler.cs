@@ -316,7 +316,7 @@ public class clientHandler : MonoBehaviour
                         GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
                         switch ((eventType.EventTypes)gameStateData.gameState)
                         {
-                            case eventType.EventTypes.GAME_STARTED:
+                            case eventType.EventTypes.START_GAME:
                                 SceneManager.LoadScene(3);
                                 break;
                         }
@@ -378,12 +378,12 @@ public class clientHandler : MonoBehaviour
                 playerPoses.Add(playerData.playerID, new());
                 playerInterpolationTracker.Add(playerData.playerID, 0.0f);
             }
-            else if (players[playerData.playerID] == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
-            {
-                playerOBJ = Instantiate(m_PlayerHologramPrefab);
-                playerPoses.Add(playerData.playerID, new());
-                playerInterpolationTracker.Add(playerData.playerID, 0.0f);
-            }
+            //else if (players[playerData.playerID] == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
+            //{
+            //    playerOBJ = Instantiate(m_PlayerHologramPrefab);
+            //    playerPoses.Add(playerData.playerID, new());
+            //    playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+            //}
 
             playerPoses[playerData.playerID].Clear();
             playerPoses[playerData.playerID].Add(players[playerData.playerID].transform.position);
@@ -414,6 +414,15 @@ public class clientHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
+        for (int i = 0; i < players.Count; i++)
+        {
+            foreach (uint playerID in players.Keys)
+            {
+                players[playerID] = Instantiate(m_PlayerHologramPrefab);
+
+            }
+        }
+
         mClientPlayerReference = player;
     }
 

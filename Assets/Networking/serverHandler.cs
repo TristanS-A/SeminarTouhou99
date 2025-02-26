@@ -153,16 +153,16 @@ public class serverHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
-        players.Add(0, player);
-
         mGameState = GameState.GAME_STARTED;
 
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                foreach (uint playerID in connectedClients)
+                foreach (uint playerID in players.Keys)
                 {
+                    players[playerID] = Instantiate(m_PlayerHologramPrefab);
+
                     clientHandler.GameStartData gameState = new clientHandler.GameStartData();
                     gameState.type = (int)clientHandler.PacketType.GAME_STATE;
                     gameState.gameState = (int)eventType.EventTypes.START_GAME;
@@ -180,6 +180,8 @@ public class serverHandler : MonoBehaviour
                     }
                 }
             }
+
+            players.Add(0, player);
         }
     }
 
