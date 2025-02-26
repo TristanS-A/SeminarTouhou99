@@ -308,14 +308,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 489820774}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45757a6997b56744c9a099c3fdd22f22, type: 3}
+  m_Script: {fileID: 11500000, guid: 481fcfa6d6d005c44917904bea200e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attacks:
-  - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
-  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
-  - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
-  shouldLoop: 0
+  bullet: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
+  waitTime: 0
+  ammount: 40
+  radius: 1
+  scaler: 0
 --- !u!1001 &2040606612
 PrefabInstance:
   m_ObjectHideFlags: 0
