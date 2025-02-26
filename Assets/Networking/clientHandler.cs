@@ -332,7 +332,7 @@ public class clientHandler : MonoBehaviour
 
     void SendPlayerData()
     {
-        if (client != null && players.ContainsKey(connectionIDOnServer))
+        if (client != null && players.ContainsKey(connectionIDOnServer) && players[connectionIDOnServer] != null)
         {
             PlayerData playerData = new PlayerData();
             GameObject player = players[connectionIDOnServer];

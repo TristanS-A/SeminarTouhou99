@@ -297,10 +297,10 @@ public class serverHandler : MonoBehaviour
             {
                 foreach (uint playerID in players.Keys)
                 {
-                    if (playerID != connectedClients[i])
+                    GameObject player = players[playerID];
+                    if (playerID != connectedClients[i] && player != null)
                     {
                         clientHandler.PlayerData playerData = new clientHandler.PlayerData();
-                        GameObject player = players[playerID];
                         playerData.pos = player.transform.position;
                         playerData.speed = 12;
                         playerData.type = (int)clientHandler.PacketType.PLAYER_DATA;
