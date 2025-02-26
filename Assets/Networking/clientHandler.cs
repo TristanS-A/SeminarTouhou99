@@ -2,20 +2,24 @@ using AOT;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using TMPro;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
 using static clientHandler;
+using static serverHandler;
 
 public class clientHandler : MonoBehaviour
 {
     [SerializeField] private Button testClientButton;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
-    private GameObject mClientPlayerReference;
+    [SerializeField] private GameObject m_IPDisplay;
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
@@ -27,6 +31,9 @@ public class clientHandler : MonoBehaviour
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
 
+    private Dictionary<string, GameObject> mJoinableIPs = new Dictionary<string, GameObject>();
+    serverHandler.GameState mGameState = serverHandler.GameState.NONE;
+
     //MessageCallback message;
     const int maxMessages = 20;
     NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
@@ -36,7 +43,9 @@ public class clientHandler : MonoBehaviour
     public enum PacketType
     {
         PLAYER_DATA,
-        REGISTER_PLAYER
+        REGISTER_PLAYER,
+        PLAYER_COUNT,
+        GAME_STATE
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -59,22 +68,38 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
-    }
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PlayerCountData
+    {
+        public int type;
+        public int playerCount;
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GameStartData
+    {
+        public int type;
+        public int gameState;
+    };
 
     private void OnEnable()
     {
-        eventSystem.playerJoined += AddClientPlayer;
-        eventSystem.ipReceived += InitClientJoin;
+        eventSystem.gameStarted += HandleGameStart;
+        eventSystem.ipReceived += AddIP;
     }
 
     private void OnDisable()
     {
-        eventSystem.playerJoined -= AddClientPlayer;
-        eventSystem.ipReceived -= InitClientJoin;
+        eventSystem.gameStarted -= HandleGameStart;
+        eventSystem.ipReceived -= AddIP;
     }
 
     private void OnApplicationQuit()
     {
+        client.CloseConnection(serverConnection);
+        UDPListener.CloseClient();
         Valve.Sockets.Library.Deinitialize();
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
@@ -91,7 +116,7 @@ public class clientHandler : MonoBehaviour
 
         DebugCallback debugCallback = (DebugType type, string message) =>
         {
-            Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
+            //Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
         };
 
         utils.SetDebugCallback(DebugType.Everything, debugCallback);
@@ -103,18 +128,26 @@ public class clientHandler : MonoBehaviour
 
         DontDestroyOnLoad(transform.gameObject);
 
+        client = new NetworkingSockets();
+        clientNetworkingUtils = OnClientStatusUpdate;
+
         UDPListener.StartClient(true);
+        mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
 
         SceneManager.LoadScene(1);
     }
 
+    private void AddIP(string ip)
+    {
+        if (!mJoinableIPs.ContainsKey(ip))
+        {
+            mJoinableIPs.Add(ip, null);
+        }
+    }
+
     private void InitClientJoin(string ip)
     {
-        client = new NetworkingSockets();
-
         serverConnection = 0;
-
-        clientNetworkingUtils = OnClientStatusUpdate;
 
         Address address = new Address();
 
@@ -138,6 +171,8 @@ public class clientHandler : MonoBehaviour
 
         NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 #endif
+
+        SceneManager.LoadScene(2);
     }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
@@ -161,6 +196,53 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    private void DisplayJoinableIPs()
+    {
+        int ipYCord = 220;
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            var keys = mJoinableIPs.Keys;
+            for (int i = 0; i < keys.Count; i++)
+            {
+                if (mJoinableIPs[keys.ElementAt(i)] == null)
+                {
+                    Canvas canvas = FindObjectOfType<Canvas>();
+                    GameObject newIPDisplay = Instantiate(m_IPDisplay, canvas.transform);
+                    mJoinableIPs[keys.ElementAt(i)] = newIPDisplay;
+
+                    Button joinB = newIPDisplay.GetComponentInChildren<Button>();
+                    TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
+
+                    EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
+                    EventTrigger.Entry entry = new EventTrigger.Entry();
+                    entry.eventID = EventTriggerType.PointerDown;
+                    entry.callback.AddListener((data) => { JoinHost((BaseEventData)data); });
+                    trigger.triggers.Add(entry);
+                }
+
+                GameObject displayOBJ = mJoinableIPs[keys.ElementAt(i)];
+                TextMeshProUGUI hostName = displayOBJ.GetComponentInChildren<TextMeshProUGUI>();
+                Button joinButton = displayOBJ.GetComponentInChildren<Button>();
+                TextMeshProUGUI joinButtonTextOBJ = joinButton.GetComponentInChildren<TextMeshProUGUI>();
+
+                displayOBJ.transform.position = new Vector3(displayOBJ.transform.position.x, ipYCord, displayOBJ.transform.position.z);
+                hostName.text = keys.ElementAt(i);
+                joinButtonTextOBJ.text = "Join!";
+                ipYCord -= (int)hostName.rectTransform.rect.height;
+            }
+        }
+    }
+
+    public void JoinHost(BaseEventData eventData)
+    {
+        if (eventData.selectedObject != null)
+        {
+            InitClientJoin(eventData.selectedObject.GetComponentInParent<TextMeshProUGUI>().text);
+            mGameState = serverHandler.GameState.SEARCHING_FOR_PLAYERS;
+        }
+    }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -168,54 +250,83 @@ public class clientHandler : MonoBehaviour
         {
             client.DispatchCallback(clientNetworkingUtils);
 
-            handleInterpolatePlayerPoses();
-            if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+            switch (mGameState)
             {
-                SendChatMessage();
-                mPacketSendTime = 0.0f;
-            }
-            mPacketSendTime += Time.deltaTime;
+                case serverHandler.GameState.GAME_STARTED:
+                    handleInterpolatePlayerPoses();
+                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+                    {
+                        SendPlayerData();
+                        mPacketSendTime = 0.0f;
+                    }
+                    mPacketSendTime += Time.deltaTime;
+                    HandleNetMessages();
+                    break;
 
+                    case serverHandler.GameState.LOOKING_FOR_HOST:
+                        DisplayJoinableIPs();
+                        break;
+                    case serverHandler.GameState.SEARCHING_FOR_PLAYERS:
+                    HandleNetMessages();
+                    break;
+            }
+        }
+    }
+
+    private void HandleNetMessages()
+    {
 #if VALVESOCKETS_SPAN
                     client.ReceiveMessagesOnConnection(serverConnection, message, 20);
 #else
-            int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
+        int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
 
-            if (netMessagesCount > 0)
+        if (netMessagesCount > 0)
+        {
+            for (int i = 0; i < netMessagesCount; i++)
             {
-                for (int i = 0; i < netMessagesCount; i++)
+                ref NetworkingMessage netMessage = ref netMessages[i];
+
+                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+                netMessage.CopyTo(messageDataBuffer);
+                netMessage.Destroy();
+
+                ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+
+                switch ((PacketType)packetType.type)
                 {
-                    ref NetworkingMessage netMessage = ref netMessages[i];
-
-                    Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-
-                    netMessage.CopyTo(messageDataBuffer);
-                    netMessage.Destroy();
-
-                    ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
-
-                    IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
-                    Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
-
-                    TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-
-                    switch ((PacketType)packetType.type)
-                    {
-                        case PacketType.PLAYER_DATA:
-                            PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
-                            handlePlayerData(packetData);
-                            break;
-                        case PacketType.REGISTER_PLAYER:
-                            RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
-                            handleRegisterPlayer(playerRegisterPacketData);
-                            break;
-                    }
-
-                    Marshal.FreeHGlobal(ptPoit);
+                    case PacketType.PLAYER_DATA:
+                        PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                        handlePlayerData(packetData);
+                        break;
+                    case PacketType.REGISTER_PLAYER:
+                        RegisterPlayer playerRegisterPacketData = (RegisterPlayer)Marshal.PtrToStructure(ptPoit, typeof(RegisterPlayer));
+                        handleRegisterPlayer(playerRegisterPacketData);
+                        break;
+                    case PacketType.PLAYER_COUNT:
+                        PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
+                        eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        break;
+                    case PacketType.GAME_STATE:
+                        GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
+                        switch ((eventType.EventTypes)gameStateData.gameState)
+                        {
+                            case eventType.EventTypes.START_GAME:
+                                SceneManager.LoadScene(3);
+                                break;
+                        }
+                        break;
                 }
+
+                Marshal.FreeHGlobal(ptPoit);
             }
-#endif
         }
+#endif
     }
 
     private void FixedUpdate()
@@ -223,7 +334,7 @@ public class clientHandler : MonoBehaviour
         //handleMovePlayer();
     }
 
-    void SendChatMessage()
+    void SendPlayerData()
     {
         if (client != null && players.ContainsKey(connectionIDOnServer))
         {
@@ -267,6 +378,12 @@ public class clientHandler : MonoBehaviour
                 playerPoses.Add(playerData.playerID, new());
                 playerInterpolationTracker.Add(playerData.playerID, 0.0f);
             }
+            //else if (players[playerData.playerID] == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
+            //{
+            //    playerOBJ = Instantiate(m_PlayerHologramPrefab);
+            //    playerPoses.Add(playerData.playerID, new());
+            //    playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+            //}
 
             playerPoses[playerData.playerID].Clear();
             playerPoses[playerData.playerID].Add(players[playerData.playerID].transform.position);
@@ -295,17 +412,27 @@ public class clientHandler : MonoBehaviour
         }
     }
 
-    public void AddClientPlayer(GameObject player)
+    private void HandleGameStart(GameObject player)
     {
-        mClientPlayerReference = player;
-        Debug.Log("Client Player Added");
+        mGameState = GameState.GAME_STARTED;
+
+        var keys = players.Keys;
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (keys.ElementAt(i) != connectionIDOnServer)
+            {
+                players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
+            }
+        }
+
+        players[connectionIDOnServer] = player;
     }
 
     //Bad archatecture for now (this function should ONLY be called after AddClientPlayer). Look into refactoring.
     private void handleRegisterPlayer(RegisterPlayer playerData)
     {
         connectionIDOnServer = playerData.playerID;
-        players.Add(connectionIDOnServer, mClientPlayerReference);
+        players.Add(connectionIDOnServer, null);
         playerPoses.Add(connectionIDOnServer, new());
         playerInterpolationTracker.Add(connectionIDOnServer, 0.0f);
     }

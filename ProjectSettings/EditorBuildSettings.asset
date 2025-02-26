@@ -12,6 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/JoinScene.unity
     guid: a4803c75df1a5e647847765935d5eac6
   - enabled: 1
+    path: Assets/Scenes/JoinLobbyScene.unity
+    guid: ea3028b8a0547784da8fe747c81cb445
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 80f2f65e0ddafd743a8e33218a14404c
+  - enabled: 1
     path: Assets/Scenes/PlayerMovement.unity
     guid: 01aedc402f8ac85439b6726e199ebbdd
   m_configObjects: {}
