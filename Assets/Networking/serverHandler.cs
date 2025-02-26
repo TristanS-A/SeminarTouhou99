@@ -157,27 +157,25 @@ public class serverHandler : MonoBehaviour
 
         if (server != null)
         {
+            var keys = players.Keys;
             for (int i = 0; i < players.Count; i++)
             {
-                foreach (uint playerID in players.Keys)
+                players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
+
+                clientHandler.GameStartData gameState = new clientHandler.GameStartData();
+                gameState.type = (int)clientHandler.PacketType.GAME_STATE;
+                gameState.gameState = (int)eventType.EventTypes.START_GAME;
+
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStartData))];
+                GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
+                try
                 {
-                    players[playerID] = Instantiate(m_PlayerHologramPrefab);
-
-                    clientHandler.GameStartData gameState = new clientHandler.GameStartData();
-                    gameState.type = (int)clientHandler.PacketType.GAME_STATE;
-                    gameState.gameState = (int)eventType.EventTypes.START_GAME;
-
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStartData))];
-                    GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
-                    try
-                    {
-                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                    }
-                    finally
-                    {
-                        server.SendMessageToConnection(connectedClients[i], bytes);
-                        pinStructure.Free();
-                    }
+                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                }
+                finally
+                {
+                    server.SendMessageToConnection(connectedClients[i], bytes);
+                    pinStructure.Free();
                 }
             }
 

@@ -414,13 +414,10 @@ public class clientHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
+        var keys = players.Keys;
         for (int i = 0; i < players.Count; i++)
         {
-            foreach (uint playerID in players.Keys)
-            {
-                players[playerID] = Instantiate(m_PlayerHologramPrefab);
-
-            }
+            players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
         }
 
         mClientPlayerReference = player;
