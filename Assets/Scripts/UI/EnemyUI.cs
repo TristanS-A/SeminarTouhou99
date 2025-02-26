@@ -12,7 +12,7 @@ public class EnemyUI : MonoBehaviour {
         if (enemyHealth != null) {
             enemyHealth.OnHealthUpdate += UpdateHealthUI;
             enemyHealth.OnRespawnUpdate += UpdateRespawnUI;
-            enemyHealth.OnPlayerDeath += UpdateDeathUI;
+            enemyHealth.OnEnemyDeath += UpdateDeathUI;
             UpdateHealthUI(enemyHealth.GetCurrentMaxHealth());
             UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
         }
@@ -41,7 +41,7 @@ public class EnemyUI : MonoBehaviour {
         if (enemyHealth != null) {
             enemyHealth.OnHealthUpdate -= UpdateHealthUI;
             enemyHealth.OnRespawnUpdate -= UpdateRespawnUI;
-            enemyHealth.OnPlayerDeath -= UpdateDeathUI;
+            enemyHealth.OnEnemyDeath -= UpdateDeathUI;
         }
     }
 }

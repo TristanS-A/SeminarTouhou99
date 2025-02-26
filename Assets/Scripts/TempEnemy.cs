@@ -10,16 +10,16 @@ public class TempEnemy : MonoBehaviour {
         public float respawnTime = 1.5f;
     }
 
-    [Serializable]public class SequeceContainer
+    [Serializable]
+    public class SequeceContainer
     {
         public List<AttackData> attacks;
-        float customTime;
     }
 
     public List<BossStage> stages;
     public event Action<int> OnHealthUpdate;
     public event Action<float> OnRespawnUpdate;
-    public event Action OnPlayerDeath;
+    public event Action OnEnemyDeath;
     public bool isDead { get; private set; }
 
     private int currentHealth;
@@ -30,6 +30,7 @@ public class TempEnemy : MonoBehaviour {
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
     private int conIndex = 0;
+
     private void Start() {
         currentHealth = stages[0].maxHealth;
         currentRespawnTime = stages[0].respawnTime;
@@ -69,8 +70,11 @@ public class TempEnemy : MonoBehaviour {
 
     //I think this naming is wrong?
     private void Kill() {
+        Debug.Log("Killed");
         isDead = true;
-        OnPlayerDeath?.Invoke();
+        sequencer.ClearAttackList();
+        sequencer.CleanSequencer();
+        OnEnemyDeath?.Invoke();
     }
 
     public void Revive() {
@@ -80,8 +84,10 @@ public class TempEnemy : MonoBehaviour {
         currentStage++;
         currentHealth = stages[currentStage].maxHealth;
         currentRespawnTime = stages[currentStage].respawnTime;
-        sequencer.SetSequeceList(containter[conIndex].attacks);
+
         conIndex++;
+        sequencer.SetSequeceList(containter[conIndex].attacks);
+       
         OnRespawnUpdate?.Invoke(currentRespawnTime);
     }
     
