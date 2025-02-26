@@ -420,7 +420,10 @@ public class clientHandler : MonoBehaviour
         var keys = players.Keys;
         for (int i = 0; i < players.Count; i++)
         {
-            players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
+            if (keys.ElementAt(i) != connectionIDOnServer)
+            {
+                players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
+            }
         }
 
         players[connectionIDOnServer] = player;
