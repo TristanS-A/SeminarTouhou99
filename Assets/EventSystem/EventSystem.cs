@@ -12,7 +12,7 @@ public static class eventSystem
     {
         switch (type.getEventType())
         {
-            case eventType.EventTypes.PLAYER_JOINED:
+            case eventType.EventTypes.GAME_STARTED:
                 GameStartEvent player = (GameStartEvent)(type);
                 gameStarted.Invoke(player.getPlayer());    //THIS BREAKS WHEN STARTING A SCENE AND TRIGERING THE EVENT ON START FOR SOME REASON
                 break;

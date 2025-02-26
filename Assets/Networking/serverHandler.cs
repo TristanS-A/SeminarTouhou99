@@ -41,8 +41,7 @@ public class serverHandler : MonoBehaviour
 
     List<uint> connectedClients = new();
 
-    bool mSearchingForPlayers = false;
-    bool mGameStarted = false;
+    GameState mGameState = GameState.NONE;
 
     public enum GameState
     {
@@ -111,7 +110,7 @@ public class serverHandler : MonoBehaviour
 
         //Starts UDP client to broadcast host IP
         UDPListener.StartClient(false);
-        mSearchingForPlayers = true;
+        mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
         //Switches to lobby scene
         SceneManager.LoadScene(2);
@@ -154,13 +153,16 @@ public class serverHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
+        Debug.Log("HEEEEEEEEEEEEEEEEEEERE");
         players.Add(0, player);
+
+        mGameState = GameState.GAME_STARTED;
 
         if (server != null)
         {
             for (int i = 0; i < connectedClients.Count; i++)
             {
-                foreach (uint playerID in players.Keys)
+                foreach (uint playerID in connectedClients)
                 {
                     clientHandler.GameStartData gameState = new clientHandler.GameStartData();
                     gameState.type = (int)clientHandler.PacketType.GAME_STATE;
@@ -187,67 +189,67 @@ public class serverHandler : MonoBehaviour
     {
         if (server != null)
         {
-            ////Rafactor into switch statment with game states
-            if (mGameStarted)                 //Handles gameplay networking
+            switch (mGameState)                 //Handles gameplay networking
             {
-                server.DispatchCallback(serverNetworkingUtils);
+                case GameState.GAME_STARTED:
+                    server.DispatchCallback(serverNetworkingUtils);
 
-                handleInterpolatePlayerPoses();
-                if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
-                {
-                    SendChatMessage();
-                    mPacketSendTime = 0.0f;
-                }
-                mPacketSendTime += Time.deltaTime;
-
-                //Enable SPAN for this next part
-#if VALVESOCKETS_SPAN
-            server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
-#else
-                int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, maxMessages);
-
-                if (netMessagesCount > 0)
-                {
-                    for (int i = 0; i < netMessagesCount; i++)
+                    handleInterpolatePlayerPoses();
+                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
                     {
-                        ref NetworkingMessage netMessage = ref netMessages[i];
-
-                        Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-
-                        netMessage.CopyTo(messageDataBuffer);
-                        netMessage.Destroy();
-
-                        ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
-
-                        IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
-                        Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
-
-                        TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-
-                        switch ((PacketType)packetType.type)
-                        {
-                            case PacketType.PLAYER_DATA:
-                                PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
-                                handlePlayerData(packetData);
-                                break;
-                        }
-
-                        Marshal.FreeHGlobal(ptPoit);
+                        SendChatMessage();
+                        mPacketSendTime = 0.0f;
                     }
-                }
-#endif
-            }
-            else if (mSearchingForPlayers)    //Handles joining players
-            {
-                server.DispatchCallback(serverNetworkingUtils);
+                    mPacketSendTime += Time.deltaTime;
 
-                if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    ////Refactor this to reset packet send time for actual game maybe (and to look better)
-                {
-                    SendGameJoinMessage();
-                    BroadcastPlayerCount();
-                    mPacketSendTime = 0.0f;
-                }
-                mPacketSendTime += Time.deltaTime;
+                    //Enable SPAN for this next part
+#if VALVESOCKETS_SPAN
+                server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
+#else
+                    int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, maxMessages);
+
+                    if (netMessagesCount > 0)
+                    {
+                        for (int i = 0; i < netMessagesCount; i++)
+                        {
+                            ref NetworkingMessage netMessage = ref netMessages[i];
+
+                            Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+
+                            netMessage.CopyTo(messageDataBuffer);
+                            netMessage.Destroy();
+
+                            ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                            IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                            Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                            TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+
+                            switch ((PacketType)packetType.type)
+                            {
+                                case PacketType.PLAYER_DATA:
+                                    PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                                    handlePlayerData(packetData);
+                                    break;
+                            }
+
+                            Marshal.FreeHGlobal(ptPoit);
+                        }
+                    }
+#endif
+                    break;
+                case GameState.SEARCHING_FOR_PLAYERS:    //Handles joining players
+                    server.DispatchCallback(serverNetworkingUtils);
+
+                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    ////Refactor this to reset packet send time for actual game maybe (and to look better)
+                    {
+                        SendGameJoinMessage();
+                        BroadcastPlayerCount();
+                        mPacketSendTime = 0.0f;
+                    }
+                    mPacketSendTime += Time.deltaTime;
+                    break;
             }
         }
     }

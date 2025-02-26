@@ -116,7 +116,7 @@ public class clientHandler : MonoBehaviour
 
         DebugCallback debugCallback = (DebugType type, string message) =>
         {
-            Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
+            //Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
         };
 
         utils.SetDebugCallback(DebugType.Everything, debugCallback);
