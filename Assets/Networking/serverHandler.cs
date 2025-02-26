@@ -43,6 +43,7 @@ public class serverHandler : MonoBehaviour
 
     GameState mGameState = GameState.NONE;
 
+    public static serverHandler instance;
     public enum GameState
     {
         NONE,
@@ -65,6 +66,8 @@ public class serverHandler : MonoBehaviour
     void Start()
     {
         Valve.Sockets.Library.Initialize();
+
+        instance = this;
 
         if (testServerButton != null)
         {
@@ -403,10 +406,16 @@ public class serverHandler : MonoBehaviour
         if (players.ContainsKey(playerID))
         {
             connectedClients.Remove(playerID);
+            Destroy(players[playerID]);
             players.Remove(playerID);
+            playerPoses.Remove(playerID);
+            playerInterpolationTracker.Remove(playerID);
             server.CloseConnection(playerID);
 
-            eventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+            if (mGameState == GameState.SEARCHING_FOR_PLAYERS)
+            {
+                eventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+            }
         }
     }
 

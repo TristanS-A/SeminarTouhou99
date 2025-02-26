@@ -17,6 +17,11 @@ public class ButtonHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(serverHandler.instance == null)
+        {
+            gameObject.SetActive(false);
+        }
+
         switch (mButtonType)
         {
             case ButtonType.START_GAME:
