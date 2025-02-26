@@ -87,8 +87,10 @@ public class Sequencer : MonoBehaviour
             spawnPos = (Vector2)this.transform.position + nextAttackToSpawn.GetDirction();
         }
 
+        
         var obj = Instantiate(nextAttackToSpawn.GetEmitter(), spawnPos, Quaternion.identity);
-     
+
+        
         activeEmmiter.Add(obj);
         //before returning we need to clean the list for dead referecnes
         CleanList();

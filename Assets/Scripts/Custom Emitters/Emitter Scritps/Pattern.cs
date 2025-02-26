@@ -11,7 +11,10 @@ public class Pattern : MonoBehaviour
     {
         foreach(var bullet in bullets)
         {
-            Destroy(bullet.gameObject);
+            if (bullet != null)
+            {
+                Destroy(bullet.gameObject);
+            }
         }
 
         bullets.Clear();
