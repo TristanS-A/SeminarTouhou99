@@ -7,15 +7,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2937b8e272e005040bd8a5650ee9493e, type: 3}
-  m_Name: StrightDown
+  m_Name: InstantLeftAttack
   m_EditorClassIdentifier: 
-  isCenterd: 1
-  isCustomTime: 0
-  customLifeTime: 0
-  dirction: {x: 0, y: -1}
+  isCenterd: 0
+  isCustomTime: 1
+  customLifeTime: 4
+  dirction: {x: 2, y: 0}
   bulletType: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
-  emmiter: {fileID: 6224333239488190002, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
+  emmiter: {fileID: 6224333239488190002, guid: 032ff883297706c4a9ac7e70c19d5fc7, type: 3}
   angle: 0

@@ -38,9 +38,11 @@ public class Sequencer : MonoBehaviour
         if (currentAttackIndex >= attacks.Count)
         {
             //just retrun a null
-            if (shouldLoop)
+            if (shouldLoop && attacks.Count != 0)
             {
                 currentAttackIndex = 0;
+                return attacks[currentAttackIndex];
+
             }
             return null;
 
@@ -87,8 +89,10 @@ public class Sequencer : MonoBehaviour
             spawnPos = (Vector2)this.transform.position + nextAttackToSpawn.GetDirction();
         }
 
+        
         var obj = Instantiate(nextAttackToSpawn.GetEmitter(), spawnPos, Quaternion.identity);
-     
+
+        
         activeEmmiter.Add(obj);
         //before returning we need to clean the list for dead referecnes
         CleanList();
@@ -176,5 +180,27 @@ public class Sequencer : MonoBehaviour
         //removes stuff from the list if it is <=0 should be fast becasue we sorted the list
         timeTillNextAttack.RemoveAll(t => t <= 0);
 
+    }
+
+    public void CleanSequencer()
+    {
+        foreach (var emitter in activeEmmiter)
+        {
+            Destroy(emitter);
+        }
+    }
+    public void ClearAttackList()
+    {
+        attacks.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        CleanSequencer();
+    }
+
+    public void SetSequeceList(List<AttackData> sequeceList)
+    {
+        this.attacks = sequeceList;
     }
 }

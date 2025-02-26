@@ -5,19 +5,29 @@ using UnityEngine;
 public class CirlcePattern : Pattern
 { 
     [SerializeField] float radius = 3;
-
     [SerializeField] float scaler = 0;
+    [SerializeField] int ammout = 0;
+    [SerializeField] float waitTime = 0;
+    [SerializeField] bool invert;
+
+    int inverted = 1;
+
 
     Vector2 center = Vector2.zero;
     
 
-    List<BaseBullet> bullets = new List<BaseBullet>();
+    //List<BaseBullet> bullets = new List<BaseBullet>();
     // Start is called before the first frame update
     void Start()
     {
         center = transform.position;
 
         StartCoroutine(SpawnCircle());
+
+        if(invert)
+        {
+            inverted = -1;
+        }
         
     }
 
@@ -65,13 +75,13 @@ public class CirlcePattern : Pattern
     //creation of the pattern
     IEnumerator SpawnCircle()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.25f);
+        WaitForSeconds wait = new WaitForSeconds(waitTime);
         //create objects
-        for (int i = 0; i < 40; i++)
+        for (int i = 0; i < ammout; i++)
         {
             //get the x and y position based on the position of the center
-            float x = center.x + radius * Mathf.Cos(i);
-            float y = center.y + radius * Mathf.Sin(i);
+            float x = center.x + radius * (inverted * Mathf.Cos(i));
+            float y = center.y + radius * (inverted * Mathf.Sin(i));
 
             Vector2 spawnPos = new Vector2(x, y);
             GameObject dummy = Instantiate(bullet, spawnPos, Quaternion.identity);
@@ -104,8 +114,8 @@ public class CirlcePattern : Pattern
         }
     }
     //this can be used for bombs and other things consider making this a base class for emitters
-    public void ClearBullets()
-    {
-        bullets.Clear();
-    }
+    //public void ClearBullets()
+    //{
+    //    bullets.Clear();
+    //}
 }

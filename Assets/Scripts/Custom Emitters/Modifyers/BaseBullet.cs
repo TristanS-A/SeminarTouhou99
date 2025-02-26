@@ -15,6 +15,7 @@ public class BaseBullet : MonoBehaviour
     private void Start() 
     {
         rb = this.GetComponent<Rigidbody2D>();
+        GetComponent<SpriteRenderer>().sortingOrder = -1;
         rb.isKinematic = true;
 
     }

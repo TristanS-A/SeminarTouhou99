@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7154780550188341587}
   - component: {fileID: 4049287504572475122}
   - component: {fileID: 3719647831614739423}
+  - component: {fileID: 281478293746345220}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885559242883235853}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.004999995, y: -0.40499997, z: -1}
   m_LocalScale: {x: 0.083333336, y: 0.05, z: 0.5}
   m_ConstrainProportionsScale: 0
@@ -78,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -9095717837082945937, guid: bd3cb4af8406d4436a2ae8c2aafe1f8d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -186,12 +187,25 @@ MonoBehaviour:
   bulletDelay: 0.1
   bulletDamage: 1
   target: {fileID: 0}
-  rotateSpeed: 8
-  isHomingBullet: 1
+  rotateSpeed: 2
   bulletPrefab: {fileID: 435637448550865365, guid: 107be95e213d16c4ebeec299d20dea14, type: 3}
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}
   rightBulletSpawn: {fileID: 3484360881877885786}
+--- !u!114 &281478293746345220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885559242883235853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a112d6f626179468b473eacb7b9c84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  invinciblityTime: 1
 --- !u!1 &4342171893642893423
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,7 +373,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0

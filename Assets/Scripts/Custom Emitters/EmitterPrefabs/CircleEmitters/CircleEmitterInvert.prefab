@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3662759449070770954}
   - component: {fileID: 9003960000671102645}
   m_Layer: 0
-  m_Name: CircleEmitter
+  m_Name: CircleEmitterInvert
   m_TagString: Untagged
   m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -45,4 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
-  radius: 3
+  radius: 1
+  scaler: 0.03
+  ammout: 40
+  waitTime: 0.27
+  invert: 1

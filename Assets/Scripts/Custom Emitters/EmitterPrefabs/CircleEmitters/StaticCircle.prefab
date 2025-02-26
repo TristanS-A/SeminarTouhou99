@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3662759449070770954}
-  - component: {fileID: 5736564431535454515}
-  - component: {fileID: 7200883922211189626}
+  - component: {fileID: 9003960000671102645}
   m_Layer: 0
-  m_Name: SingleShotEmmiter
+  m_Name: StaticCircle
   m_TagString: Untagged
   m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -33,22 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5736564431535454515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6224333239488190002}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5da537fd18a6f014ca825ae73273323f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bullet: {fileID: 0}
-  radius: 1
-  scaler: 0
---- !u!114 &7200883922211189626
+--- !u!114 &9003960000671102645
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -57,11 +41,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6224333239488190002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3080c6bef4e75544894f2115859002b, type: 3}
+  m_Script: {fileID: 11500000, guid: 5da537fd18a6f014ca825ae73273323f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
-  diretion: {x: 0, y: 1}
-  ammountToSpawn: 1
-  timeInbetweenShot: 1
-  modifyScaler: 0
+  radius: 1
+  scaler: 0.03
+  ammout: 6
+  waitTime: 0
+  invert: 1
