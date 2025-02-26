@@ -153,7 +153,6 @@ public class serverHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
-        Debug.Log("HEEEEEEEEEEEEEEEEEEERE");
         players.Add(0, player);
 
         mGameState = GameState.GAME_STARTED;
@@ -166,7 +165,7 @@ public class serverHandler : MonoBehaviour
                 {
                     clientHandler.GameStartData gameState = new clientHandler.GameStartData();
                     gameState.type = (int)clientHandler.PacketType.GAME_STATE;
-                    gameState.gameState = eventType.EventTypes.START_GAME;
+                    gameState.gameState = (int)eventType.EventTypes.START_GAME;
 
                     Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStartData))];
                     GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);

@@ -81,7 +81,7 @@ public class clientHandler : MonoBehaviour
     public struct GameStartData
     {
         public int type;
-        public eventType.EventTypes gameState;
+        public int gameState;
     };
 
     private void OnEnable()
@@ -314,7 +314,7 @@ public class clientHandler : MonoBehaviour
                         break;
                     case PacketType.GAME_STATE:
                         GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
-                        switch (gameStateData.gameState)
+                        switch ((eventType.EventTypes)gameStateData.gameState)
                         {
                             case eventType.EventTypes.GAME_STARTED:
                                 SceneManager.LoadScene(3);
