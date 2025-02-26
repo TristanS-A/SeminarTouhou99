@@ -1,18 +1,14 @@
 using AOT;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using TMPro;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
-using static clientHandler;
 using static serverHandler;
 
 public class clientHandler : MonoBehaviour
