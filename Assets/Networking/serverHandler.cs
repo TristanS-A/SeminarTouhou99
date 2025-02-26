@@ -54,12 +54,12 @@ public class serverHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        eventSystem.playerJoined += AddServerPlayer;
+        eventSystem.gameStarted += HandleGameStart;
     }
 
     private void OnDisable()
     {
-        eventSystem.playerJoined -= AddServerPlayer;
+        eventSystem.gameStarted -= HandleGameStart;
     }
 
     // Start is called before the first frame update
@@ -85,12 +85,6 @@ public class serverHandler : MonoBehaviour
         Valve.Sockets.Library.Deinitialize();
         UDPListener.CloseClient();
         Debug.Log("Quit and Socket Lib Deanitialized");
-    }
-
-    public void AddServerPlayer(GameObject player)
-    {
-        players.Add(0, player);
-        Debug.Log("Server Player Added");
     }
 
     private void RunServerSetUp()
@@ -119,7 +113,7 @@ public class serverHandler : MonoBehaviour
         UDPListener.StartClient(false);
         mSearchingForPlayers = true;
 
-        //Switches to game scene
+        //Switches to lobby scene
         SceneManager.LoadScene(2);
 
 #if VALVESOCKETS_SPAN
@@ -156,6 +150,11 @@ public class serverHandler : MonoBehaviour
                 Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
         }
+    }
+
+    private void HandleGameStart(GameObject player)
+    {
+        players.Add(0, player);
     }
 
     // Update is called once per frame
@@ -389,6 +388,12 @@ public class serverHandler : MonoBehaviour
         {
             playerOBJ = Instantiate(m_PlayerHologramPrefab);
             players.Add(playerData.playerID, playerOBJ);
+            playerPoses.Add(playerData.playerID, new());
+            playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+        }
+        else if (players[playerData.playerID] == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
+        {
+            playerOBJ = Instantiate(m_PlayerHologramPrefab);
             playerPoses.Add(playerData.playerID, new());
             playerInterpolationTracker.Add(playerData.playerID, 0.0f);
         }

@@ -78,13 +78,13 @@ public class clientHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        eventSystem.playerJoined += AddClientPlayer;
+        eventSystem.gameStarted += HandleGameStart;
         eventSystem.ipReceived += AddIP;
     }
 
     private void OnDisable()
     {
-        eventSystem.playerJoined -= AddClientPlayer;
+        eventSystem.gameStarted -= HandleGameStart;
         eventSystem.ipReceived -= AddIP;
     }
 
@@ -361,7 +361,7 @@ public class clientHandler : MonoBehaviour
                 playerPoses.Add(playerData.playerID, new());
                 playerInterpolationTracker.Add(playerData.playerID, 0.0f);
             }
-            else if (players[playerData.playerID] == null)
+            else if (players[playerData.playerID] == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
             {
                 playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 playerPoses.Add(playerData.playerID, new());
@@ -395,10 +395,9 @@ public class clientHandler : MonoBehaviour
         }
     }
 
-    public void AddClientPlayer(GameObject player)
+    private void HandleGameStart(GameObject player)
     {
         mClientPlayerReference = player;
-        Debug.Log("Client Player Added");
     }
 
     //Bad archatecture for now (this function should ONLY be called after AddClientPlayer). Look into refactoring.

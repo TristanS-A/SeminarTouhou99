@@ -10,6 +10,7 @@ public class eventType
         PLAYER_JOINED,
         RECEIVED_IP,
         NUMBER_OF_PLAYERS_JOINED_CHANGED,
+        START_GAME,
         GAME_STARTED
     }
 

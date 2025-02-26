@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerJoinedEvent : eventType
+public class GameStartEvent : eventType
 {
     private GameObject mPlayer;
 
-    public PlayerJoinedEvent(GameObject player) : base(eventType.EventTypes.PLAYER_JOINED)
+    public GameStartEvent(GameObject player) : base(eventType.EventTypes.GAME_STARTED)
     { 
         mPlayer = player;
     }
