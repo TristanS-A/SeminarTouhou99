@@ -77,7 +77,7 @@ public class Sequencer : MonoBehaviour
 
        
         Vector2 spawnPos = Vector2.zero;
-
+   
         //attack centerd on the enemy 
         if (nextAttackToSpawn.IsCenterd())
         {
@@ -89,10 +89,20 @@ public class Sequencer : MonoBehaviour
             spawnPos = (Vector2)this.transform.position + nextAttackToSpawn.GetDirction();
         }
 
-        
-        var obj = Instantiate(nextAttackToSpawn.GetEmitter(), spawnPos, Quaternion.identity);
+        bool isAttached = nextAttackToSpawn.ShouldAttach();
 
-        
+        GameObject obj = null;
+        //attaches to parent
+        if (isAttached)
+        {
+            obj = Instantiate(nextAttackToSpawn.GetEmitter(), spawnPos, Quaternion.identity, gameObject.transform);
+        }
+        else
+        {
+            obj = Instantiate(nextAttackToSpawn.GetEmitter(), spawnPos, Quaternion.identity);
+        }
+
+
         activeEmmiter.Add(obj);
         //before returning we need to clean the list for dead referecnes
         CleanList();

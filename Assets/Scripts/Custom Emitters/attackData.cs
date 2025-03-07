@@ -18,9 +18,11 @@ public class AttackData : ScriptableObject
     Pattern attackPattern;
     [SerializeField] GameObject bulletType;
     [SerializeField] GameObject emmiter;
-    
 
     [SerializeField] float angle;
+
+    [SerializeField] bool shouldAttach = false;
+
 
     //getters dont really want code to change this object but we need to read from it
 
@@ -30,7 +32,7 @@ public class AttackData : ScriptableObject
     }
     public bool IsCenterd()
     {
-        return isCenterd; 
+        return isCenterd;
     }
     public Pattern GetPattern() { return attackPattern; }
 
@@ -40,6 +42,7 @@ public class AttackData : ScriptableObject
     public float GetAngle() { return angle; }
 
     public Vector2 GetDirction() { return dirction; }
-    public bool IsCustomTime() {  return isCustomTime; }
+    public bool IsCustomTime() { return isCustomTime; }
     public float GetCustomLifeTime() { return customLifeTime; }
+    public bool ShouldAttach() { return shouldAttach;  }
 }

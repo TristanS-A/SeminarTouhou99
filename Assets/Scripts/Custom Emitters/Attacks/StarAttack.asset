@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCenterd: 1
   isCustomTime: 1
-  customLifeTime: 5
+  customLifeTime: 2
   dirction: {x: 0, y: 0}
   bulletType: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
   emmiter: {fileID: 6224333239488190002, guid: 68fdf0cf03eaa8c49a6c702d42538b17, type: 3}
   angle: 0
+  shouldAttach: 0
