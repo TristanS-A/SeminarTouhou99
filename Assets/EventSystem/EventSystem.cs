@@ -1,12 +1,21 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 public static class eventSystem
 {
     public static event Action<GameObject> gameStarted; //Rename this to game start event
     public static event Action<string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
+
+    public static event UnityAction<int> OnHealthUpdate;
+    public static void HealthUpdate(int health) => OnHealthUpdate?.Invoke(health);
+
+    public static event UnityAction OnDeathUpdate;
+    public static void OnDeath() => OnDeathUpdate?.Invoke();
+
+    public static UnityEvent<float> OnRespawnUpdate;
+    public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
 
     public static void fireEvent(eventType type)
     {

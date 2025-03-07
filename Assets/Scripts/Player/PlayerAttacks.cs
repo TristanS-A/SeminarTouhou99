@@ -1,23 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerAttacks : MonoBehaviour {
     [Header("Keybinds")]
     public KeyCode shootKey = KeyCode.Z;
-    public KeyCode bombKey = KeyCode.X;
+    public KeyCode defensiveBombKey = KeyCode.X;
+    public KeyCode offensiveBombKey = KeyCode.C;
 
     [Header("Bullet Stats")]
     [Range(1, 8)]
     public float bulletSpeed = 4.5f;
     public float bulletDelay = 0.1f;
-    public int bulletDamage = 1;
+    public static int bulletDamage = 1;
 
     [Header("Homing Missle")]
     public Transform target;
     [Range(1, 8)]
     public int rotateSpeed = 2;
+
+    [Header("Defensive Bomb")]
+    [SerializeField] private int maxDefensiveBombs = 3;
+    private int defensiveBombCount;
+
+    [Header("Offensive Bomb")]
+    [SerializeField] private int maxOffensiveBombs = 3;
+    private int offensiveBombCount;
 
     [Header("Other")]
     [SerializeField] private GameObject bulletPrefab;
@@ -32,12 +40,18 @@ public class PlayerAttacks : MonoBehaviour {
     private void Start() {
         playerMovement = GetComponent<PlayerMovement>();
         target = GameObject.FindGameObjectWithTag("Enemy").transform;
+
+        defensiveBombCount = maxDefensiveBombs;
+        offensiveBombCount = maxOffensiveBombs;
     }
 
     void Update() {
         if (Input.GetKeyDown(shootKey) && !isShooting) {
             StartCoroutine(ShootBullets());
         }
+
+        HandleDefensiveBomb();
+        HandleOffensiveBomb();
     }
 
     void FixedUpdate() {
@@ -83,8 +97,20 @@ public class PlayerAttacks : MonoBehaviour {
         isShooting = false;
     }
 
-    public int GetDamageAmount() { return bulletDamage; }
-
-    private void OnTriggerEnter2D(Collider2D collision) {
+    private void HandleDefensiveBomb() {
+        if (Input.GetKey(defensiveBombKey)) {
+            var enemy = target.gameObject.GetComponent<TempEnemy>();
+            enemy.GetSequencer().CleanSequencer();
+        }
     }
+
+    private void HandleOffensiveBomb() {
+        if (Input.GetKey(offensiveBombKey)) {
+
+        }
+    }
+
+    public static int GetDamageAmount() { return bulletDamage; }
+    public int GetDefensiveBombCount => defensiveBombCount;
+    public int GetOffensiveBombCount => offensiveBombCount;
 }

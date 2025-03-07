@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,8 +5,6 @@ public class PlayerHealth : MonoBehaviour {
     public int maxHealth = 3;
     public float invinciblityTime = 1.5f;
 
-    public event Action<int> OnHealthUpdate;
-    public event Action OnPlayerDeath;
     public bool isDead { get; private set; }
 
     private int currentHealth;
@@ -15,7 +12,7 @@ public class PlayerHealth : MonoBehaviour {
 
     private void Start() {
         currentHealth = maxHealth;
-        OnHealthUpdate?.Invoke(currentHealth);
+        eventSystem.HealthUpdate(currentHealth);
         isDead = false;
     }
 
@@ -27,9 +24,9 @@ public class PlayerHealth : MonoBehaviour {
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        
+
         // CALLS EVENT FOR UI
-        OnHealthUpdate?.Invoke(currentHealth);
+        eventSystem.HealthUpdate(currentHealth);
 
         // KILLS PLAYER :(
         if (currentHealth <= 0) {
@@ -51,14 +48,14 @@ public class PlayerHealth : MonoBehaviour {
         // HEALS & KEEPS IN APPROPIATE RANGE
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        
+
         // CALLS EVENT FOR UI
-        OnHealthUpdate?.Invoke(currentHealth);
+        eventSystem.HealthUpdate(currentHealth);
     }
 
     private void KillPlayer() {
         isDead = true;
-        OnPlayerDeath?.Invoke();
+        eventSystem.OnDeath();
         Debug.Log("Player died");
         Destroy(this.gameObject);
     }
@@ -68,9 +65,6 @@ public class PlayerHealth : MonoBehaviour {
 
         if (collision.CompareTag("EnemyBullet")) {
             TakeDamage(1);
-
-            // Do we wanna destroy these?
-            // Destroy(collision.gameObject);
         }
     }
 }

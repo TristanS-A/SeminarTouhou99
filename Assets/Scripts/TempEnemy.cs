@@ -11,15 +11,11 @@ public class TempEnemy : MonoBehaviour {
     }
 
     [Serializable]
-    public class SequeceContainer
-    {
+    public class SequeceContainer {
         public List<AttackData> attacks;
     }
 
     public List<BossStage> stages;
-    public event Action<int> OnHealthUpdate;
-    public event Action<float> OnRespawnUpdate;
-    public event Action OnEnemyDeath;
     public bool isDead { get; private set; }
 
     private int currentHealth;
@@ -35,8 +31,8 @@ public class TempEnemy : MonoBehaviour {
         currentHealth = stages[0].maxHealth;
         currentRespawnTime = stages[0].respawnTime;
 
-        OnHealthUpdate?.Invoke(currentHealth);
-        OnRespawnUpdate?.Invoke(currentRespawnTime);
+        eventSystem.HealthUpdate(currentHealth);
+        eventSystem.RespawnUpdate(currentRespawnTime);
 
         isDead = false;
 
@@ -53,7 +49,7 @@ public class TempEnemy : MonoBehaviour {
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
 
         // CALLS EVENT FOR UI
-        OnHealthUpdate?.Invoke(currentHealth);
+        eventSystem.HealthUpdate(currentHealth);
 
         if (currentHealth <= 0) {
             if (currentStage != stages.Count - 1) {
@@ -74,7 +70,7 @@ public class TempEnemy : MonoBehaviour {
         isDead = true;
         sequencer.ClearAttackList();
         sequencer.CleanSequencer();
-        OnEnemyDeath?.Invoke();
+        eventSystem.OnDeath();
     }
 
     public void Revive() {
@@ -87,20 +83,20 @@ public class TempEnemy : MonoBehaviour {
 
         conIndex++;
         sequencer.SetSequeceList(containter[conIndex].attacks);
-       
-        OnRespawnUpdate?.Invoke(currentRespawnTime);
+
+        eventSystem.RespawnUpdate(currentRespawnTime);
     }
-    
+
     //might want to change this to be a  flag in the update loop (this seems like a lot of overhead)
     private IEnumerator Respawn() {
         isInvincible = true;
         isDead = true;
 
         WaitForSeconds local = new(0);
-        
+
         while (currentRespawnTime >= 0) {
             currentRespawnTime -= Time.deltaTime;
-            OnRespawnUpdate?.Invoke(currentRespawnTime);
+            eventSystem.RespawnUpdate(currentRespawnTime);
             yield return local;
         }
         isInvincible = false;
@@ -119,4 +115,5 @@ public class TempEnemy : MonoBehaviour {
 
     public int GetCurrentMaxHealth() => stages[currentStage].maxHealth;
     public float GetCurrentRespawnTime() => stages[currentStage].respawnTime;
+    public Sequencer GetSequencer() { return sequencer; }
 }

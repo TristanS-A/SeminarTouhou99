@@ -11,7 +11,7 @@ public class HealthUI : MonoBehaviour {
         playerHealth = FindObjectOfType<PlayerHealth>();
 
         if (playerHealth != null) {
-            playerHealth.OnHealthUpdate += UpdateUI;
+            eventSystem.OnHealthUpdate += UpdateUI;
             UpdateUI(playerHealth.maxHealth);
         }
     }
@@ -35,7 +35,7 @@ public class HealthUI : MonoBehaviour {
     // OFFLOADS UI FROM EVENT
     private void OnDestroy() {
         if (playerHealth != null) {
-            playerHealth.OnHealthUpdate -= UpdateUI;
+            eventSystem.OnHealthUpdate -= UpdateUI;
         }
     }
 }
