@@ -12,7 +12,7 @@ public class PlayerAttacks : MonoBehaviour {
     [Range(1, 8)]
     public float bulletSpeed = 4.5f;
     public float bulletDelay = 0.1f;
-    public int bulletDamage = 1;
+    public static int bulletDamage = 1;
 
     [Header("Homing Missle")]
     public Transform target;
@@ -83,8 +83,5 @@ public class PlayerAttacks : MonoBehaviour {
         isShooting = false;
     }
 
-    public int GetDamageAmount() { return bulletDamage; }
-
-    private void OnTriggerEnter2D(Collider2D collision) {
-    }
+    public static int GetDamageAmount() { return bulletDamage; }
 }
