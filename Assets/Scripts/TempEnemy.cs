@@ -113,7 +113,7 @@ public class TempEnemy : MonoBehaviour {
 
         if (collision.CompareTag("Bullet")) {
             Destroy(collision.gameObject);
-            TakeDamage(currentStage, 1);
+            TakeDamage(currentStage, PlayerAttacks.GetDamageAmount());
         }
     }
 
