@@ -1,9 +1,12 @@
 using AOT;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -40,6 +43,9 @@ public class serverHandler : MonoBehaviour
     GameState mGameState = GameState.NONE;
 
     public static serverHandler instance;
+
+    [SerializeField] private bool mDebugMode = false;
+
     public enum GameState
     {
         NONE,
@@ -81,8 +87,11 @@ public class serverHandler : MonoBehaviour
     private void OnApplicationQuit()
     {
         Valve.Sockets.Library.Deinitialize();
-        UDPListener.CloseClient();
-        Debug.Log("Quit and Socket Lib Deanitialized");
+        if (!mDebugMode)
+        {
+            UDPListener.CloseClient();
+            Debug.Log("Quit and Socket Lib Deanitialized");
+        }
     }
 
     private void RunServerSetUp()
@@ -107,8 +116,12 @@ public class serverHandler : MonoBehaviour
 
         listenSocket = server.CreateListenSocket(address);
 
-        //Starts UDP client to broadcast host IP
-        UDPListener.StartClient(false);
+        if (!mDebugMode)
+        {
+            //Starts UDP client to broadcast host IP
+            UDPListener.StartClient(false);
+        }
+
         mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
         //Switches to lobby scene
@@ -244,6 +257,7 @@ public class serverHandler : MonoBehaviour
                     {
                         SendGameJoinMessage();
                         BroadcastPlayerCount();
+                        BroadcastPlayerName();
                         mPacketSendTime = 0.0f;
                     }
                     mPacketSendTime += Time.deltaTime;
@@ -358,9 +372,84 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    private void BroadcastPlayerName()
+    {
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                foreach (uint playerID in players.Keys)
+                {
+                    clientHandler.PlayerName playerName = new clientHandler.PlayerName();
+                    playerName.type = (int)clientHandler.PacketType.PLAYER_NAME;
+                    string str = "HIIIIIIIIIII THere";
+                    playerName.name = str;
+
+                    //Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerName))];
+                    // GCHandle pinStructure = GCHandle.Alloc(playerName, GCHandleType.Pinned);
+
+                    IntPtr ptr = IntPtr.Zero;
+                    byte[] arr = new byte[Marshal.SizeOf(typeof(clientHandler.PlayerName))];
+
+                    try
+                    {
+                        ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(clientHandler.PlayerName)));
+                        Marshal.StructureToPtr(playerName, ptr, true);
+                        Marshal.Copy(ptr, arr, 0, Marshal.SizeOf(typeof(clientHandler.PlayerName)));
+                    }
+                    finally
+                    {
+                        server.SendMessageToConnection(connectedClients[i], arr);
+                        Marshal.FreeHGlobal(ptr);
+                    }
+                }
+            }
+        }
+    }
+
+    private void BroadcastResults()
+    {
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                foreach (uint playerID in players.Keys)
+                {
+                    GameObject player = players[playerID];
+                    if (playerID != connectedClients[i] && player != null)
+                    {
+                        clientHandler.PlayerResultData playerResultData = new clientHandler.PlayerResultData();
+                        playerResultData.type = (int)clientHandler.PacketType.PLAYER_RESULT;
+                        playerResultData.playerID = playerID;
+                        playerResultData.time = 0;
+                        playerResultData.points = 0;
+
+
+                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerResultData))];
+                        GCHandle pinStructure = GCHandle.Alloc(playerResultData, GCHandleType.Pinned);
+                        try
+                        {
+                            Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                        }
+                        finally
+                        {
+                            server.SendMessageToConnection(connectedClients[i], bytes);
+                            pinStructure.Free();
+                        }
+
+                        //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
+                        //server.SendMessageToConnection(connectedClients[i], bytes);
+
+                        //messages.Add(message);
+                    }
+                }
+            }
+        }
+    }
+
     private void SendGameJoinMessage()
     {
-        if (mServerIP != null)
+        if (mServerIP != null && !mDebugMode)
         {
             UDPListener.SendIP(mServerIP.ToString());
         }

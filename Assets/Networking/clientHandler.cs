@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -36,12 +37,17 @@ public class clientHandler : MonoBehaviour
 
     byte[] messageDataBuffer = new byte[256];
 
+    [SerializeField] private bool mDebugMode = false;
+    [SerializeField] private string mDebugDebugIP;
+
     public enum PacketType
     {
         PLAYER_DATA,
         REGISTER_PLAYER,
         PLAYER_COUNT,
-        GAME_STATE
+        GAME_STATE,
+        PLAYER_NAME,
+        PLAYER_RESULT
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -59,6 +65,15 @@ public class clientHandler : MonoBehaviour
         public float speed;
     };
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct PlayerName
+    {
+        public int type;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
+        public string name;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RegisterPlayer
     {
@@ -71,6 +86,15 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public int playerCount;
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PlayerResultData
+    {
+        public int type;
+        public uint playerID;
+        public int time;
+        public int points;
     };
 
     [StructLayout(LayoutKind.Sequential)]
@@ -94,8 +118,16 @@ public class clientHandler : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        client.CloseConnection(serverConnection);
-        UDPListener.CloseClient();
+        if (client != null)
+        {
+            client.CloseConnection(serverConnection);
+        }
+
+        if (!mDebugMode)
+        {
+            UDPListener.CloseClient();
+        }
+
         Valve.Sockets.Library.Deinitialize();
         Debug.Log("Quit and Socket Lib Deanitialized");
     }
@@ -127,7 +159,15 @@ public class clientHandler : MonoBehaviour
         client = new NetworkingSockets();
         clientNetworkingUtils = OnClientStatusUpdate;
 
-        UDPListener.StartClient(true);
+        if (!mDebugMode)
+        {
+            UDPListener.StartClient(true);
+        }
+        else
+        {
+            mJoinableIPs.Add(mDebugDebugIP, null);
+        }
+
         mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
 
         SceneManager.LoadScene(1);
@@ -259,10 +299,10 @@ public class clientHandler : MonoBehaviour
                     HandleNetMessages();
                     break;
 
-                    case serverHandler.GameState.LOOKING_FOR_HOST:
-                        DisplayJoinableIPs();
-                        break;
-                    case serverHandler.GameState.SEARCHING_FOR_PLAYERS:
+                case serverHandler.GameState.LOOKING_FOR_HOST:
+                    DisplayJoinableIPs();
+                    break;
+                case serverHandler.GameState.SEARCHING_FOR_PLAYERS:
                     HandleNetMessages();
                     break;
             }
@@ -289,6 +329,10 @@ public class clientHandler : MonoBehaviour
 
                 ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
 
+                //Debug.Log((PacketType)packetType.type);
+                //string result = Encoding.ASCII.GetString(messageDataBuffer);
+                //Debug.Log("HERE: " + result);
+
                 IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
                 Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
@@ -307,6 +351,28 @@ public class clientHandler : MonoBehaviour
                     case PacketType.PLAYER_COUNT:
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
                         eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        break;
+                    case PacketType.PLAYER_NAME:
+                        PlayerName playerName = new PlayerName();
+                        int size = Marshal.SizeOf(playerName);
+                        IntPtr ptr = IntPtr.Zero;
+                        try
+                        {
+                            ptr = Marshal.AllocHGlobal(size);
+
+                            Marshal.Copy(messageDataBuffer, 0, ptr, size);
+
+                            playerName = (PlayerName)Marshal.PtrToStructure(ptr, playerName.GetType());
+                        }
+                        finally
+                        {
+                            Debug.Log("NAME: " + playerName.name);
+                            Marshal.FreeHGlobal(ptr);
+                        }
+                        break;
+                    case PacketType.PLAYER_RESULT:
+                        PlayerResultData playerResultData = (PlayerResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerResultData));
+                        //eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
                     case PacketType.GAME_STATE:
                         GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
