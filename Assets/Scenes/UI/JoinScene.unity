@@ -1075,7 +1075,7 @@ MonoBehaviour:
   m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
   m_IPDisplay: {fileID: 1463750753901123346, guid: ff24a004bcea3a949b84f0bb7a039903, type: 3}
   mDebugMode: 1
-  mDebugDebugIP: 192.168.1.17
+  mDebugDebugIP: 192.168.1.224
 --- !u!4 &1410010107
 Transform:
   m_ObjectHideFlags: 0

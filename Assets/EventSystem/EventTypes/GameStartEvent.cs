@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameStartEvent : eventType
+public class GameStartEvent : EventType
 {
     private GameObject mPlayer;
 
-    public GameStartEvent(GameObject player) : base(eventType.EventTypes.GAME_STARTED)
+    public GameStartEvent(GameObject player) : base(EventType.EventTypes.GAME_STARTED)
     { 
         mPlayer = player;
     }

@@ -9,12 +9,12 @@ public class PlayerCountDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        eventSystem.numberOfJoinedPlayersChanged += OnPlayerCountChange;
+        EventSystem.numberOfJoinedPlayersChanged += OnPlayerCountChange;
     }
 
     private void OnDisable()
     {
-        eventSystem.numberOfJoinedPlayersChanged -= OnPlayerCountChange;
+        EventSystem.numberOfJoinedPlayersChanged -= OnPlayerCountChange;
     }
 
     private void OnPlayerCountChange(int newPlayerCount)

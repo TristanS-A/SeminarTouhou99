@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class eventType
+public class EventType
 {
     public enum EventTypes
     {
@@ -17,7 +17,7 @@ public class eventType
 
     private EventTypes _type;
 
-    public eventType(EventTypes type)
+    public EventType(EventTypes type)
     {
         _type = type;
     }
@@ -27,7 +27,7 @@ public class eventType
         return _type;
     }
 
-    public static explicit operator eventType(EventTypes v)
+    public static explicit operator EventType(EventTypes v)
     {
         throw new NotImplementedException();
     }

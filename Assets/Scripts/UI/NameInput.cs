@@ -24,6 +24,7 @@ public class NameInput : MonoBehaviour
     private void submit(string name)
     {
         mJoinOptions.SetActive(true);
+        PlayerInfo.PlayerName = name;
         Destroy(gameObject);
     }
 }

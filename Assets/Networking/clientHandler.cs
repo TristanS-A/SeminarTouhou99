@@ -10,6 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
+using static clientHandler;
 using static serverHandler;
 
 public class clientHandler : MonoBehaviour
@@ -22,9 +23,9 @@ public class clientHandler : MonoBehaviour
     private uint serverConnection = 0;
     private StatusCallback clientNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
-    Dictionary<uint, GameObject> players = new Dictionary<uint, GameObject>();
-    Dictionary<uint, List<Vector3>> playerPoses = new Dictionary<uint, List<Vector3>>();
-    Dictionary<uint, float> playerInterpolationTracker = new Dictionary<uint, float>();
+
+    Dictionary<uint, serverHandler.PlayersData> mPlayers = new();
+
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
 
@@ -106,14 +107,14 @@ public class clientHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        eventSystem.gameStarted += HandleGameStart;
-        eventSystem.ipReceived += AddIP;
+        EventSystem.gameStarted += HandleGameStart;
+        EventSystem.ipReceived += AddIP;
     }
 
     private void OnDisable()
     {
-        eventSystem.gameStarted -= HandleGameStart;
-        eventSystem.ipReceived -= AddIP;
+        EventSystem.gameStarted -= HandleGameStart;
+        EventSystem.ipReceived -= AddIP;
     }
 
     private void OnApplicationQuit()
@@ -350,7 +351,7 @@ public class clientHandler : MonoBehaviour
                         break;
                     case PacketType.PLAYER_COUNT:
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
-                        eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
                     case PacketType.PLAYER_NAME:
                         PlayerName playerName = new PlayerName();
@@ -372,13 +373,13 @@ public class clientHandler : MonoBehaviour
                         break;
                     case PacketType.PLAYER_RESULT:
                         PlayerResultData playerResultData = (PlayerResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerResultData));
-                        //eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        //EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
                     case PacketType.GAME_STATE:
                         GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
-                        switch ((eventType.EventTypes)gameStateData.gameState)
+                        switch ((EventType.EventTypes)gameStateData.gameState)
                         {
-                            case eventType.EventTypes.START_GAME:
+                            case EventType.EventTypes.START_GAME:
                                 SceneManager.LoadScene(3);
                                 break;
                         }
@@ -398,10 +399,10 @@ public class clientHandler : MonoBehaviour
 
     void SendPlayerData()
     {
-        if (client != null && players.ContainsKey(connectionIDOnServer) && players[connectionIDOnServer] != null)
+        if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null)
         {
             PlayerData playerData = new PlayerData();
-            GameObject player = players[connectionIDOnServer];
+            GameObject player = mPlayers[connectionIDOnServer].playerOBJ;
             playerData.pos = player.transform.position;
             playerData.speed = 12;
             playerData.type = (int)PacketType.PLAYER_DATA;
@@ -432,43 +433,51 @@ public class clientHandler : MonoBehaviour
     {
         if (playerData.playerID != connectionIDOnServer)
         {
-            GameObject playerOBJ;
-            if (!players.ContainsKey(playerData.playerID))
+            PlayersData player = new PlayersData();
+            if (!mPlayers.ContainsKey(playerData.playerID))
             {
-                playerOBJ = Instantiate(m_PlayerHologramPrefab);
-                players.Add(playerData.playerID, playerOBJ);
-                playerPoses.Add(playerData.playerID, new());
-                playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+                player.playerOBJ = Instantiate(m_PlayerHologramPrefab); ;
+                player.init();
+                player.playerInterpolationTracker = 0.0f;
+
+                mPlayers.Add(playerData.playerID, player);
             }
-            //else if (players[playerData.playerID] == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
-            //{
-            //    playerOBJ = Instantiate(m_PlayerHologramPrefab);
-            //    playerPoses.Add(playerData.playerID, new());
-            //    playerInterpolationTracker.Add(playerData.playerID, 0.0f);
-            //}
+            else if (mPlayers[playerData.playerID].playerOBJ == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
+            {
+                //playerOBJ = Instantiate(m_PlayerHologramPrefab);
+                //playerPoses.Add(playerData.playerID, new());
+                //playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+            }
 
-            playerPoses[playerData.playerID].Clear();
-            playerPoses[playerData.playerID].Add(players[playerData.playerID].transform.position);
-            playerPoses[playerData.playerID].Add(playerData.pos);
+            mPlayers[playerData.playerID].playerPoses.Clear();
+            Debug.Log(mPlayers[playerData.playerID].playerPoses);
+            mPlayers[playerData.playerID].playerPoses.Add(mPlayers[playerData.playerID].playerOBJ.transform.position);
+            mPlayers[playerData.playerID].playerPoses.Add(playerData.pos);
 
-            playerInterpolationTracker[playerData.playerID] = 0.0f;
+            PlayersData pData = mPlayers[playerData.playerID];
+            pData.playerInterpolationTracker = 0.0f;
+            mPlayers[playerData.playerID] = pData;
         }
     }
 
     private void handleInterpolatePlayerPoses()
     {
-        foreach (uint key in playerPoses.Keys)
+        var keys = mPlayers.Keys;
+        for (int i = 0; i < mPlayers.Count; i++)
         {
-            if (playerPoses[key].Count > 0)
+            uint id = keys.ElementAt(i);
+            if (mPlayers[id].playerPoses.Count > 0)
             {
-                GameObject playerOBJ = players[key];
-                playerOBJ.transform.position = Vector3.Lerp(playerPoses[key][0], playerPoses[key][1], playerInterpolationTracker[key] / PACKET_TARGET_SEND_TIME);
+                GameObject playerOBJ = mPlayers[id].playerOBJ;
+                playerOBJ.transform.position = Vector3.Lerp(mPlayers[id].playerPoses[0], mPlayers[id].playerPoses[1], mPlayers[id].playerInterpolationTracker / PACKET_TARGET_SEND_TIME);
 
-                playerInterpolationTracker[key] += Time.deltaTime;
+                PlayersData pData = mPlayers[id];
+                pData.playerInterpolationTracker += Time.deltaTime;
+                mPlayers[id] = pData;
 
-                if (playerInterpolationTracker[key] >= PACKET_TARGET_SEND_TIME)
+                if (mPlayers[id].playerInterpolationTracker >= PACKET_TARGET_SEND_TIME)
                 {
-                    playerPoses[key].Clear();
+                    mPlayers[id].playerPoses.Clear();
                 }
             }
         }
@@ -478,25 +487,33 @@ public class clientHandler : MonoBehaviour
     {
         mGameState = GameState.GAME_STARTED;
 
-        var keys = players.Keys;
-        for (int i = 0; i < players.Count; i++)
+        var keys = mPlayers.Keys;
+        for (int i = 0; i < mPlayers.Count; i++)
         {
             if (keys.ElementAt(i) != connectionIDOnServer)
             {
-                players[keys.ElementAt(i)] = Instantiate(m_PlayerHologramPrefab);
+                PlayersData pD = new();
+                pD.init();
+                pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
+                mPlayers[keys.ElementAt(i)] = pD;
             }
         }
 
-        players[connectionIDOnServer] = player;
+        PlayersData pData = new();
+        pData.init();
+        pData.playerOBJ = player;
+        mPlayers[connectionIDOnServer] = pData;
     }
 
     //Bad archatecture for now (this function should ONLY be called after AddClientPlayer). Look into refactoring.
     private void handleRegisterPlayer(RegisterPlayer playerData)
     {
         connectionIDOnServer = playerData.playerID;
-        players.Add(connectionIDOnServer, null);
-        playerPoses.Add(connectionIDOnServer, new());
-        playerInterpolationTracker.Add(connectionIDOnServer, 0.0f);
+
+        PlayersData pData = new();
+        pData.init();
+
+        mPlayers.Add(connectionIDOnServer, pData);
     }
 
     //private void handleMovePlayer()
