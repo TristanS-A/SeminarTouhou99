@@ -237,8 +237,7 @@ public class serverHandler : MonoBehaviour
 
         if (server != null)
         {
-            var keys = mPlayers.Keys;
-            for (int i = 0; i < mPlayers.Count; i++)
+            for (int i = 0; i < connectedClients.Count; i++)
             {
                 clientHandler.GameStateData gameState = new clientHandler.GameStateData();
                 gameState.type = (int)clientHandler.PacketType.GAME_STATE;
@@ -246,7 +245,7 @@ public class serverHandler : MonoBehaviour
 
                 Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStateData))];
                 GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
-                try                                                                                 ////CONVERT THIS INTO A FUNCTION MAYBE
+                try                                                                                 ////CONVERT THIS SENDING CODE INTO A FUNCTION MAYBE
                 {
                     Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
                 }
@@ -332,7 +331,7 @@ public class serverHandler : MonoBehaviour
                     mPacketSendTime += Time.deltaTime;
                     break;
                 case GameState.RESULTS_SCREEN:
-                    BroadcastResults();
+                    //BroadcastResults();
                     break;
             }
         }
