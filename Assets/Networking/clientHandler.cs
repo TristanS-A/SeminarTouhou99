@@ -24,7 +24,8 @@ public class clientHandler : MonoBehaviour
     private StatusCallback clientNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
 
-    Dictionary<uint, serverHandler.PlayersData> mPlayers = new();
+    Dictionary<uint, serverHandler.PlayerGameData> mPlayers = new();
+    Dictionary<uint, serverHandler.PlayersResultData> mPlayerResults = new();
 
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
@@ -89,13 +90,16 @@ public class clientHandler : MonoBehaviour
         public int playerCount;
     };
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct PlayerResultData
     {
         public int type;
         public uint playerID;
         public int time;
         public int points;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
+        public string name;
     };
 
     [StructLayout(LayoutKind.Sequential)]
@@ -433,7 +437,7 @@ public class clientHandler : MonoBehaviour
     {
         if (playerData.playerID != connectionIDOnServer)
         {
-            PlayersData player = new PlayersData();
+            PlayerGameData player = new PlayerGameData();
             if (!mPlayers.ContainsKey(playerData.playerID))
             {
                 player.playerOBJ = Instantiate(m_PlayerHologramPrefab); ;
@@ -454,7 +458,7 @@ public class clientHandler : MonoBehaviour
             mPlayers[playerData.playerID].playerPoses.Add(mPlayers[playerData.playerID].playerOBJ.transform.position);
             mPlayers[playerData.playerID].playerPoses.Add(playerData.pos);
 
-            PlayersData pData = mPlayers[playerData.playerID];
+            PlayerGameData pData = mPlayers[playerData.playerID];
             pData.playerInterpolationTracker = 0.0f;
             mPlayers[playerData.playerID] = pData;
         }
@@ -471,7 +475,7 @@ public class clientHandler : MonoBehaviour
                 GameObject playerOBJ = mPlayers[id].playerOBJ;
                 playerOBJ.transform.position = Vector3.Lerp(mPlayers[id].playerPoses[0], mPlayers[id].playerPoses[1], mPlayers[id].playerInterpolationTracker / PACKET_TARGET_SEND_TIME);
 
-                PlayersData pData = mPlayers[id];
+                PlayerGameData pData = mPlayers[id];
                 pData.playerInterpolationTracker += Time.deltaTime;
                 mPlayers[id] = pData;
 
@@ -492,14 +496,14 @@ public class clientHandler : MonoBehaviour
         {
             if (keys.ElementAt(i) != connectionIDOnServer)
             {
-                PlayersData pD = new();
+                PlayerGameData pD = new();
                 pD.init();
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
             }
         }
 
-        PlayersData pData = new();
+        PlayerGameData pData = new();
         pData.init();
         pData.playerOBJ = player;
         mPlayers[connectionIDOnServer] = pData;
@@ -510,7 +514,7 @@ public class clientHandler : MonoBehaviour
     {
         connectionIDOnServer = playerData.playerID;
 
-        PlayersData pData = new();
+        PlayerGameData pData = new();
         pData.init();
 
         mPlayers.Add(connectionIDOnServer, pData);

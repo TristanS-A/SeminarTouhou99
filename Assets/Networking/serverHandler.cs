@@ -16,11 +16,12 @@ using static EventType;
 
 public class serverHandler : MonoBehaviour
 {
-    public struct PlayersData
+    public struct PlayerGameData
     {
         public GameObject playerOBJ;
         public List<Vector3> playerPoses;
         public float playerInterpolationTracker;
+        //public string name;
 
         public void init()
         { 
@@ -29,11 +30,20 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Add a state for collecting result data and once it is all collected then send it maybe
+    public struct PlayersResultData    //Add to a dictionary of this when a player disconnects or dies/wins which sends an event with this data
+    {
+        public string name;
+        public int points;
+        public int time;
+    }
+
     [SerializeField] private Button testServerButton;
     [SerializeField] private GameObject m_PlayerPrefab;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
 
-    Dictionary<uint, PlayersData> mPlayers = new();
+    Dictionary<uint, PlayerGameData> mPlayers = new();
+    Dictionary<uint, PlayersResultData> mPlayerResults = new();
    
     private NetworkingSockets server;
     //private uint serverPlayerID = 0;
@@ -65,7 +75,8 @@ public class serverHandler : MonoBehaviour
         NONE,
         LOOKING_FOR_HOST,
         SEARCHING_FOR_PLAYERS,
-        GAME_STARTED
+        GAME_STARTED,
+        RESULTS_SCREEN
     }
 
     private void OnEnable()
@@ -171,7 +182,8 @@ public class serverHandler : MonoBehaviour
 
             case ConnectionState.ClosedByPeer:
             case ConnectionState.ProblemDetectedLocally:
-                handlePlayerLeaving(info.connection);
+                bool inGame = mGameState == GameState.GAME_STARTED;    //MAKE SURE TO SEND RESULT DATA FROM CLIENT BEFORE DETECTING
+                handlePlayerLeaving(info.connection, inGame);
                 Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
         }
@@ -186,7 +198,7 @@ public class serverHandler : MonoBehaviour
             var keys = mPlayers.Keys;
             for (int i = 0; i < mPlayers.Count; i++)
             {
-                PlayersData pD = new();
+                PlayerGameData pD = new();
                 pD.init();
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
@@ -208,7 +220,7 @@ public class serverHandler : MonoBehaviour
                 }
             }
 
-            PlayersData ownPlayer = new();
+            PlayerGameData ownPlayer = new();
             ownPlayer.playerOBJ = player;
             ownPlayer.init();
 
@@ -283,6 +295,9 @@ public class serverHandler : MonoBehaviour
                     }
                     mPacketSendTime += Time.deltaTime;
                     break;
+                case GameState.RESULTS_SCREEN:
+                    BroadcastResults();
+                    break;
             }
         }
     }
@@ -332,7 +347,7 @@ public class serverHandler : MonoBehaviour
             {
                 foreach (uint playerID in mPlayers.Keys)
                 {
-                    PlayersData player = mPlayers[playerID];
+                    PlayerGameData player = mPlayers[playerID];
                     if (playerID != connectedClients[i] && player.playerOBJ != null)
                     {
                         clientHandler.PlayerData playerData = new clientHandler.PlayerData();
@@ -403,8 +418,7 @@ public class serverHandler : MonoBehaviour
                 {
                     clientHandler.PlayerName playerName = new clientHandler.PlayerName();
                     playerName.type = (int)clientHandler.PacketType.PLAYER_NAME;
-                    string str = "HIIIIIIIIIII THere";
-                    playerName.name = str;
+                    playerName.name = "mPlayers[playerID].name";
 
                     //Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerName))];
                     // GCHandle pinStructure = GCHandle.Alloc(playerName, GCHandleType.Pinned);
@@ -434,17 +448,17 @@ public class serverHandler : MonoBehaviour
         {
             for (int i = 0; i < connectedClients.Count; i++)
             {
-                foreach (uint playerID in mPlayers.Keys)
+                foreach (uint playerID in mPlayerResults.Keys)
                 {
-                    PlayersData player = mPlayers[playerID];
-                    if (playerID != connectedClients[i] && player.playerOBJ != null)
+                    PlayersResultData player = mPlayerResults[playerID];
+                    if (playerID != connectedClients[i])
                     {
                         clientHandler.PlayerResultData playerResultData = new clientHandler.PlayerResultData();
                         playerResultData.type = (int)clientHandler.PacketType.PLAYER_RESULT;
                         playerResultData.playerID = playerID;
                         playerResultData.time = 0;
                         playerResultData.points = 0;
-
+                        playerResultData.name = player.name;
 
                         Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerResultData))];
                         GCHandle pinStructure = GCHandle.Alloc(playerResultData, GCHandleType.Pinned);
@@ -482,7 +496,7 @@ public class serverHandler : MonoBehaviour
         {
             connectedClients.Add(playerID);
 
-            PlayersData player = new PlayersData();
+            PlayerGameData player = new PlayerGameData();
             player.init();
 
             mPlayers.Add(playerID, player);
@@ -509,13 +523,16 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    private void handlePlayerLeaving(uint playerID)
+    private void handlePlayerLeaving(uint playerID, bool inGame)
     {
         if (mPlayers.ContainsKey(playerID))
         {
             connectedClients.Remove(playerID);
             Destroy(mPlayers[playerID].playerOBJ);
-            mPlayers.Remove(playerID);
+            if (!inGame)
+            {
+                mPlayers.Remove(playerID);
+            }
             server.CloseConnection(playerID);
 
             if (mGameState == GameState.SEARCHING_FOR_PLAYERS)
@@ -527,7 +544,7 @@ public class serverHandler : MonoBehaviour
 
     private void handlePlayerData(clientHandler.PlayerData playerData)
     {
-        PlayersData player = new PlayersData();
+        PlayerGameData player = new PlayerGameData();
         if (!mPlayers.ContainsKey(playerData.playerID))
         {
             player.playerOBJ = Instantiate(m_PlayerHologramPrefab); ;
@@ -547,7 +564,7 @@ public class serverHandler : MonoBehaviour
         mPlayers[playerData.playerID].playerPoses.Add(mPlayers[playerData.playerID].playerOBJ.transform.position);
         mPlayers[playerData.playerID].playerPoses.Add(playerData.pos);
 
-        PlayersData pData = mPlayers[playerData.playerID];
+        PlayerGameData pData = mPlayers[playerData.playerID];
         pData.playerInterpolationTracker = 0.0f;
         mPlayers[playerData.playerID] = pData;
     }
@@ -563,7 +580,7 @@ public class serverHandler : MonoBehaviour
                 GameObject playerOBJ = mPlayers[id].playerOBJ;
                 playerOBJ.transform.position = Vector3.Lerp(mPlayers[id].playerPoses[0], mPlayers[id].playerPoses[1], mPlayers[id].playerInterpolationTracker / PACKET_TARGET_SEND_TIME);
 
-                PlayersData pData = mPlayers[id];
+                PlayerGameData pData = mPlayers[id];
                 pData.playerInterpolationTracker += Time.deltaTime;
                 mPlayers[id] = pData;
 
