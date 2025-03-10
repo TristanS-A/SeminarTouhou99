@@ -18,7 +18,8 @@ public class ResultsDisplay : MonoBehaviour
         public GameObject resultOBJ;
     }
 
-    private List<ResultUI> mSortedResults;
+    private List<ResultUI> mSortedResults = new();
+    private HashSet<uint> mStoredIDs = new();
 
     private void OnEnable()
     {
@@ -32,24 +33,29 @@ public class ResultsDisplay : MonoBehaviour
 
     private void InsertResult(clientHandler.PlayerSendResultData result)
     {
-        ResultUI newResult = new();
-        newResult.resultData = result;
-        newResult.resultOBJ = Instantiate(m_ResultContentPrefab, transform);
-        newResult.resultOBJ.GetComponentInChildren<TextMeshProUGUI>().text = result.name;
+        if (!mStoredIDs.Contains(result.playerID))
+        { 
+            ResultUI newResult = new();
+            newResult.resultData = result;
+            newResult.resultOBJ = Instantiate(m_ResultContentPrefab, transform);
+            newResult.resultOBJ.GetComponentInChildren<TextMeshProUGUI>().text = result.name;
 
-        for (int i = 0; i < mSortedResults.Count; i++)
-        {
-            if (GetIfNewScoreIsHigher(result, mSortedResults[i].resultData))
+            mStoredIDs.Add(result.playerID);
+
+            for (int i = 0; i < mSortedResults.Count; i++)
             {
-                mSortedResults.Insert(i, newResult);
-                newResult.resultOBJ.transform.SetSiblingIndex(i);
-                mSortedResults[i].resultOBJ.transform.SetSiblingIndex(i + 1);
-                return; 
+                if (GetIfNewScoreIsHigher(result, mSortedResults[i].resultData))
+                {
+                    mSortedResults.Insert(i, newResult);
+                    newResult.resultOBJ.transform.SetSiblingIndex(i);
+                    mSortedResults[i].resultOBJ.transform.SetSiblingIndex(i + 1);
+                    return;
+                }
             }
-        }
 
-        newResult.resultOBJ.transform.SetSiblingIndex(-1);
-        mSortedResults.Add(newResult);
+            newResult.resultOBJ.transform.SetSiblingIndex(-1);
+            mSortedResults.Add(newResult);
+        }
     }
 
     private bool GetIfNewScoreIsHigher(clientHandler.PlayerSendResultData newResult, clientHandler.PlayerSendResultData storedResult)
