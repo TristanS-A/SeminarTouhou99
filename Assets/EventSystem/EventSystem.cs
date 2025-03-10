@@ -9,6 +9,7 @@ public static class EventSystem
     public static event Action<int> numberOfJoinedPlayersChanged;
     public static event Action<int, int> playerResultReveived;
     public static event Action onPlayerDeath;
+    public static event Action<clientHandler.PlayerSendResultData> onReceiveResult;
 
     public static void fireEvent(EventType type)
     {
@@ -30,8 +31,12 @@ public static class EventSystem
                 numberOfJoinedPlayersChanged.Invoke(newPlayerCountEvent.getNewPlayerCount());
                 break;
             case EventType.EventTypes.PLAYER_RESULT_RECEIVED:
-                PlayerResultEvent PlayerSendResultData = (PlayerResultEvent)(type);
-                playerResultReveived.Invoke(PlayerSendResultData.getTime(), PlayerSendResultData.getPoints());
+                PlayerResultEvent playerSendResultData = (PlayerResultEvent)(type);
+                playerResultReveived.Invoke(playerSendResultData.getTime(), playerSendResultData.getPoints());
+                break;
+            case EventType.EventTypes.RESULT_SENT:
+                ReceiveResultEvent result = (ReceiveResultEvent)(type);
+                onReceiveResult.Invoke(result.getResult());
                 break;
         }
     }

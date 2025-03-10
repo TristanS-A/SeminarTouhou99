@@ -49,8 +49,8 @@ public class clientHandler : MonoBehaviour
         REGISTER_PLAYER,
         PLAYER_COUNT,
         GAME_STATE,
-        PLAYER_NAME,
-        PLAYER_RESULT
+        STORE_PLAYER_RESULTS,
+        SEND_RESULT
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -339,10 +339,6 @@ public class clientHandler : MonoBehaviour
 
                 ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
 
-                //Debug.Log((PacketType)packetType.type);
-                //string result = Encoding.ASCII.GetString(messageDataBuffer);
-                //Debug.Log("HERE: " + result);
-
                 IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
                 Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
@@ -362,9 +358,9 @@ public class clientHandler : MonoBehaviour
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
                         EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
-                    case PacketType.PLAYER_RESULT:
-                        PlayerSendResultData PlayerSendResultData = (PlayerSendResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerSendResultData));
-                        //EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                    case PacketType.SEND_RESULT:
+                        PlayerSendResultData playerSendResultData = (PlayerSendResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerSendResultData));
+                        EventSystem.fireEvent(new ReceiveResultEvent(playerSendResultData));
                         break;
                     case PacketType.GAME_STATE:
                         GameStateData gameStateData = (GameStateData)Marshal.PtrToStructure(ptPoit, typeof(GameStateData));
@@ -514,7 +510,7 @@ public class clientHandler : MonoBehaviour
     private void OnPlayerDie()
     {
         PlayerSendResultData playerResults = new PlayerSendResultData();
-        playerResults.type = (int)clientHandler.PacketType.PLAYER_RESULT;
+        playerResults.type = (int)clientHandler.PacketType.STORE_PLAYER_RESULTS;
         playerResults.playerID = connectionIDOnServer;
         playerResults.name = PlayerInfo.PlayerName;
         playerResults.time = PlayerInfo.PlayerTime;

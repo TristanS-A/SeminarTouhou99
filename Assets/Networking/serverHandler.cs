@@ -37,6 +37,7 @@ public class serverHandler : MonoBehaviour
         public string name;
         public int points;
         public int time;
+        public int placement;
     }
 
     [SerializeField] private Button testServerButton;
@@ -308,7 +309,7 @@ public class serverHandler : MonoBehaviour
                                     PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
                                     handlePlayerData(packetData);
                                     break;
-                                case PacketType.PLAYER_RESULT:
+                                case PacketType.STORE_PLAYER_RESULTS:
                                     HandleReceivePlayerResult();
                                     break;
                             }
@@ -325,13 +326,12 @@ public class serverHandler : MonoBehaviour
                     {
                         SendGameJoinMessage();
                         BroadcastPlayerCount();
-                        BroadcastPlayerName();
                         mPacketSendTime = 0.0f;
                     }
                     mPacketSendTime += Time.deltaTime;
                     break;
                 case GameState.RESULTS_SCREEN:
-                    //BroadcastResults();
+                    BroadcastResults();
                     break;
             }
         }
@@ -443,40 +443,6 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    private void BroadcastPlayerName()
-    {
-        if (server != null)
-        {
-            for (int i = 0; i < connectedClients.Count; i++)
-            {
-                foreach (uint playerID in mPlayers.Keys)
-                {
-                    clientHandler.PlayerName playerName = new clientHandler.PlayerName();
-                    playerName.type = (int)clientHandler.PacketType.PLAYER_NAME;
-                    playerName.name = "mPlayers[playerID].name";
-
-                    //Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerName))];
-                    // GCHandle pinStructure = GCHandle.Alloc(playerName, GCHandleType.Pinned);
-
-                    IntPtr ptr = IntPtr.Zero;
-                    byte[] arr = new byte[Marshal.SizeOf(typeof(clientHandler.PlayerName))];
-
-                    try
-                    {
-                        ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(clientHandler.PlayerName)));
-                        Marshal.StructureToPtr(playerName, ptr, true);
-                        Marshal.Copy(ptr, arr, 0, Marshal.SizeOf(typeof(clientHandler.PlayerName)));
-                    }
-                    finally
-                    {
-                        server.SendMessageToConnection(connectedClients[i], arr);
-                        Marshal.FreeHGlobal(ptr);
-                    }
-                }
-            }
-        }
-    }
-
     private void BroadcastResults()
     {
         if (server != null)
@@ -486,32 +452,30 @@ public class serverHandler : MonoBehaviour
                 foreach (uint playerID in mPlayerResults.Keys)
                 {
                     PlayerStoredResultData player = mPlayerResults[playerID];
-                    if (playerID != connectedClients[i])
+
+                    clientHandler.PlayerSendResultData playerSendResultData = new clientHandler.PlayerSendResultData();
+                    playerSendResultData.type = (int)clientHandler.PacketType.SEND_RESULT;
+                    playerSendResultData.playerID = playerID;
+                    playerSendResultData.time = 0;
+                    playerSendResultData.points = 0;
+                    playerSendResultData.name = player.name;
+
+                    IntPtr ptr = IntPtr.Zero;
+                    byte[] bytes = new byte[Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData))];
+
+                    try
                     {
-                        clientHandler.PlayerSendResultData PlayerSendResultData = new clientHandler.PlayerSendResultData();
-                        PlayerSendResultData.type = (int)clientHandler.PacketType.PLAYER_RESULT;
-                        PlayerSendResultData.playerID = playerID;
-                        PlayerSendResultData.time = 0;
-                        PlayerSendResultData.points = 0;
-                        PlayerSendResultData.name = player.name;
-
-                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData))];
-                        GCHandle pinStructure = GCHandle.Alloc(PlayerSendResultData, GCHandleType.Pinned);
-                        try
-                        {
-                            Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                        }
-                        finally
-                        {
-                            server.SendMessageToConnection(connectedClients[i], bytes);
-                            pinStructure.Free();
-                        }
-
-                        //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
-                        //server.SendMessageToConnection(connectedClients[i], bytes);
-
-                        //messages.Add(message);
+                        ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData)));
+                        Marshal.StructureToPtr(playerSendResultData, ptr, true);
+                        Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData)));
                     }
+                    finally
+                    {
+                        server.SendMessageToConnection(connectedClients[i], bytes);
+                        Marshal.FreeHGlobal(ptr);
+                    }
+
+                    EventSystem.fireEvent(new ReceiveResultEvent(playerSendResultData));
                 }
             }
         }
@@ -658,18 +622,6 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    //This function will be called when a player dies/finished (and also disconnects probobly)
-    private bool CheckIfGameFinished()
-    {
-        //Game will finish when all results are in (Add safety exception in case not but level is done maybe)
-        if (mPlayers.Count == mPlayerResults.Count)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     private void OnPlayerDie()
     {
         PlayerStoredResultData playerStoreResult = new()
@@ -686,5 +638,17 @@ public class serverHandler : MonoBehaviour
         {
             HandleGameFinish();
         }
+    }
+
+    //This function will be called when a player dies/finished (and also disconnects probobly)
+    private bool CheckIfGameFinished()
+    {
+        //Game will finish when all results are in (Add safety exception in case not but level is done maybe)
+        if (mPlayers.Count == mPlayerResults.Count)
+        {
+            return true;
+        }
+
+        return false;
     }
 }
