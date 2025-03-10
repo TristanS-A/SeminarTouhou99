@@ -512,6 +512,7 @@ public class clientHandler : MonoBehaviour
     {
         PlayerSendResultData playerResults = new PlayerSendResultData();
         playerResults.type = (int)clientHandler.PacketType.PLAYER_RESULT;
+        playerResults.playerID = connectionIDOnServer;
         playerResults.name = PlayerInfo.PlayerName;
         playerResults.time = PlayerInfo.PlayerTime;
         playerResults.points = PlayerInfo.PlayerPoints;

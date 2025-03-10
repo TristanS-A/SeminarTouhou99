@@ -7,6 +7,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using Unity.Burst.Intrinsics;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -82,11 +83,13 @@ public class serverHandler : MonoBehaviour
     private void OnEnable()
     {
         EventSystem.gameStarted += HandleGameStart;
+        EventSystem.onPlayerDeath += OnPlayerDie;
     }
 
     private void OnDisable()
     {
         EventSystem.gameStarted -= HandleGameStart;
+        EventSystem.onPlayerDeath -= OnPlayerDie;
     }
 
     // Start is called before the first frame update
@@ -641,7 +644,7 @@ public class serverHandler : MonoBehaviour
             PlayerStoredResultData playerStoreResult = new() { name = playerReceivedResult.name, 
                                                                points = playerReceivedResult.points, 
                                                                time = playerReceivedResult.time };
-
+            Debug.Log("REceived result from : " + playerReceivedResult.playerID);
             mPlayerResults.Add(playerReceivedResult.playerID, playerStoreResult);
 
             //Check if game is finished (all players are done playing)
@@ -668,27 +671,21 @@ public class serverHandler : MonoBehaviour
         return false;
     }
 
-    //private void handleMovePlayer()
-    //{
-    //    if (players.ContainsKey(serverPlayerID))
-    //    {
-    //        Transform serverPlayerTransform = players[serverPlayerID].transform;
-    //        if (Input.GetKey(KeyCode.W))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
-    //        }
-    //        if (Input.GetKey(KeyCode.D))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
-    //        }
-    //        if (Input.GetKey(KeyCode.S))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
-    //        }
-    //        if (Input.GetKey(KeyCode.A))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
-    //        }
-    //    }
-    //}
+    private void OnPlayerDie()
+    {
+        PlayerStoredResultData playerStoreResult = new()
+        {
+            name = PlayerInfo.PlayerName,
+            points = PlayerInfo.PlayerPoints,
+            time = PlayerInfo.PlayerTime
+        };
+
+        mPlayerResults.Add(0, playerStoreResult);
+
+        //Check if game is finished (all players are done playing)
+        if (CheckIfGameFinished())
+        {
+            HandleGameFinish();
+        }
+    }
 }
