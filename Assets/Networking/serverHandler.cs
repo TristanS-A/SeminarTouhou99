@@ -31,7 +31,7 @@ public class serverHandler : MonoBehaviour
     }
 
     //Add a state for collecting result data and once it is all collected then send it maybe
-    public struct PlayersResultData    //Add to a dictionary of this when a player disconnects or dies/wins which sends an event with this data
+    public struct PlayerStoredResultData    //Add to a dictionary of this when a player disconnects or dies/wins which sends an event with this data
     {
         public string name;
         public int points;
@@ -43,7 +43,7 @@ public class serverHandler : MonoBehaviour
     [SerializeField] private GameObject m_PlayerHologramPrefab;
 
     Dictionary<uint, PlayerGameData> mPlayers = new();
-    Dictionary<uint, PlayersResultData> mPlayerResults = new();
+    Dictionary<uint, PlayerStoredResultData> mPlayerResults = new();
    
     private NetworkingSockets server;
     //private uint serverPlayerID = 0;
@@ -203,11 +203,11 @@ public class serverHandler : MonoBehaviour
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
 
-                clientHandler.GameStartData gameState = new clientHandler.GameStartData();
+                clientHandler.GameStateData gameState = new clientHandler.GameStateData();
                 gameState.type = (int)clientHandler.PacketType.GAME_STATE;
                 gameState.gameState = (int)EventType.EventTypes.START_GAME;
 
-                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStartData))];
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStateData))];
                 GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
                 try
                 {
@@ -226,6 +226,36 @@ public class serverHandler : MonoBehaviour
 
             mPlayers.Add(0, ownPlayer);
         }
+    }
+
+    private void HandleGameFinish()
+    {
+        mGameState = GameState.RESULTS_SCREEN;
+
+        if (server != null)
+        {
+            var keys = mPlayers.Keys;
+            for (int i = 0; i < mPlayers.Count; i++)
+            {
+                clientHandler.GameStateData gameState = new clientHandler.GameStateData();
+                gameState.type = (int)clientHandler.PacketType.GAME_STATE;
+                gameState.gameState = (int)EventType.EventTypes.GAME_FINISHED;
+
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStateData))];
+                GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
+                try                                                                                 ////CONVERT THIS INTO A FUNCTION MAYBE
+                {
+                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                }
+                finally
+                {
+                    server.SendMessageToConnection(connectedClients[i], bytes);
+                    pinStructure.Free();
+                }
+            }
+        }
+
+        SceneManager.LoadScene(4);
     }
 
     // Update is called once per frame
@@ -275,6 +305,9 @@ public class serverHandler : MonoBehaviour
                                 case PacketType.PLAYER_DATA:
                                     PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
                                     handlePlayerData(packetData);
+                                    break;
+                                case PacketType.PLAYER_RESULT:
+                                    HandleReceivePlayerResult();
                                     break;
                             }
 
@@ -450,18 +483,18 @@ public class serverHandler : MonoBehaviour
             {
                 foreach (uint playerID in mPlayerResults.Keys)
                 {
-                    PlayersResultData player = mPlayerResults[playerID];
+                    PlayerStoredResultData player = mPlayerResults[playerID];
                     if (playerID != connectedClients[i])
                     {
-                        clientHandler.PlayerResultData playerResultData = new clientHandler.PlayerResultData();
-                        playerResultData.type = (int)clientHandler.PacketType.PLAYER_RESULT;
-                        playerResultData.playerID = playerID;
-                        playerResultData.time = 0;
-                        playerResultData.points = 0;
-                        playerResultData.name = player.name;
+                        clientHandler.PlayerSendResultData PlayerSendResultData = new clientHandler.PlayerSendResultData();
+                        PlayerSendResultData.type = (int)clientHandler.PacketType.PLAYER_RESULT;
+                        PlayerSendResultData.playerID = playerID;
+                        PlayerSendResultData.time = 0;
+                        PlayerSendResultData.points = 0;
+                        PlayerSendResultData.name = player.name;
 
-                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerResultData))];
-                        GCHandle pinStructure = GCHandle.Alloc(playerResultData, GCHandleType.Pinned);
+                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData))];
+                        GCHandle pinStructure = GCHandle.Alloc(PlayerSendResultData, GCHandleType.Pinned);
                         try
                         {
                             Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
@@ -590,6 +623,49 @@ public class serverHandler : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void HandleReceivePlayerResult()
+    {
+        clientHandler.PlayerSendResultData playerReceivedResult = new clientHandler.PlayerSendResultData();
+        int size = Marshal.SizeOf(playerReceivedResult);
+        IntPtr ptr = IntPtr.Zero;
+        try
+        {
+            ptr = Marshal.AllocHGlobal(size);
+
+            Marshal.Copy(messageDataBuffer, 0, ptr, size);
+
+            playerReceivedResult = (clientHandler.PlayerSendResultData)Marshal.PtrToStructure(ptr, playerReceivedResult.GetType());
+
+            PlayerStoredResultData playerStoreResult = new() { name = playerReceivedResult.name, 
+                                                               points = playerReceivedResult.points, 
+                                                               time = playerReceivedResult.time };
+
+            mPlayerResults.Add(playerReceivedResult.playerID, playerStoreResult);
+
+            //Check if game is finished (all players are done playing)
+            if (CheckIfGameFinished())
+            {
+                HandleGameFinish();
+            }
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(ptr);
+        }
+    }
+
+    //This function will be called when a player dies/finished (and also disconnects probobly)
+    private bool CheckIfGameFinished()
+    {
+        //Game will finish when all results are in (Add safety exception in case not but level is done maybe)
+        if (mPlayers.Count == mPlayerResults.Count)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     //private void handleMovePlayer()

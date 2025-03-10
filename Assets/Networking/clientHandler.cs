@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.XR;
 using Valve.Sockets;
 using static clientHandler;
 using static serverHandler;
@@ -25,7 +26,7 @@ public class clientHandler : MonoBehaviour
     NetworkingUtils utils = new NetworkingUtils();
 
     Dictionary<uint, serverHandler.PlayerGameData> mPlayers = new();
-    Dictionary<uint, serverHandler.PlayersResultData> mPlayerResults = new();
+    Dictionary<uint, serverHandler.PlayerStoredResultData> mPlayerResults = new();
 
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
@@ -91,7 +92,7 @@ public class clientHandler : MonoBehaviour
     };
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct PlayerResultData
+    public struct PlayerSendResultData
     {
         public int type;
         public uint playerID;
@@ -103,7 +104,7 @@ public class clientHandler : MonoBehaviour
     };
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct GameStartData
+    public struct GameStateData
     {
         public int type;
         public int gameState;
@@ -113,12 +114,14 @@ public class clientHandler : MonoBehaviour
     {
         EventSystem.gameStarted += HandleGameStart;
         EventSystem.ipReceived += AddIP;
+        EventSystem.onPlayerDeath += OnPlayerDie;
     }
 
     private void OnDisable()
     {
         EventSystem.gameStarted -= HandleGameStart;
         EventSystem.ipReceived -= AddIP;
+        EventSystem.onPlayerDeath -= OnPlayerDie;
     }
 
     private void OnApplicationQuit()
@@ -357,34 +360,19 @@ public class clientHandler : MonoBehaviour
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
                         EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
-                    case PacketType.PLAYER_NAME:
-                        PlayerName playerName = new PlayerName();
-                        int size = Marshal.SizeOf(playerName);
-                        IntPtr ptr = IntPtr.Zero;
-                        try
-                        {
-                            ptr = Marshal.AllocHGlobal(size);
-
-                            Marshal.Copy(messageDataBuffer, 0, ptr, size);
-
-                            playerName = (PlayerName)Marshal.PtrToStructure(ptr, playerName.GetType());
-                        }
-                        finally
-                        {
-                            Debug.Log("NAME: " + playerName.name);
-                            Marshal.FreeHGlobal(ptr);
-                        }
-                        break;
                     case PacketType.PLAYER_RESULT:
-                        PlayerResultData playerResultData = (PlayerResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerResultData));
+                        PlayerSendResultData PlayerSendResultData = (PlayerSendResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerSendResultData));
                         //EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
                     case PacketType.GAME_STATE:
-                        GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));
+                        GameStateData gameStateData = (GameStateData)Marshal.PtrToStructure(ptPoit, typeof(GameStateData));
                         switch ((EventType.EventTypes)gameStateData.gameState)
                         {
                             case EventType.EventTypes.START_GAME:
                                 SceneManager.LoadScene(3);
+                                break;
+                            case EventType.EventTypes.GAME_FINISHED:
+                                SceneManager.LoadScene(4);
                                 break;
                         }
                         break;
@@ -518,6 +506,30 @@ public class clientHandler : MonoBehaviour
         pData.init();
 
         mPlayers.Add(connectionIDOnServer, pData);
+    }
+
+    private void OnPlayerDie()
+    {
+        PlayerSendResultData playerResults = new PlayerSendResultData();
+        playerResults.type = (int)clientHandler.PacketType.PLAYER_RESULT;
+        playerResults.name = PlayerInfo.PlayerName;
+        playerResults.time = PlayerInfo.PlayerTime;
+        playerResults.points = PlayerInfo.PlayerPoints;
+
+        IntPtr ptr = IntPtr.Zero;
+        byte[] bytes = new byte[Marshal.SizeOf(typeof(PlayerSendResultData))];
+
+        try
+        {
+            ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PlayerSendResultData)));
+            Marshal.StructureToPtr(playerResults, ptr, true);
+            Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(PlayerSendResultData)));
+        }
+        finally
+        {
+            client.SendMessageToConnection(serverConnection, bytes);
+            Marshal.FreeHGlobal(ptr);
+        }
     }
 
     //private void handleMovePlayer()

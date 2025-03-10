@@ -7,7 +7,6 @@ public class PlayerHealth : MonoBehaviour {
     public float invinciblityTime = 1.5f;
 
     public event Action<int> OnHealthUpdate;
-    public event Action OnPlayerDeath;
     public bool isDead { get; private set; }
 
     private int currentHealth;
@@ -58,7 +57,7 @@ public class PlayerHealth : MonoBehaviour {
 
     private void KillPlayer() {
         isDead = true;
-        OnPlayerDeath?.Invoke();
+        EventSystem.fireEvent(new EventType(EventType.EventTypes.PLAYER_DIED));
         Debug.Log("Player died");
         Destroy(this.gameObject);
     }

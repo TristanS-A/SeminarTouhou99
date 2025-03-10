@@ -8,12 +8,13 @@ public static class EventSystem
     public static event Action<string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
     public static event Action<int, int> playerResultReveived;
+    public static event Action onPlayerDeath;
 
     public static void fireEvent(EventType type)
     {
         switch (type.getEventType())
         {
-            case EventType.EventTypes.GAME_STARTED:
+            case EventType.EventTypes.START_GAME:
                 GameStartEvent player = (GameStartEvent)(type);
                 gameStarted.Invoke(player.getPlayer());    //THIS BREAKS WHEN STARTING A SCENE AND TRIGERING THE EVENT ON START FOR SOME REASON <-- sub scripting timing(most likly calling a event befor it is subscriped)
                 break;
@@ -21,13 +22,16 @@ public static class EventSystem
                 ReceiveIPEvent ip = (ReceiveIPEvent)(type);
                 ipReceived.Invoke(ip.getIP());   
                 break;
+            case EventType.EventTypes.PLAYER_DIED:
+                onPlayerDeath.Invoke();
+                break;
             case EventType.EventTypes.NUMBER_OF_PLAYERS_JOINED_CHANGED:
                 PlayerCountChangedEvent newPlayerCountEvent = (PlayerCountChangedEvent)(type);
                 numberOfJoinedPlayersChanged.Invoke(newPlayerCountEvent.getNewPlayerCount());
                 break;
             case EventType.EventTypes.PLAYER_RESULT_RECEIVED:
-                PlayerResultEvent playerResultData = (PlayerResultEvent)(type);
-                playerResultReveived.Invoke(playerResultData.getTime(), playerResultData.getPoints());
+                PlayerResultEvent PlayerSendResultData = (PlayerResultEvent)(type);
+                playerResultReveived.Invoke(PlayerSendResultData.getTime(), PlayerSendResultData.getPoints());
                 break;
         }
     }

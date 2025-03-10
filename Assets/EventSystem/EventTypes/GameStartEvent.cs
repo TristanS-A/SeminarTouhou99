@@ -6,7 +6,7 @@ public class GameStartEvent : EventType
 {
     private GameObject mPlayer;
 
-    public GameStartEvent(GameObject player) : base(EventType.EventTypes.GAME_STARTED)
+    public GameStartEvent(GameObject player) : base(EventType.EventTypes.START_GAME)
     { 
         mPlayer = player;
     }

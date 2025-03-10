@@ -11,8 +11,9 @@ public class EventType
         RECEIVED_IP,
         NUMBER_OF_PLAYERS_JOINED_CHANGED,
         START_GAME,
-        GAME_STARTED,
-        PLAYER_RESULT_RECEIVED
+        PLAYER_RESULT_RECEIVED,
+        PLAYER_DIED,
+        GAME_FINISHED
     }
 
     private EventTypes _type;
