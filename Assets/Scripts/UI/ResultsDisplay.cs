@@ -37,7 +37,7 @@ public class ResultsDisplay : MonoBehaviour
         { 
             ResultUI newResult = new();
             newResult.resultData = result;
-            newResult.resultOBJ = Instantiate(m_ResultContentPrefab, transform);
+            newResult.resultOBJ = Instantiate(m_ResultContentPrefab, mResultsContent.transform);
             newResult.resultOBJ.GetComponentInChildren<TextMeshProUGUI>().text = result.name;
 
             mStoredIDs.Add(result.playerID);
