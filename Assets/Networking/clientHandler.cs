@@ -313,6 +313,8 @@ public class clientHandler : MonoBehaviour
                 case serverHandler.GameState.SEARCHING_FOR_PLAYERS:
                     HandleNetMessages();
                     break;
+                case serverHandler.GameState.RESULTS_SCREEN:
+                    break;
             }
         }
     }
@@ -372,6 +374,7 @@ public class clientHandler : MonoBehaviour
                                 SceneManager.LoadScene(3);
                                 break;
                             case EventType.EventTypes.GAME_FINISHED:
+                                mGameState = GameState.RESULTS_SCREEN;
                                 SceneManager.LoadScene(4);
                                 break;
                         }
