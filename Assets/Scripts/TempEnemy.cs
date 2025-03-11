@@ -70,6 +70,7 @@ public class TempEnemy : MonoBehaviour {
 
     //I think this naming is wrong?
     private void Kill() {
+        EventSystem.fireEvent(new EventType(EventType.EventTypes.PLAYER_DIED));
         Debug.Log("Killed");
         isDead = true;
         sequencer.ClearAttackList();
