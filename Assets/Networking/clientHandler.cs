@@ -96,7 +96,7 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
-        public int time;
+        public float time;
         public int points;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
@@ -370,8 +370,8 @@ public class clientHandler : MonoBehaviour
                                 SceneManager.LoadScene(3);
                                 break;
                             case EventType.EventTypes.GAME_FINISHED:
-                                mGameState = GameState.RESULTS_SCREEN;
                                 SceneManager.LoadScene(4);
+                                mGameState = GameState.RESULTS_SCREEN;
                                 break;
                         }
                         break;
@@ -513,7 +513,7 @@ public class clientHandler : MonoBehaviour
         playerResults.type = (int)clientHandler.PacketType.STORE_PLAYER_RESULTS;
         playerResults.playerID = connectionIDOnServer;
         playerResults.name = PlayerInfo.PlayerName;
-        playerResults.time = PlayerInfo.PlayerTime;
+        playerResults.time = Time.time - PlayerInfo.PlayerTime;
         playerResults.points = PlayerInfo.PlayerPoints;
 
         IntPtr ptr = IntPtr.Zero;

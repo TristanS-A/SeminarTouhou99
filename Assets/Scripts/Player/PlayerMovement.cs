@@ -30,6 +30,8 @@ public class PlayerMovement : MonoBehaviour {
 
         //EventSystem.fireEvent(new EventType(EventSystem.))
         EventSystem.fireEvent(new GameStartEvent(gameObject));
+
+        PlayerInfo.PlayerTime = Time.time;
     }
 
     void Update() {

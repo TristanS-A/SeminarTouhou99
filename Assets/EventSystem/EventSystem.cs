@@ -35,8 +35,14 @@ public static class EventSystem
                 playerResultReveived.Invoke(playerSendResultData.getTime(), playerSendResultData.getPoints());
                 break;
             case EventType.EventTypes.RESULT_SENT:
-                ReceiveResultEvent result = (ReceiveResultEvent)(type);
-                onReceiveResult.Invoke(result.getResult());
+                try //Try is in case the scene with the subscribed functions is not loaded yet
+                {
+                    ReceiveResultEvent result = (ReceiveResultEvent)(type);
+                    onReceiveResult.Invoke(result.getResult());
+                }
+                catch (Exception e)
+                {
+                }
                 break;
         }
     }

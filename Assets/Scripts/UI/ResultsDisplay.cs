@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -38,7 +39,11 @@ public class ResultsDisplay : MonoBehaviour
             ResultUI newResult = new();
             newResult.resultData = result;
             newResult.resultOBJ = Instantiate(m_ResultContentPrefab, mResultsContent.transform);
-            newResult.resultOBJ.GetComponentInChildren<TextMeshProUGUI>().text = result.name;
+            TextMeshProUGUI[] resultTexts = newResult.resultOBJ.GetComponentsInChildren<TextMeshProUGUI>();
+
+            resultTexts[0].text = result.name;
+            resultTexts[1].text = result.time.ToString("0.00");
+            resultTexts[2].text = result.points.ToString();
 
             mStoredIDs.Add(result.playerID);
 
@@ -46,20 +51,33 @@ public class ResultsDisplay : MonoBehaviour
             {
                 if (GetIfNewScoreIsHigher(result, mSortedResults[i].resultData))
                 {
-                    mSortedResults.Insert(i, newResult);
-                    newResult.resultOBJ.transform.SetSiblingIndex(i);
                     mSortedResults[i].resultOBJ.transform.SetSiblingIndex(i + 1);
+                    newResult.resultOBJ.transform.SetSiblingIndex(i);
+                    mSortedResults.Insert(i, newResult);
+                    UpdateTop3();
                     return;
                 }
             }
 
-            newResult.resultOBJ.transform.SetSiblingIndex(-1);
-            mSortedResults.Add(newResult);
+            newResult.resultOBJ.transform.SetSiblingIndex(mResultsContent.transform.childCount);
+            mSortedResults.Insert(0, newResult);
+            UpdateTop3();
         }
     }
 
     private bool GetIfNewScoreIsHigher(clientHandler.PlayerSendResultData newResult, clientHandler.PlayerSendResultData storedResult)
     {
         return newResult.points + newResult.time > storedResult.points + storedResult.time;
+    }
+
+    private void UpdateTop3()
+    {
+        try
+        {
+            mFirstPlaceText.text = mSortedResults[0].resultData.name;
+            mSecondPlaceText.text = mSortedResults[1].resultData.name;
+            mThirdPlaceText.text = mSortedResults[2].resultData.name;
+        }
+        catch { }
     }
 }

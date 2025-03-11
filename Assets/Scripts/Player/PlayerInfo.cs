@@ -5,7 +5,7 @@ using UnityEngine;
 public static class PlayerInfo
 {
     private static string mPlayerName;
-    private static int mPlayerTime;
+    private static float mPlayerTime;
     private static int mPlayerPoints;
 
     public static string PlayerName
@@ -14,7 +14,7 @@ public static class PlayerInfo
         set { mPlayerName = value; }
     }
 
-    public static int PlayerTime
+    public static float PlayerTime
     {
         get { return mPlayerTime; }
         set { mPlayerTime = value; }

@@ -36,7 +36,7 @@ public class serverHandler : MonoBehaviour
     {
         public string name;
         public int points;
-        public int time;
+        public float time;
         public int placement;
     }
 
@@ -234,6 +234,7 @@ public class serverHandler : MonoBehaviour
 
     private void HandleGameFinish()
     {
+        SceneManager.LoadScene(4);
         mGameState = GameState.RESULTS_SCREEN;
 
         if (server != null)
@@ -257,8 +258,6 @@ public class serverHandler : MonoBehaviour
                 }
             }
         }
-
-        SceneManager.LoadScene(4);
     }
 
     // Update is called once per frame
@@ -354,24 +353,6 @@ public class serverHandler : MonoBehaviour
                 connectedClients.RemoveAt(i);
             }
         }
-
-        //inputString = GUI.TextField(new Rect(200, 370, 400, 50), inputString);
-        //if (GUI.Button(new Rect(200, 450, 100, 50), "send"))
-        //{
-        //    SendPlayerData(inputString);
-        //    inputString = "";
-        //}
-
-        //if (server != null)
-        //{
-        //    if (GUI.Button(new Rect(150, 550, 100, 20), "Stop Sever"))
-        //    {
-        //        server.CloseListenSocket(listenSocket);
-        //        server.DestroyPollGroup(pollGroup);
-        //        server = null;
-        //        serverNetworkingUtils.Dispose();
-        //    }
-        //}
     }
 
     private void SendPlayerData()
@@ -404,11 +385,6 @@ public class serverHandler : MonoBehaviour
                             server.SendMessageToConnection(connectedClients[i], bytes);
                             pinStructure.Free();
                         }
-
-                        //byte[] bytes = Encoding.ASCII.GetBytes(playerData);
-                        //server.SendMessageToConnection(connectedClients[i], bytes);
-
-                        //messages.Add(message);
                     }
                 }
             }
@@ -456,7 +432,7 @@ public class serverHandler : MonoBehaviour
                     clientHandler.PlayerSendResultData playerSendResultData = new clientHandler.PlayerSendResultData();
                     playerSendResultData.type = (int)clientHandler.PacketType.SEND_RESULT;
                     playerSendResultData.playerID = playerID;
-                    playerSendResultData.time = 0;
+                    playerSendResultData.time = player.time;
                     playerSendResultData.points = 0;
                     playerSendResultData.name = player.name;
 
@@ -628,7 +604,7 @@ public class serverHandler : MonoBehaviour
         {
             name = PlayerInfo.PlayerName,
             points = PlayerInfo.PlayerPoints,
-            time = PlayerInfo.PlayerTime
+            time = Time.time - PlayerInfo.PlayerTime
         };
 
         mPlayerResults.Add(0, playerStoreResult);
