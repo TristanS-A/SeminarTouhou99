@@ -314,6 +314,7 @@ public class clientHandler : MonoBehaviour
                     HandleNetMessages();
                     break;
                 case serverHandler.GameState.RESULTS_SCREEN:
+                    HandleNetMessages();
                     break;
             }
         }
@@ -343,7 +344,6 @@ public class clientHandler : MonoBehaviour
                 Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
                 TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
-
                 switch ((PacketType)packetType.type)
                 {
                     case PacketType.PLAYER_DATA:
@@ -531,28 +531,4 @@ public class clientHandler : MonoBehaviour
             Marshal.FreeHGlobal(ptr);
         }
     }
-
-    //private void handleMovePlayer()
-    //{
-    //    if (players.ContainsKey(connectionIDOnServer))
-    //    {
-    //        Transform serverPlayerTransform = players[connectionIDOnServer].transform;
-    //        if (Input.GetKey(KeyCode.W))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(0, 0.1f, 0);
-    //        }
-    //        if (Input.GetKey(KeyCode.D))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(0.1f, 0, 0);
-    //        }
-    //        if (Input.GetKey(KeyCode.S))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(0, -0.1f, 0);
-    //        }
-    //        if (Input.GetKey(KeyCode.A))
-    //        {
-    //            serverPlayerTransform.position += new Vector3(-0.1f, 0, 0);
-    //        }
-    //    }
-    //}
 }
