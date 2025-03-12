@@ -7,6 +7,7 @@ public static class eventSystem
     public static event Action<GameObject> gameStarted; //Rename this to game start event
     public static event Action<string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
+    public static event Action<DropTypes> dropEvent;
 
     public static void fireEvent(eventType type)
     {
@@ -24,6 +25,13 @@ public static class eventSystem
                 PlayerCountChangedEvent newPlayerCountEvent = (PlayerCountChangedEvent)(type);
                 numberOfJoinedPlayersChanged.Invoke(newPlayerCountEvent.getNewPlayerCount());
                 break;
+            case eventType.EventTypes.ENEMY_KILLED:
+                DropEvent drop = (DropEvent)(type);
+                dropEvent.Invoke(drop.GetDropObject());
+                break;
+                
+
+
         }
     }
 }

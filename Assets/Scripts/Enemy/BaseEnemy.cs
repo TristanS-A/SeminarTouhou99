@@ -20,6 +20,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] PositionContainer posData;
     [SerializeField] float health;
     [SerializeField] float range;
+    [SerializeField] DropTypes dropType;
     //this needs a sequencer
     Sequencer sqe;
     private Vector2 currentSelectedPositon;
@@ -38,8 +39,18 @@ public class BaseEnemy : MonoBehaviour
         //    //we did not have a sequencer --> might have issues becasue it is full of nothing!!
         //    sqe = gameObject.AddComponent<Sequencer>();
         //}
+        
+        //we are in the range of our array 
+        if(currentIndex < posData.intermedatePos.Count)
+        {
+            currentSelectedPositon = posData.intermedatePos[currentIndex];
 
-        currentSelectedPositon = posData.intermedatePos[currentIndex];
+        }
+        
+        //trigger drop event
+        DropEvent evt = new DropEvent(dropType);
+        dropType.SetLocation(this.transform.position);
+        eventSystem.fireEvent(evt);
     }
     private void FixedUpdate()
     {
@@ -63,7 +74,14 @@ public class BaseEnemy : MonoBehaviour
         if(health <= 0)
         {
             //player killed enemy
+
             //trigger drop event
+            DropEvent evt = new DropEvent(dropType);
+
+            //make sure to save the position of the object to that it does not spawn in some weird place
+            
+            dropType.SetLocation(this.transform.position);
+            eventSystem.fireEvent(evt);
 
             Destroy(this.gameObject);
         }
@@ -115,7 +133,6 @@ public class BaseEnemy : MonoBehaviour
     {
         sqe.ClearAttackList();
         sqe.CleanSequencer();
-        
     }
 
 }
