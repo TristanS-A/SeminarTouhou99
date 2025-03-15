@@ -40,9 +40,7 @@ public static class EventSystem
                     ReceiveResultEvent result = (ReceiveResultEvent)(type);
                     onReceiveResult.Invoke(result.getResult());
                 }
-                catch (Exception e)
-                {
-                }
+                catch{ }
                 break;
         }
     }
