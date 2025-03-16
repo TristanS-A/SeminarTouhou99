@@ -195,6 +195,7 @@ MonoBehaviour:
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}
   rightBulletSpawn: {fileID: 3484360881877885786}
+  playerSequencer: {fileID: 2317277070188080296}
 --- !u!114 &281478293746345220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +223,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attacks:
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   shouldLoop: 0
 --- !u!1 &4342171893642893423

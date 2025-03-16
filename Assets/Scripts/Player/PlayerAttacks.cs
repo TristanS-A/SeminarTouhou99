@@ -101,6 +101,7 @@ public class PlayerAttacks : MonoBehaviour {
         }
     }
 
+    // Each bomb enables the sequencer on trigger and based on the lifetime of the attack will spawn and then disable, incrementing to the next index
     private void HandleOffensiveBomb(int cost) {
         if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
             offensiveBombCount -= cost;
@@ -124,6 +125,7 @@ public class PlayerAttacks : MonoBehaviour {
         isShooting = false;
     }
 
+    // Waits for the lifetime of the AttackData, disables the sequencer, cleans and increments to next index
     private IEnumerator TurnOffSequencer(float lifetime) {
         yield return new WaitForSeconds(lifetime);
         playerSequencer.enabled = false;
