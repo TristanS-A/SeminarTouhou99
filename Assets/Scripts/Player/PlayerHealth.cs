@@ -12,7 +12,7 @@ public class PlayerHealth : MonoBehaviour {
 
     private void Start() {
         currentHealth = maxHealth;
-        eventSystem.HealthUpdate(currentHealth);
+        EventSystem.HealthUpdate(currentHealth);
         isDead = false;
     }
 
@@ -26,7 +26,7 @@ public class PlayerHealth : MonoBehaviour {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         // CALLS EVENT FOR UI
-        eventSystem.HealthUpdate(currentHealth);
+        EventSystem.HealthUpdate(currentHealth);
 
         // KILLS PLAYER :(
         if (currentHealth <= 0) {
@@ -50,12 +50,12 @@ public class PlayerHealth : MonoBehaviour {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         // CALLS EVENT FOR UI
-        eventSystem.HealthUpdate(currentHealth);
+        EventSystem.HealthUpdate(currentHealth);
     }
 
     private void KillPlayer() {
         isDead = true;
-        eventSystem.OnDeath();
+        EventSystem.OnDeath();
         Debug.Log("Player died");
         Destroy(this.gameObject);
     }

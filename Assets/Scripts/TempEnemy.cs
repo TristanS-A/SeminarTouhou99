@@ -16,7 +16,7 @@ public class TempEnemy : MonoBehaviour {
     }
 
     public List<BossStage> stages;
-    public bool isDead { get; private set; }
+    public bool IsDead { get; private set; }
 
     private int currentHealth;
     private int currentStage = 0;
@@ -31,10 +31,10 @@ public class TempEnemy : MonoBehaviour {
         currentHealth = stages[0].maxHealth;
         currentRespawnTime = stages[0].respawnTime;
 
-        eventSystem.HealthUpdate(currentHealth);
-        eventSystem.RespawnUpdate(currentRespawnTime);
+        EventSystem.HealthUpdate(currentHealth);
+        EventSystem.RespawnUpdate(currentRespawnTime);
 
-        isDead = false;
+        IsDead = false;
 
         // WILL NYE THE SCIENCE GUY
         sequencer = gameObject.GetComponent<Sequencer>();
@@ -42,14 +42,14 @@ public class TempEnemy : MonoBehaviour {
 
     public void TakeDamage(int stage, int damage) {
         // CHECKING IF PLAYER IS ALREADY DEAD
-        if (isDead || isInvincible) return;
+        if (IsDead || isInvincible) return;
 
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
 
         // CALLS EVENT FOR UI
-        eventSystem.HealthUpdate(currentHealth);
+        EventSystem.EnemyHealthUpdate(currentHealth);
 
         if (currentHealth <= 0) {
             if (currentStage != stages.Count - 1) {
@@ -67,16 +67,16 @@ public class TempEnemy : MonoBehaviour {
     //I think this naming is wrong?
     private void Kill() {
         Debug.Log("Killed");
-        isDead = true;
+        IsDead = true;
         sequencer.ClearAttackList();
         sequencer.CleanSequencer();
-        eventSystem.OnDeath();
+        EventSystem.OnEnemyDeath();
     }
 
     public void Revive() {
-        if (!isDead) return;
+        if (!IsDead) return;
 
-        isDead = false;
+        IsDead = false;
         currentStage++;
         currentHealth = stages[currentStage].maxHealth;
         currentRespawnTime = stages[currentStage].respawnTime;
@@ -84,19 +84,19 @@ public class TempEnemy : MonoBehaviour {
         conIndex++;
         sequencer.SetSequeceList(containter[conIndex].attacks);
 
-        eventSystem.RespawnUpdate(currentRespawnTime);
+        EventSystem.EnemyRespawnUpdate(currentRespawnTime);
     }
 
     //might want to change this to be a  flag in the update loop (this seems like a lot of overhead)
     private IEnumerator Respawn() {
         isInvincible = true;
-        isDead = true;
+        IsDead = true;
 
         WaitForSeconds local = new(0);
 
         while (currentRespawnTime >= 0) {
             currentRespawnTime -= Time.deltaTime;
-            eventSystem.RespawnUpdate(currentRespawnTime);
+            EventSystem.EnemyRespawnUpdate(currentRespawnTime);
             yield return local;
         }
         isInvincible = false;
@@ -105,7 +105,7 @@ public class TempEnemy : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        if (isDead | isInvincible) return;
+        if (IsDead | isInvincible) return;
 
         if (collision.CompareTag("Bullet")) {
             Destroy(collision.gameObject);

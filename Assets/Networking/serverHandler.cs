@@ -50,12 +50,12 @@ public class serverHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        eventSystem.gameStarted += HandleGameStart;
+        EventSystem.gameStarted += HandleGameStart;
     }
 
     private void OnDisable()
     {
-        eventSystem.gameStarted -= HandleGameStart;
+        EventSystem.gameStarted -= HandleGameStart;
     }
 
     // Start is called before the first frame update
@@ -393,7 +393,7 @@ public class serverHandler : MonoBehaviour
                 pinStructure.Free();
             }
 
-            eventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+            EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
         }
     }
 
@@ -410,7 +410,7 @@ public class serverHandler : MonoBehaviour
 
             if (mGameState == GameState.SEARCHING_FOR_PLAYERS)
             {
-                eventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+                EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
             }
         }
     }

@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour {
         circleRenderer = circleChild.GetComponent<SpriteRenderer>();
 
         //eventSystem.fireEvent(new EventType(eventSystem.))
-        eventSystem.fireEvent(new GameStartEvent(gameObject));
+        EventSystem.fireEvent(new GameStartEvent(gameObject));
     }
 
     void Update() {

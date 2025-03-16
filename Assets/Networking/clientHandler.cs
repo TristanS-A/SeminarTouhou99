@@ -82,14 +82,14 @@ public class clientHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        eventSystem.gameStarted += HandleGameStart;
-        eventSystem.ipReceived += AddIP;
+        EventSystem.gameStarted += HandleGameStart;
+        EventSystem.ipReceived += AddIP;
     }
 
     private void OnDisable()
     {
-        eventSystem.gameStarted -= HandleGameStart;
-        eventSystem.ipReceived -= AddIP;
+        EventSystem.gameStarted -= HandleGameStart;
+        EventSystem.ipReceived -= AddIP;
     }
 
     private void OnApplicationQuit()
@@ -306,7 +306,7 @@ public class clientHandler : MonoBehaviour
                         break;
                     case PacketType.PLAYER_COUNT:
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
-                        eventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
                         break;
                     case PacketType.GAME_STATE:
                         GameStartData gameStateData = (GameStartData)Marshal.PtrToStructure(ptPoit, typeof(GameStartData));

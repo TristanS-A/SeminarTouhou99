@@ -10,16 +10,16 @@ public class EnemyUI : MonoBehaviour {
         enemyHealth = FindObjectOfType<TempEnemy>();
 
         if (enemyHealth != null) {
-            enemyHealth.OnHealthUpdate += UpdateHealthUI;
-            enemyHealth.OnRespawnUpdate += UpdateRespawnUI;
-            enemyHealth.OnEnemyDeath += UpdateDeathUI;
+            EventSystem.OnEnemyHealthUpdate += UpdateHealthUI;
+            EventSystem.OnEnemyDeathUpdate += UpdateDeathUI;
             UpdateHealthUI(enemyHealth.GetCurrentMaxHealth());
             UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
+            EventSystem.OnEnemyRespawnUpdate.AddListener(UpdateRespawnUI);
         }
     }
 
     private void Update() {
-        enemyHealth.OnRespawnUpdate += UpdateRespawnUI;
+        EventSystem.OnEnemyRespawnUpdate.AddListener(UpdateRespawnUI);
     }
 
     // UPDATES UI ON EVENT INVOKE
@@ -39,9 +39,9 @@ public class EnemyUI : MonoBehaviour {
     // OFFLOADS UI FROM EVENT
     private void OnDestroy() {
         if (enemyHealth != null) {
-            enemyHealth.OnHealthUpdate -= UpdateHealthUI;
-            enemyHealth.OnRespawnUpdate -= UpdateRespawnUI;
-            enemyHealth.OnEnemyDeath -= UpdateDeathUI;
+            EventSystem.OnEnemyHealthUpdate -= UpdateHealthUI;
+            EventSystem.OnEnemyRespawnUpdate.RemoveListener(UpdateRespawnUI);
+            EventSystem.OnEnemyDeathUpdate -= UpdateDeathUI;
         }
     }
 }

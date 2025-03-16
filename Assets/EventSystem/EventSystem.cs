@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public static class eventSystem
+public static class EventSystem
 {
     public static event Action<GameObject> gameStarted; //Rename this to game start event
     public static event Action<string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
 
+    // Player Events
     public static event UnityAction<int> OnHealthUpdate;
     public static void HealthUpdate(int health) => OnHealthUpdate?.Invoke(health);
 
@@ -16,6 +17,16 @@ public static class eventSystem
 
     public static UnityEvent<float> OnRespawnUpdate;
     public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
+
+    // Enemy Events
+    public static event UnityAction<int> OnEnemyHealthUpdate;
+    public static void EnemyHealthUpdate(int health) => OnEnemyHealthUpdate?.Invoke(health);
+
+    public static event UnityAction OnEnemyDeathUpdate;
+    public static void OnEnemyDeath() => OnEnemyDeathUpdate?.Invoke();
+
+    public static UnityEvent<float> OnEnemyRespawnUpdate;
+    public static void EnemyRespawnUpdate(float health) => OnEnemyRespawnUpdate?.Invoke(health);
 
     public static void fireEvent(eventType type)
     {
