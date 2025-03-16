@@ -18,6 +18,13 @@ public static class EventSystem
     public static UnityEvent<float> OnRespawnUpdate;
     public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
 
+    // Bomb Events
+    public static event UnityAction<int> OnDefensiveBombAttack;
+    public static void DefensiveBombAttack(int amount) => OnDefensiveBombAttack?.Invoke(amount);
+
+    public static event UnityAction<int> OnOffensiveBombAttack;
+    public static void OffensiveBombAttack(int amount) => OnOffensiveBombAttack?.Invoke(amount);
+
     // Enemy Events
     public static event UnityAction<int> OnEnemyHealthUpdate;
     public static void EnemyHealthUpdate(int health) => OnEnemyHealthUpdate?.Invoke(health);

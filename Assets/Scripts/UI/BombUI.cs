@@ -5,37 +5,45 @@ public class BombUI : MonoBehaviour {
     public Transform offensiveContainer, defensiveContainer;
     public float xOffset;
 
-    private PlayerAttacks playerAttacks;
+    [SerializeField] private PlayerAttacks playerAttacks;
 
     private void Start() {
-        playerAttacks = FindObjectOfType<PlayerAttacks>();
-
-        //if (playerAttacks != null) {
-        //    playerAttacks.OnHealthUpdate += UpdateUI;
-        //    UpdateUI(playerAttacks.GetDefensiveBombCount);
-        //}
+        if (playerAttacks != null) {
+            EventSystem.OnDefensiveBombAttack += UpdateDefensiveBomb;
+            EventSystem.OnOffensiveBombAttack += UpdateOffensiveBomb;
+            UpdateDefensiveBomb(playerAttacks.GetDefensiveBombCount);
+            UpdateOffensiveBomb(playerAttacks.GetOffensiveBombCount);
+        }
     }
 
-    // UPDATES UI ON EVENT INVOKE
-    private void UpdateUI(int currentHealth) {
-        //// IF THERE ARE ANY PREFABS LEFT OVER FROM RUNTIME, WILL REMOVE 
-        //foreach (Transform t in healthContainer) {
-        //    Destroy(t.gameObject);
-        //}
+    private void UpdateDefensiveBomb(int amount) {
+        HandleUI(amount, defensivePrefab, defensiveContainer);
+    }
 
-        //// OFFSETS PREFABS ON X-AXIS BY 75
-        //for (int i = 0; i < currentHealth; i++) {
-        //    GameObject icon = Instantiate(healthImagePrefab, healthContainer);
-        //    RectTransform rect = icon.GetComponent<RectTransform>();
+    private void UpdateOffensiveBomb(int amount) {
+        HandleUI(amount, offensivePrefab, offensiveContainer);
+    }
 
-        //    rect.anchoredPosition = new Vector2(i * xOffset, 0);
-        //}
+    private void HandleUI(int amount, GameObject prefab, Transform container) {
+        // IF THERE ARE ANY PREFABS LEFT OVER FROM RUNTIME, WILL REMOVE 
+        foreach (Transform t in container) {
+            Destroy(t.gameObject);
+        }
+
+        // OFFSETS PREFABS ON X-AXIS BY 75
+        for (int i = 0; i < amount; i++) {
+            GameObject icon = Instantiate(prefab, container);
+            RectTransform rect = icon.GetComponent<RectTransform>();
+
+            rect.anchoredPosition = new Vector2(i * xOffset, 0);
+        }
     }
 
     // OFFLOADS UI FROM EVENT
     private void OnDestroy() {
-        //if (playerAttacks != null) {
-        //    eventSystem.OnOffensiveBulletAttack -= UpdateUI;
-        //}
+        if (playerAttacks != null) {
+            EventSystem.OnDefensiveBombAttack -= UpdateDefensiveBomb;
+            EventSystem.OnOffensiveBombAttack -= UpdateDefensiveBomb;
+        }
     }
 }

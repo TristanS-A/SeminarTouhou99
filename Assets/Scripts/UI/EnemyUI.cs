@@ -11,15 +11,15 @@ public class EnemyUI : MonoBehaviour {
 
         if (enemyHealth != null) {
             EventSystem.OnEnemyHealthUpdate += UpdateHealthUI;
+            //EventSystem.OnEnemyRespawnUpdate += UpdateRespawnUI;
             EventSystem.OnEnemyDeathUpdate += UpdateDeathUI;
             UpdateHealthUI(enemyHealth.GetCurrentMaxHealth());
             UpdateRespawnUI(enemyHealth.GetCurrentRespawnTime());
-            EventSystem.OnEnemyRespawnUpdate.AddListener(UpdateRespawnUI);
         }
     }
 
     private void Update() {
-        EventSystem.OnEnemyRespawnUpdate.AddListener(UpdateRespawnUI);
+        //EventSystem.OnEnemyRespawnUpdate += UpdateRespawnUI
     }
 
     // UPDATES UI ON EVENT INVOKE
@@ -40,7 +40,7 @@ public class EnemyUI : MonoBehaviour {
     private void OnDestroy() {
         if (enemyHealth != null) {
             EventSystem.OnEnemyHealthUpdate -= UpdateHealthUI;
-            EventSystem.OnEnemyRespawnUpdate.RemoveListener(UpdateRespawnUI);
+            //EventSystem.OnEnemyRespawnUpdate -= UpdateRespawnUI
             EventSystem.OnEnemyDeathUpdate -= UpdateDeathUI;
         }
     }

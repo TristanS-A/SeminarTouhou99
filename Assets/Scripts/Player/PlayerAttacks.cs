@@ -43,6 +43,8 @@ public class PlayerAttacks : MonoBehaviour {
 
         defensiveBombCount = maxDefensiveBombs;
         offensiveBombCount = maxOffensiveBombs;
+        EventSystem.DefensiveBombAttack(defensiveBombCount);
+        EventSystem.OffensiveBombAttack(offensiveBombCount);
     }
 
     void Update() {
@@ -99,14 +101,19 @@ public class PlayerAttacks : MonoBehaviour {
 
     private void HandleDefensiveBomb() {
         if (Input.GetKey(defensiveBombKey)) {
+            defensiveBombCount--;
+
             var enemy = target.gameObject.GetComponent<TempEnemy>();
             enemy.GetSequencer().CleanSequencer();
+
+            EventSystem.DefensiveBombAttack(defensiveBombCount);
         }
     }
 
     private void HandleOffensiveBomb() {
         if (Input.GetKey(offensiveBombKey)) {
-
+            offensiveBombCount--;
+            EventSystem.OffensiveBombAttack(offensiveBombCount);
         }
     }
 
