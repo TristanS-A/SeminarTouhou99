@@ -203,4 +203,7 @@ public class Sequencer : MonoBehaviour
     {
         this.attacks = sequeceList;
     }
+
+    public List<AttackData> GetAttacks => attacks;
+    public int GetAttackLength => attacks.Count;
 }

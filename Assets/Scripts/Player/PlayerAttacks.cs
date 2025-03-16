@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerAttacks : MonoBehaviour {
@@ -26,6 +27,7 @@ public class PlayerAttacks : MonoBehaviour {
     [Header("Offensive Bomb")]
     [SerializeField] private int maxOffensiveBombs = 3;
     private int offensiveBombCount;
+    private int attackIndex = 0;
 
     private const int BOMB_COST = 1;
 
@@ -33,6 +35,7 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject screenObject;
     [SerializeField] private Transform leftBulletSpawn, rightBulletSpawn;
+    [SerializeField] private Sequencer playerSequencer;
 
     private List<GameObject> bullets = new();
     private bool isShooting = false;
@@ -87,6 +90,26 @@ public class PlayerAttacks : MonoBehaviour {
         }
     }
 
+    private void HandleDefensiveBomb(int cost) {
+        if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
+            defensiveBombCount -= cost;
+
+            var enemy = target.gameObject.GetComponent<TempEnemy>();
+            enemy.GetSequencer().CleanSequencer();
+
+            EventSystem.DefensiveBombAttack(defensiveBombCount);
+        }
+    }
+
+    private void HandleOffensiveBomb(int cost) {
+        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
+            offensiveBombCount -= cost;
+            playerSequencer.enabled = true;
+            EventSystem.OffensiveBombAttack(offensiveBombCount);
+            StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
+        }
+    }
+
     private IEnumerator ShootBullets() {
         isShooting = true;
 
@@ -101,24 +124,11 @@ public class PlayerAttacks : MonoBehaviour {
         isShooting = false;
     }
 
-    private void HandleDefensiveBomb(int cost) {
-        if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
-            defensiveBombCount -= cost;
-
-            var enemy = target.gameObject.GetComponent<TempEnemy>();
-            enemy.GetSequencer().CleanSequencer();
-
-            EventSystem.DefensiveBombAttack(defensiveBombCount);
-        }
-    }
-
-
-    private void HandleOffensiveBomb(int cost) {
-        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
-            offensiveBombCount -= cost;
-
-            EventSystem.OffensiveBombAttack(offensiveBombCount);
-        }
+    private IEnumerator TurnOffSequencer(float lifetime) {
+        yield return new WaitForSeconds(lifetime);
+        playerSequencer.enabled = false;
+        playerSequencer.CleanSequencer();
+        attackIndex++;
     }
 
     public static int GetDamageAmount() { return bulletDamage; }

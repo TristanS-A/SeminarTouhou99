@@ -1363,6 +1363,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2317277070188080296, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: attacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2317277070188080296, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: attacks.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+    - target: {fileID: 2317277070188080296, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: attacks.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
     - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
       propertyPath: target
       value: 
@@ -1371,6 +1383,10 @@ PrefabInstance:
       propertyPath: screenObject
       value: 
       objectReference: {fileID: 1968492547}
+    - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: playerSequencer
+      value: 
+      objectReference: {fileID: 1809746886}
     - target: {fileID: 3875593617490493976, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.004999995
@@ -2494,6 +2510,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c7de5cf56fcf1e4898f2c6b3224bf0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1809746886 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2317277070188080296, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+  m_PrefabInstance: {fileID: 1179731412}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45757a6997b56744c9a099c3fdd22f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1968492547
