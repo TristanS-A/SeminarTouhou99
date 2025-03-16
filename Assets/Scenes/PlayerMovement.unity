@@ -2228,7 +2228,7 @@ MonoBehaviour:
   defensivePrefab: {fileID: 4674576406188574248, guid: 5b8138165c2e0c64b80735a0a19d4bb6, type: 3}
   offensiveContainer: {fileID: 23557164}
   defensiveContainer: {fileID: 1785844550}
-  xOffset: 0
+  xOffset: 75
   playerAttacks: {fileID: 1809746880}
 --- !u!1 &1753723617
 GameObject:
