@@ -57,7 +57,7 @@ public class PlayerHealth : MonoBehaviour {
         isDead = true;
         EventSystem.OnDeath();
         Debug.Log("Player died");
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

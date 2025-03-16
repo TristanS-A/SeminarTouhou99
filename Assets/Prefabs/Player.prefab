@@ -182,12 +182,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootKey: 122
-  bombKey: 120
+  defensiveBombKey: 120
+  offensiveBombKey: 99
   bulletSpeed: 6
   bulletDelay: 0.1
-  bulletDamage: 1
   target: {fileID: 0}
   rotateSpeed: 2
+  maxDefensiveBombs: 3
+  maxOffensiveBombs: 3
   bulletPrefab: {fileID: 435637448550865365, guid: 107be95e213d16c4ebeec299d20dea14, type: 3}
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}

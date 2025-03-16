@@ -27,6 +27,8 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private int maxOffensiveBombs = 3;
     private int offensiveBombCount;
 
+    private const int BOMB_COST = 1;
+
     [Header("Other")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject screenObject;
@@ -52,8 +54,8 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
-        HandleDefensiveBomb();
-        HandleOffensiveBomb();
+        HandleDefensiveBomb(BOMB_COST);
+        HandleOffensiveBomb(BOMB_COST);
     }
 
     void FixedUpdate() {
@@ -99,9 +101,9 @@ public class PlayerAttacks : MonoBehaviour {
         isShooting = false;
     }
 
-    private void HandleDefensiveBomb() {
-        if (Input.GetKey(defensiveBombKey) && defensiveBombCount > 0) {
-            defensiveBombCount--;
+    private void HandleDefensiveBomb(int cost) {
+        if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
+            defensiveBombCount -= cost;
 
             var enemy = target.gameObject.GetComponent<TempEnemy>();
             enemy.GetSequencer().CleanSequencer();
@@ -111,9 +113,10 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
 
-    private void HandleOffensiveBomb() {
-        if (Input.GetKey(offensiveBombKey) && offensiveBombCount > 0) {
-            offensiveBombCount--;
+    private void HandleOffensiveBomb(int cost) {
+        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
+            offensiveBombCount -= cost;
+
             EventSystem.OffensiveBombAttack(offensiveBombCount);
         }
     }

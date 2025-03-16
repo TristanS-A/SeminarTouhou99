@@ -7,6 +7,8 @@ public class BombUI : MonoBehaviour {
 
     [SerializeField] private PlayerAttacks playerAttacks;
 
+    private bool wasRemoved = false;
+
     private void Start() {
         if (playerAttacks != null) {
             EventSystem.OnDefensiveBombAttack += UpdateDefensiveBomb;
@@ -25,16 +27,15 @@ public class BombUI : MonoBehaviour {
     }
 
     private void HandleUI(int amount, GameObject prefab, Transform container) {
-        // IF THERE ARE ANY PREFABS LEFT OVER FROM RUNTIME, WILL REMOVE 
-        foreach (Transform t in container) {
-            Destroy(t.gameObject);
+        // Clear existing icons in the container
+        foreach (Transform child in container) {
+            Destroy(child.gameObject);
         }
 
-        // OFFSETS PREFABS ON X-AXIS BY 75
+        // Add the exact number of icons needed
         for (int i = 0; i < amount; i++) {
             GameObject icon = Instantiate(prefab, container);
             RectTransform rect = icon.GetComponent<RectTransform>();
-
             rect.anchoredPosition = new Vector2(i * xOffset, 0);
         }
     }
