@@ -100,7 +100,7 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     private void HandleDefensiveBomb() {
-        if (Input.GetKey(defensiveBombKey)) {
+        if (Input.GetKey(defensiveBombKey) && defensiveBombCount > 0) {
             defensiveBombCount--;
 
             var enemy = target.gameObject.GetComponent<TempEnemy>();
@@ -110,8 +110,9 @@ public class PlayerAttacks : MonoBehaviour {
         }
     }
 
+
     private void HandleOffensiveBomb() {
-        if (Input.GetKey(offensiveBombKey)) {
+        if (Input.GetKey(offensiveBombKey) && offensiveBombCount > 0) {
             offensiveBombCount--;
             EventSystem.OffensiveBombAttack(offensiveBombCount);
         }
