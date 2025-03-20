@@ -343,6 +343,7 @@ public class serverHandler : MonoBehaviour
                     mPacketSendTime += Time.deltaTime;
                     break;
                 case GameState.RESULTS_SCREEN:
+                    server.DispatchCallback(serverNetworkingUtils);
                     BroadcastResults();
                     break;
             }
