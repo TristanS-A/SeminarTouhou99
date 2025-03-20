@@ -14,11 +14,12 @@ public class ButtonHandler : MonoBehaviour
 
     [SerializeField] private ButtonType mButtonType;
     [SerializeField] private Button mButton;
+    [SerializeField] private bool mOnlyServerButton;
 
     // Start is called before the first frame update
     void Start()
     {
-        if(serverHandler.instance == null)
+        if(serverHandler.instance == null && mOnlyServerButton)
         {
             gameObject.SetActive(false);
         }
