@@ -34,6 +34,8 @@ public class clientHandler : MonoBehaviour
     private Dictionary<string, GameObject> mJoinableIPs = new Dictionary<string, GameObject>();
     serverHandler.GameState mGameState = serverHandler.GameState.NONE;
 
+    public static clientHandler instance;
+
     //MessageCallback message;
     const int maxMessages = 20;
     NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
@@ -115,6 +117,7 @@ public class clientHandler : MonoBehaviour
         EventSystem.gameStarted += HandleGameStart;
         EventSystem.ipReceived += AddIP;
         EventSystem.onPlayerDeath += OnPlayerDie;
+        EventSystem.onEndGameSession += EndSession;
     }
 
     private void OnDisable()
@@ -122,10 +125,20 @@ public class clientHandler : MonoBehaviour
         EventSystem.gameStarted -= HandleGameStart;
         EventSystem.ipReceived -= AddIP;
         EventSystem.onPlayerDeath -= OnPlayerDie;
+        EventSystem.onEndGameSession -= EndSession;
     }
 
     private void OnApplicationQuit()
     {
+        HandleCloseConnection();
+
+        Valve.Sockets.Library.Deinitialize();
+        Debug.Log("Quit and Socket Lib Deanitialized");
+    }
+
+    private void HandleCloseConnection()
+    {
+        Debug.Log("Closing Connection");
         if (client != null)
         {
             client.CloseConnection(serverConnection);
@@ -135,14 +148,18 @@ public class clientHandler : MonoBehaviour
         {
             UDPListener.CloseClient();
         }
-
-        Valve.Sockets.Library.Deinitialize();
-        Debug.Log("Quit and Socket Lib Deanitialized");
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        if (instance != null)
+        {
+            Destroy(this);
+        }
+
+        instance = this;
+
         Valve.Sockets.Library.Initialize();
 
         if (testClientButton != null)
@@ -530,5 +547,11 @@ public class clientHandler : MonoBehaviour
             client.SendMessageToConnection(serverConnection, bytes);
             Marshal.FreeHGlobal(ptr);
         }
+    }
+
+    private void EndSession()
+    {
+        HandleCloseConnection();
+        Destroy(gameObject);
     }
 }

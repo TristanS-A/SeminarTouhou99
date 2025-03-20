@@ -8,7 +8,8 @@ public class ButtonHandler : MonoBehaviour
 {
     enum ButtonType
     {
-        START_GAME
+        START_GAME,
+        MAIN_MENU
     }
 
     [SerializeField] private ButtonType mButtonType;
@@ -27,6 +28,9 @@ public class ButtonHandler : MonoBehaviour
             case ButtonType.START_GAME:
                 mButton.onClick.AddListener(StartGame);
                 break;
+            case ButtonType.MAIN_MENU:
+                mButton.onClick.AddListener(GoToMainMenu);
+                break;
         }
     }
 
@@ -34,5 +38,14 @@ public class ButtonHandler : MonoBehaviour
     {
         //Goes to game scene
         SceneManager.LoadScene(3);
+    }
+
+    private void GoToMainMenu()
+    {
+        //Starts ending session flow
+        EventSystem.fireEvent(new EventType(EventType.EventTypes.END_GAME_SESSION));
+
+        //Goes to main menu scene
+        SceneManager.LoadScene(0);
     }
 }

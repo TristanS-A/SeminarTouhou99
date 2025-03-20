@@ -10,6 +10,7 @@ public static class EventSystem
     public static event Action<int, int> playerResultReveived;
     public static event Action onPlayerDeath;
     public static event Action<clientHandler.PlayerSendResultData> onReceiveResult;
+    public static event Action onEndGameSession;
 
     public static void fireEvent(EventType type)
     {
@@ -41,6 +42,9 @@ public static class EventSystem
                     onReceiveResult.Invoke(result.getResult());
                 }
                 catch{ }
+                break;
+            case EventType.EventTypes.END_GAME_SESSION:
+                onEndGameSession.Invoke();
                 break;
         }
     }

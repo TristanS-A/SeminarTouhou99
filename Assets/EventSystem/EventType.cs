@@ -14,7 +14,8 @@ public class EventType
         PLAYER_RESULT_RECEIVED,
         PLAYER_DIED,
         GAME_FINISHED,
-        RESULT_SENT
+        RESULT_SENT,
+        END_GAME_SESSION
     }
 
     private EventTypes _type;

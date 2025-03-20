@@ -85,20 +85,27 @@ public class serverHandler : MonoBehaviour
     {
         EventSystem.gameStarted += HandleGameStart;
         EventSystem.onPlayerDeath += OnPlayerDie;
+        EventSystem.onEndGameSession += EndSession;
     }
 
     private void OnDisable()
     {
         EventSystem.gameStarted -= HandleGameStart;
         EventSystem.onPlayerDeath -= OnPlayerDie;
+        EventSystem.onEndGameSession -= EndSession;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Valve.Sockets.Library.Initialize();
+        if (instance != null)
+        {
+            Destroy(this);
+        }
 
         instance = this;
+
+        Valve.Sockets.Library.Initialize();
 
         if (testServerButton != null)
         {
@@ -115,7 +122,13 @@ public class serverHandler : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        HandleCloseConnection();
         Valve.Sockets.Library.Deinitialize();
+    }
+
+    private void HandleCloseConnection()
+    {
+        Debug.Log("Closing Connection");
         if (!mDebugMode)
         {
             UDPListener.CloseClient();
@@ -626,5 +639,11 @@ public class serverHandler : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void EndSession()
+    {
+        HandleCloseConnection();
+        Destroy(gameObject);
     }
 }
