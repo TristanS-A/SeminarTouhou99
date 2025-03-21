@@ -126,13 +126,21 @@ public class BaseEnemy : MonoBehaviour
     {
         posData = cont;
     }
+    public PositionContainer GetPosData()
+    {
+        return posData;
+    }
 
 
     //when we distroy the object make sure to clear the squ so to that the attacks clear
     private void OnDestroy()
     {
-        sqe.ClearAttackList();
-        sqe.CleanSequencer();
+        if(sqe != null)
+        {
+            sqe.ClearAttackList();
+            sqe.CleanSequencer();
+        }
+       
     }
 
 }
