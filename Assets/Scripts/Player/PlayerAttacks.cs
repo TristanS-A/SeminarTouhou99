@@ -29,7 +29,7 @@ public class PlayerAttacks : MonoBehaviour {
     private int offensiveBombCount;
     private int attackIndex = 0;
 
-    private const int BOMB_COST = 1;
+    private static int BOMB_COST = 1;
 
     [Header("Other")]
     [SerializeField] private GameObject bulletPrefab;
@@ -49,7 +49,7 @@ public class PlayerAttacks : MonoBehaviour {
         defensiveBombCount = maxDefensiveBombs;
         offensiveBombCount = maxOffensiveBombs;
         EventSystem.DefensiveBombAttack(defensiveBombCount);
-        EventSystem.OffensiveBombAttack(offensiveBombCount);
+        EventSystem.OffensiveBombAttackUI(offensiveBombCount);
     }
 
     void Update() {
@@ -105,10 +105,15 @@ public class PlayerAttacks : MonoBehaviour {
     private void HandleOffensiveBomb(int cost) {
         if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
             offensiveBombCount -= cost;
-            playerSequencer.enabled = true;
-            EventSystem.OffensiveBombAttack(offensiveBombCount);
-            StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
+            EventSystem.OffensiveBombAttackUI(offensiveBombCount);
+            EventSystem.FireOffensiveBomb(transform.position);
         }
+    }
+
+    public void SpawnOffensiveBomb(Vector3 pos) {
+        //playerSequencer
+        playerSequencer.enabled = true;
+        StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
     }
 
     private IEnumerator ShootBullets() {
@@ -137,4 +142,15 @@ public class PlayerAttacks : MonoBehaviour {
 
     public int GetDefensiveBombCount => defensiveBombCount;
     public int GetOffensiveBombCount => offensiveBombCount;
+
+    public static int GetBombCost => BOMB_COST;
+
+    private void OnEnable() {
+        EventSystem.OnOffensiveBombAttack += SpawnOffensiveBomb;
+    }
+
+    // OFFLOADS UI FROM EVENT
+    private void OnDisable()  {
+        EventSystem.OnOffensiveBombAttack -= SpawnOffensiveBomb;
+    }
 }

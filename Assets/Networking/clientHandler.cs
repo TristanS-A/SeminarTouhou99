@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -52,7 +53,8 @@ public class clientHandler : MonoBehaviour
         PLAYER_COUNT,
         GAME_STATE,
         STORE_PLAYER_RESULTS,
-        SEND_RESULT
+        SEND_RESULT,
+        OFFENSIVE_BOMB_DATA
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -112,13 +114,22 @@ public class clientHandler : MonoBehaviour
         public int gameState;
     };
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct OffensiveBombData
+    {
+        public int type;
+        public Vector3 pos;
+    }
+
     private void OnEnable()
     {
         EventSystem.gameStarted += HandleGameStart;
         EventSystem.ipReceived += AddIP;
         EventSystem.onPlayerDeath += OnPlayerDie;
         EventSystem.onEndGameSession += EndSession;
+        EventSystem.OnFireOffensiveBomb += SendBombData;
     }
+
 
     private void OnDisable()
     {
@@ -126,6 +137,7 @@ public class clientHandler : MonoBehaviour
         EventSystem.ipReceived -= AddIP;
         EventSystem.onPlayerDeath -= OnPlayerDie;
         EventSystem.onEndGameSession -= EndSession;
+        EventSystem.OnFireOffensiveBomb -= SendBombData;
     }
 
     private void OnApplicationQuit()
@@ -392,6 +404,11 @@ public class clientHandler : MonoBehaviour
                                 break;
                         }
                         break;
+                    case PacketType.OFFENSIVE_BOMB_DATA:
+                        OffensiveBombData data = (OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(OffensiveBombData));
+                        EventSystem.OffensiveBombAttack(data.pos);
+
+                        break;
                 }
 
                 Marshal.FreeHGlobal(ptPoit);
@@ -553,5 +570,24 @@ public class clientHandler : MonoBehaviour
     {
         HandleCloseConnection();
         Destroy(gameObject);
+    }
+
+    private void SendBombData(Vector3 pos) {
+        if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null) {
+            OffensiveBombData bombData = new() {
+                pos = pos,
+                type = (int)PacketType.OFFENSIVE_BOMB_DATA
+            };
+
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];
+            GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
+            try {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            } finally {
+                Debug.Log("SENDING BOMB DATA");
+                client.SendMessageToConnection(serverConnection, bytes);
+                pinStructure.Free();
+            }
+        }
     }
 }

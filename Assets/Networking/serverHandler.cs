@@ -324,6 +324,11 @@ public class serverHandler : MonoBehaviour
                                 case PacketType.STORE_PLAYER_RESULTS:
                                     HandleReceivePlayerResult();
                                     break;
+                                case PacketType.OFFENSIVE_BOMB_DATA:
+                                    OffensiveBombData data = (OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(OffensiveBombData));
+                                    EventSystem.OffensiveBombAttack(data.pos);
+
+                                    break;
                             }
 
                             Marshal.FreeHGlobal(ptPoit);

@@ -11,8 +11,6 @@ public class BombUI : MonoBehaviour {
 
     private void Start() {
         if (playerAttacks != null) {
-            EventSystem.OnDefensiveBombAttack += UpdateDefensiveBomb;
-            EventSystem.OnOffensiveBombAttack += UpdateOffensiveBomb;
             UpdateDefensiveBomb(playerAttacks.GetDefensiveBombCount);
             UpdateOffensiveBomb(playerAttacks.GetOffensiveBombCount);
         }
@@ -40,11 +38,14 @@ public class BombUI : MonoBehaviour {
         }
     }
 
+    private void OnEnable() {
+        EventSystem.OnDefensiveBombAttack += UpdateDefensiveBomb;
+        EventSystem.OnOffensiveBombUI += UpdateOffensiveBomb;
+    }
+
     // OFFLOADS UI FROM EVENT
-    private void OnDestroy() {
-        if (playerAttacks != null) {
-            EventSystem.OnDefensiveBombAttack -= UpdateDefensiveBomb;
-            EventSystem.OnOffensiveBombAttack -= UpdateDefensiveBomb;
-        }
+    private void OnDisable() {
+        EventSystem.OnDefensiveBombAttack -= UpdateDefensiveBomb;
+        EventSystem.OnOffensiveBombUI -= UpdateOffensiveBomb;
     }
 }
