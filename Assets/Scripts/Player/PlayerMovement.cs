@@ -28,10 +28,10 @@ public class PlayerMovement : MonoBehaviour {
         circleChild.transform.localScale = FloatToVec3(GetComponent<CircleCollider2D>().radius);
         circleRenderer = circleChild.GetComponent<SpriteRenderer>();
 
-        //EventSystem.fireEvent(new EventType(EventSystem.))
         EventSystem.fireEvent(new GameStartEvent(gameObject));
 
         PlayerInfo.PlayerTime = Time.time;
+
     }
 
     void Update() {

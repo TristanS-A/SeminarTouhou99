@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4049287504572475122}
   - component: {fileID: 3719647831614739423}
   - component: {fileID: 281478293746345220}
+  - component: {fileID: 2317277070188080296}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -182,16 +183,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootKey: 122
-  bombKey: 120
+  defensiveBombKey: 120
+  offensiveBombKey: 99
   bulletSpeed: 6
   bulletDelay: 0.1
-  bulletDamage: 1
   target: {fileID: 0}
   rotateSpeed: 2
+  maxDefensiveBombs: 3
+  maxOffensiveBombs: 3
   bulletPrefab: {fileID: 435637448550865365, guid: 107be95e213d16c4ebeec299d20dea14, type: 3}
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}
   rightBulletSpawn: {fileID: 3484360881877885786}
+  playerSequencer: {fileID: 2317277070188080296}
 --- !u!114 &281478293746345220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +210,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   invinciblityTime: 1
+--- !u!114 &2317277070188080296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885559242883235853}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45757a6997b56744c9a099c3fdd22f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+  - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
+  shouldLoop: 0
 --- !u!1 &4342171893642893423
 GameObject:
   m_ObjectHideFlags: 0

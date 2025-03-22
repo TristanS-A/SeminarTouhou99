@@ -6,7 +6,8 @@ using UnityEngine;
 public class PlayerAttacks : MonoBehaviour {
     [Header("Keybinds")]
     public KeyCode shootKey = KeyCode.Z;
-    public KeyCode bombKey = KeyCode.X;
+    public KeyCode defensiveBombKey = KeyCode.X;
+    public KeyCode offensiveBombKey = KeyCode.C;
 
     [Header("Bullet Stats")]
     [Range(1, 8)]
@@ -19,10 +20,22 @@ public class PlayerAttacks : MonoBehaviour {
     [Range(1, 8)]
     public int rotateSpeed = 2;
 
+    [Header("Defensive Bomb")]
+    [SerializeField] private int maxDefensiveBombs = 3;
+    private int defensiveBombCount;
+
+    [Header("Offensive Bomb")]
+    [SerializeField] private int maxOffensiveBombs = 3;
+    private int offensiveBombCount;
+    private int attackIndex = 0;
+
+    private const int BOMB_COST = 1;
+
     [Header("Other")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject screenObject;
     [SerializeField] private Transform leftBulletSpawn, rightBulletSpawn;
+    [SerializeField] private Sequencer playerSequencer;
 
     private List<GameObject> bullets = new();
     private bool isShooting = false;
@@ -32,12 +45,20 @@ public class PlayerAttacks : MonoBehaviour {
     private void Start() {
         playerMovement = GetComponent<PlayerMovement>();
         target = GameObject.FindGameObjectWithTag("Enemy").transform;
+
+        defensiveBombCount = maxDefensiveBombs;
+        offensiveBombCount = maxOffensiveBombs;
+        EventSystem.DefensiveBombAttack(defensiveBombCount);
+        EventSystem.OffensiveBombAttack(offensiveBombCount);
     }
 
     void Update() {
         if (Input.GetKeyDown(shootKey) && !isShooting) {
             StartCoroutine(ShootBullets());
         }
+
+        HandleDefensiveBomb(BOMB_COST);
+        HandleOffensiveBomb(BOMB_COST);
     }
 
     void FixedUpdate() {
@@ -69,6 +90,27 @@ public class PlayerAttacks : MonoBehaviour {
         }
     }
 
+    private void HandleDefensiveBomb(int cost) {
+        if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
+            defensiveBombCount -= cost;
+
+            var enemy = target.gameObject.GetComponent<TempEnemy>();
+            enemy.GetSequencer().CleanSequencer();
+
+            EventSystem.DefensiveBombAttack(defensiveBombCount);
+        }
+    }
+
+    // Each bomb enables the sequencer on trigger and based on the lifetime of the attack will spawn and then disable, incrementing to the next index
+    private void HandleOffensiveBomb(int cost) {
+        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
+            offensiveBombCount -= cost;
+            playerSequencer.enabled = true;
+            EventSystem.OffensiveBombAttack(offensiveBombCount);
+            StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
+        }
+    }
+
     private IEnumerator ShootBullets() {
         isShooting = true;
 
@@ -84,4 +126,16 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     public static int GetDamageAmount() { return bulletDamage; }
+
+    // Waits for the lifetime of the AttackData, disables the sequencer, cleans and increments to next index
+    private IEnumerator TurnOffSequencer(float lifetime) {
+        yield return new WaitForSeconds(lifetime);
+        playerSequencer.enabled = false;
+        playerSequencer.CleanSequencer();
+        attackIndex++;
+    }
+
+    public static int GetDamageAmount() { return bulletDamage; }
+    public int GetDefensiveBombCount => defensiveBombCount;
+    public int GetOffensiveBombCount => offensiveBombCount;
 }

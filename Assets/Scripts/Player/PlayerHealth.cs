@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ public class PlayerHealth : MonoBehaviour {
 
     private void Start() {
         currentHealth = maxHealth;
-        OnHealthUpdate?.Invoke(currentHealth);
+        EventSystem.HealthUpdate(currentHealth);
         isDead = false;
     }
 
@@ -26,9 +25,9 @@ public class PlayerHealth : MonoBehaviour {
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        
+
         // CALLS EVENT FOR UI
-        OnHealthUpdate?.Invoke(currentHealth);
+        EventSystem.HealthUpdate(currentHealth);
 
         // KILLS PLAYER :(
         if (currentHealth <= 0) {
@@ -50,16 +49,17 @@ public class PlayerHealth : MonoBehaviour {
         // HEALS & KEEPS IN APPROPIATE RANGE
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        
+
         // CALLS EVENT FOR UI
-        OnHealthUpdate?.Invoke(currentHealth);
+        EventSystem.HealthUpdate(currentHealth);
     }
 
     private void KillPlayer() {
         isDead = true;
         EventSystem.fireEvent(new EventType(EventType.EventTypes.PLAYER_DIED));
+        EventSystem.OnDeath();
         Debug.Log("Player died");
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
@@ -67,9 +67,6 @@ public class PlayerHealth : MonoBehaviour {
 
         if (collision.CompareTag("EnemyBullet")) {
             TakeDamage(1);
-
-            // Do we wanna destroy these?
-            // Destroy(collision.gameObject);
         }
     }
 }
