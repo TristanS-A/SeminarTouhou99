@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour {
     public int maxHealth = 3;
     public float invinciblityTime = 1.5f;
 
-    public event Action<int> OnHealthUpdate;
+    public event UnityAction<int> OnHealthUpdate;
     public bool isDead { get; private set; }
 
     private int currentHealth;

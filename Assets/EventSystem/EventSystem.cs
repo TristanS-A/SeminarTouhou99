@@ -40,7 +40,7 @@ public static class EventSystem
     public static UnityEvent<float> OnEnemyRespawnUpdate;
     public static void EnemyRespawnUpdate(float health) => OnEnemyRespawnUpdate?.Invoke(health);
 
-    public static void fireEvent(eventType type)
+    public static void fireEvent(EventType type)
     {
         switch (type.getEventType())
         {
@@ -74,7 +74,7 @@ public static class EventSystem
             case EventType.EventTypes.END_GAME_SESSION:
                 onEndGameSession.Invoke();
                 break;
-            case eventType.EventTypes.ENEMY_KILLED:
+            case EventType.EventTypes.ENEMY_KILLED:
                 DropEvent drop = (DropEvent)(type);
                 dropEvent.Invoke(drop.GetDropObject());
                 break;

@@ -50,7 +50,7 @@ public class BaseEnemy : MonoBehaviour
         //trigger drop event
         DropEvent evt = new DropEvent(dropType);
         dropType.SetLocation(this.transform.position);
-        eventSystem.fireEvent(evt);
+        EventSystem.fireEvent(evt);
     }
     private void FixedUpdate()
     {
@@ -81,7 +81,7 @@ public class BaseEnemy : MonoBehaviour
             //make sure to save the position of the object to that it does not spawn in some weird place
             
             dropType.SetLocation(this.transform.position);
-            eventSystem.fireEvent(evt);
+            EventSystem.fireEvent(evt);
 
             Destroy(this.gameObject);
         }

@@ -135,7 +135,6 @@ public class PlayerAttacks : MonoBehaviour {
         attackIndex++;
     }
 
-    public static int GetDamageAmount() { return bulletDamage; }
     public int GetDefensiveBombCount => defensiveBombCount;
     public int GetOffensiveBombCount => offensiveBombCount;
 }

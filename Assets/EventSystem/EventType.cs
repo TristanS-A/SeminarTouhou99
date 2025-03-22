@@ -15,7 +15,7 @@ public class EventType
         PLAYER_DIED,
         GAME_FINISHED,
         RESULT_SENT,
-        END_GAME_SESSION
+        END_GAME_SESSION,
         GAME_STARTED, 
         ENEMY_KILLED
     }

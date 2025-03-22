@@ -24,7 +24,7 @@ public class DropManager : MonoBehaviour
 
     private void Awake()
     {
-        eventSystem.dropEvent += SpawnDrops;
+        EventSystem.dropEvent += SpawnDrops;
     }
     void Start()
     { 
@@ -103,6 +103,6 @@ public class DropManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        eventSystem.dropEvent -= SpawnDrops;
+        EventSystem.dropEvent -= SpawnDrops;
     }
 }
