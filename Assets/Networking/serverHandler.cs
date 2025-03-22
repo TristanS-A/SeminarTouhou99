@@ -25,7 +25,7 @@ public class serverHandler : MonoBehaviour
         //public string name;
 
         public void init()
-        { 
+        {
             playerPoses = new List<Vector3>();
             playerInterpolationTracker = 0;
         }
@@ -46,7 +46,7 @@ public class serverHandler : MonoBehaviour
 
     Dictionary<uint, PlayerGameData> mPlayers = new();
     Dictionary<uint, PlayerStoredResultData> mPlayerResults = new();
-   
+
     private NetworkingSockets server;
     //private uint serverPlayerID = 0;
     private uint pollGroup;
@@ -594,9 +594,12 @@ public class serverHandler : MonoBehaviour
 
             playerReceivedResult = (clientHandler.PlayerSendResultData)Marshal.PtrToStructure(ptr, playerReceivedResult.GetType());
 
-            PlayerStoredResultData playerStoreResult = new() { name = playerReceivedResult.name, 
-                                                               points = playerReceivedResult.points, 
-                                                               time = playerReceivedResult.time };
+            PlayerStoredResultData playerStoreResult = new()
+            {
+                name = playerReceivedResult.name,
+                points = playerReceivedResult.points,
+                time = playerReceivedResult.time
+            };
             Debug.Log("REceived result from : " + playerReceivedResult.playerID);
             mPlayerResults.Add(playerReceivedResult.playerID, playerStoreResult);
 
