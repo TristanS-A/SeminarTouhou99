@@ -572,7 +572,7 @@ public class clientHandler : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void SendBombData(Vector3 pos) {
+    private void SendBombData(Vector2 pos) {
         if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null) {
             OffensiveBombData bombData = new() {
                 pos = pos,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -12,6 +13,7 @@ public class Sequencer : MonoBehaviour
     private List<GameObject> activeEmmiter = new();
 
     List<float> timeTillNextAttack = new();
+    private Nullable<Vector2> overridenSpawnPos = null;
 
     bool isCustomTime;
     private void Start()
@@ -53,7 +55,8 @@ public class Sequencer : MonoBehaviour
 
         return returnObj;
     }
-    private void SpawnEmmiter()
+
+    public void SpawnEmmiter()
     {
         var nextAttackToSpawn = GetNextAttackEmmiter();
 
@@ -77,16 +80,20 @@ public class Sequencer : MonoBehaviour
 
        
         Vector2 spawnPos = Vector2.zero;
-   
-        //attack centerd on the enemy 
-        if (nextAttackToSpawn.IsCenterd())
-        {
-            spawnPos = this.transform.position;
 
-        }
-        else
-        {
-            spawnPos = (Vector2)this.transform.position + nextAttackToSpawn.GetDirction();
+        if (overridenSpawnPos == null) {
+            //attack centerd on the enemy 
+            if (nextAttackToSpawn.IsCenterd())
+            {
+                spawnPos = this.transform.position;
+
+            }
+            else
+            {
+                spawnPos = (Vector2)this.transform.position + nextAttackToSpawn.GetDirction();
+            }
+        } else {
+            spawnPos = overridenSpawnPos.Value;
         }
 
         bool isAttached = nextAttackToSpawn.ShouldAttach();
@@ -216,4 +223,5 @@ public class Sequencer : MonoBehaviour
 
     public List<AttackData> GetAttacks => attacks;
     public int GetAttackLength => attacks.Count;
+    public void SetSpawnPos(Nullable<Vector2> newSpawnPos) => overridenSpawnPos = newSpawnPos;
 }

@@ -110,8 +110,8 @@ public class PlayerAttacks : MonoBehaviour {
         }
     }
 
-    public void SpawnOffensiveBomb(Vector3 pos) {
-        //playerSequencer
+    public void SpawnOffensiveBomb(Vector2 pos) {
+        playerSequencer.SetSpawnPos(pos);
         playerSequencer.enabled = true;
         StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
     }

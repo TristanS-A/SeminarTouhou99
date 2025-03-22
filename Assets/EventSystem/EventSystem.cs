@@ -27,14 +27,14 @@ public static class EventSystem
     public static event UnityAction<int> OnDefensiveBombAttack;
     public static void DefensiveBombAttack(int amount) => OnDefensiveBombAttack?.Invoke(amount);
 
-    public static event UnityAction<Vector3> OnOffensiveBombAttack;
-    public static void OffensiveBombAttack(Vector3 pos) => OnOffensiveBombAttack?.Invoke(pos);
+    public static event UnityAction<Vector2> OnOffensiveBombAttack;
+    public static void OffensiveBombAttack(Vector2 pos) => OnOffensiveBombAttack?.Invoke(pos);
 
     public static event UnityAction<int> OnOffensiveBombUI;
     public static void OffensiveBombAttackUI(int amount) => OnOffensiveBombUI?.Invoke(amount);
 
-    public static event UnityAction<Vector3> OnFireOffensiveBomb;
-    public static void FireOffensiveBomb(Vector3 pos) => OnFireOffensiveBomb?.Invoke(pos);
+    public static event UnityAction<Vector2> OnFireOffensiveBomb;
+    public static void FireOffensiveBomb(Vector2 pos) => OnFireOffensiveBomb?.Invoke(pos);
 
     // Enemy Events
     public static event UnityAction<int> OnEnemyHealthUpdate;
