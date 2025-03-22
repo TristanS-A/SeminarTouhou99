@@ -16,6 +16,8 @@ public class EventType
         GAME_FINISHED,
         RESULT_SENT,
         END_GAME_SESSION
+        GAME_STARTED, 
+        ENEMY_KILLED
     }
 
     private EventTypes _type;

@@ -11,6 +11,7 @@ public static class EventSystem
     public static event Action onPlayerDeath;
     public static event Action<clientHandler.PlayerSendResultData> onReceiveResult;
     public static event Action onEndGameSession;
+    public static event Action<DropTypes> dropEvent;
 
     public static void fireEvent(EventType type)
     {
@@ -45,6 +46,12 @@ public static class EventSystem
                 break;
             case EventType.EventTypes.END_GAME_SESSION:
                 onEndGameSession.Invoke();
+                break;
+            case eventType.EventTypes.ENEMY_KILLED:
+                DropEvent drop = (DropEvent)(type);
+                dropEvent.Invoke(drop.GetDropObject());
+                break;
+            default:
                 break;
         }
     }
