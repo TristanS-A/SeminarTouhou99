@@ -21,21 +21,25 @@ public class WaveContainter
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] List<WaveContainter> wave = new();    // Start is called before the first frame update
-    List<GameObject> activeList = new List<GameObject>();
+    List<Tuple<GameObject, BaseEnemy>> activeList = new List<Tuple<GameObject, BaseEnemy>>(); 
     bool shouldSpawn = true;
-    int waveIndex;
+    int waveIndex = 0;
     float currentTime;
+
+
     void Start()
     {
-        InitWaveContainer();
+       
+        //InitWaveContainer();
         SpawnEnemy();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         DoTime();
         SpawnEnemy();
+        CheckActives();
     }
    
     void SpawnEnemy()
@@ -44,8 +48,9 @@ public class WaveManager : MonoBehaviour
         {
             WaveContainter enemyToSpawn = null;
             //get the wave we want to spawn
-            if (wave.Count > 0)
+            if (wave.Count > waveIndex)
             {
+                Debug.Log("Wave Index" + waveIndex);
                 enemyToSpawn = wave[waveIndex];
             }
             else
@@ -56,8 +61,14 @@ public class WaveManager : MonoBehaviour
             //now that we have the next wave to spawn it
 
             GameObject obj = Instantiate(enemyToSpawn.enemy, enemyToSpawn.pos.spawnPosition, Quaternion.identity);
+            BaseEnemy scr = obj.GetComponent<BaseEnemy>();
+            scr.SetPositionContainer(enemyToSpawn.pos);
+
             //add it to the active list
-            activeList.Add(obj);
+            activeList.Add(new(obj, scr));
+
+            Debug.Log("spawned enemy");
+
             if(enemyToSpawn.isCustomTime)
             {
                 currentTime = enemyToSpawn.timeTillSpawn;
@@ -84,17 +95,32 @@ public class WaveManager : MonoBehaviour
         currentTime -= Time.deltaTime;
     }
 
-    void InitWaveContainer()
+    //think about chaning this to a event using the event system :) event would be sent from the base enemy script
+    void CheckActives()
     {
-        foreach (WaveContainter waveContainter in wave)
+        foreach(var active in activeList)
         {
-            if(waveContainter != null && waveContainter.isCustomMoveData)
+            if(active.Item2.isAtEnd == true)
             {
-                Debug.Log("Assigning New Pos Data to " + waveContainter.enemy.gameObject.name);
-                waveContainter.enemy.GetComponent<BaseEnemy>().SetPositionContainer(waveContainter.pos);
+                Debug.Log("Destoryed enemy :(");
+                Destroy(active.Item1);
             }
         }
+
+        activeList.RemoveAll(x => x.Item1 == null);
+        
     }
+    //void InitWaveContainer()
+    //{
+    //    foreach (WaveContainter waveContainter in wave)
+    //    {
+    //        if(waveContainter != null && waveContainter.isCustomMoveData)
+    //        {
+    //            Debug.Log("Assigning New Pos Data to " + waveContainter.enemy.gameObject.name);
+    //            waveContainter.enemy.GetComponent<BaseEnemy>().SetPositionContainer(waveContainter.pos);
+    //        }
+    //    }
+    //}
     public void CleanEnemy()
     {
         activeList.Clear();

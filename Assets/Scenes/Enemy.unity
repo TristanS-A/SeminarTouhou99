@@ -317,6 +317,112 @@ MonoBehaviour:
   radius: 0.5
   scaler: 0.01
   k: 5
+--- !u!1 &1173606419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1173606421}
+  - component: {fileID: 1173606420}
+  - component: {fileID: 1173606422}
+  m_Layer: 0
+  m_Name: Test Enemy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &1173606420
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173606419}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -5177388603050735206, guid: 8884154dfe85442a3a3578be807dbcdf, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 2
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &1173606421
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173606419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.149873, y: -0.058929697, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1173606422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173606419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df09e735d1b7b74a8c8f7c573604ac8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  posData:
+    spawnPosition: {x: 0, y: 0}
+    endPosition: {x: -100, y: -100}
+    intermedatePos: []
+  health: 0
+  range: 0.5
+  dropType:
+    dropList: []
+  isAtEnd: 0
 --- !u!1 &1282623684
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,7 +549,7 @@ Transform:
   m_GameObject: {fileID: 1883331476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.373899, y: 2.6115088, z: 0}
+  m_LocalPosition: {x: -5.97, y: -4.26, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -479,14 +585,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wave:
-  - enemy: {fileID: 0}
-    isCustomTime: 0
+  - enemy: {fileID: 1173606419}
+    isCustomTime: 1
     isCustomMoveData: 1
-    timeTillSpawn: 0
+    timeTillSpawn: 1
     pos:
-      spawnPosition: {x: 0, y: 0}
-      endPosition: {x: 0, y: 0}
-      intermedatePos: []
+      spawnPosition: {x: -6.31, y: 4.38}
+      endPosition: {x: -5.97, y: -4.26}
+      intermedatePos:
+      - {x: 1, y: 1}
+  - enemy: {fileID: 1173606419}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 1
+    pos:
+      spawnPosition: {x: -6.31, y: 4.38}
+      endPosition: {x: -5.97, y: -4.26}
+      intermedatePos:
+      - {x: 1, y: 1}
 --- !u!4 &2034131577
 Transform:
   m_ObjectHideFlags: 0
@@ -660,3 +776,4 @@ SceneRoots:
   - {fileID: 1282623686}
   - {fileID: 1883331478}
   - {fileID: 2034131577}
+  - {fileID: 1173606421}

@@ -25,7 +25,8 @@ public class BaseEnemy : MonoBehaviour
     Sequencer sqe;
     private Vector2 currentSelectedPositon;
     int currentIndex = 0;
-    // Start is called before the first frame update
+
+    public bool isAtEnd = false;
     void Start()
     {
         //if (sqe = gameObject.GetComponent<Sequencer>())
@@ -46,8 +47,12 @@ public class BaseEnemy : MonoBehaviour
             currentSelectedPositon = posData.intermedatePos[currentIndex];
 
         }
-        
-        //trigger drop event
+        else
+        {
+            currentSelectedPositon = posData.endPosition;
+        }
+
+            //trigger drop event
         DropEvent evt = new DropEvent(dropType);
         dropType.SetLocation(this.transform.position);
         EventSystem.fireEvent(evt);
@@ -97,6 +102,13 @@ public class BaseEnemy : MonoBehaviour
         transform.position += (Vector3)diff;
 
         //transform.Translate(interpolatedPosition);
+
+        if(Vector2.Distance(transform.position, currentSelectedPositon) < range 
+            && currentSelectedPositon == posData.endPosition)
+        {
+            Debug.Log("ReachedEnd");
+            isAtEnd = true;
+        }
     }
 
     //all these returns statments suck change them to not that
@@ -113,10 +125,10 @@ public class BaseEnemy : MonoBehaviour
                 return currentSelectedPositon;
             }
 
-            
+
             currentSelectedPositon = posData.intermedatePos[currentIndex];
             return currentSelectedPositon;
-            
+
         }
 
         return currentSelectedPositon;
@@ -143,4 +155,5 @@ public class BaseEnemy : MonoBehaviour
        
     }
 
+    
 }
