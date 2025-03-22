@@ -1,13 +1,9 @@
 using AOT;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
-using Unity.Burst.Intrinsics;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,12 +13,12 @@ using static EventType;
 
 public class serverHandler : MonoBehaviour
 {
+    //Handles storing all networked player data (position, player gameobjects, and position interpolation)
     public struct PlayerGameData
     {
         public GameObject playerOBJ;
         public List<Vector3> playerPoses;
         public float playerInterpolationTracker;
-        //public string name;
 
         public void init()
         {
@@ -40,36 +36,38 @@ public class serverHandler : MonoBehaviour
         public int placement;
     }
 
+    //Serialized buttons and prefabs
     [SerializeField] private Button testServerButton;
     [SerializeField] private GameObject m_PlayerPrefab;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
 
+    //Player data storage
     Dictionary<uint, PlayerGameData> mPlayers = new();
     Dictionary<uint, PlayerStoredResultData> mPlayerResults = new();
 
+    //Networking members (server)
     private NetworkingSockets server;
     private uint serverPlayerID = 0;
-    private uint pollGroup;
     private StatusCallback serverNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
     private uint listenSocket;
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
     private System.Net.IPAddress mServerIP;
+    List<uint> connectedClients = new();
 
-    //MessageCallback message;
+    //Netowrking packet message data
     const int maxMessages = 20;
     NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
     byte[] messageDataBuffer = new byte[256];
 
-    string inputString;
-
-    List<uint> connectedClients = new();
-
+    //Gamestate storage
     GameState mGameState = GameState.NONE;
 
+    //Singleton instance
     public static serverHandler instance;
 
+    //Debug mode for running multiple games on a single computer
     [SerializeField] private bool mDebugMode = false;
 
     public enum GameState
@@ -97,7 +95,7 @@ public class serverHandler : MonoBehaviour
         EventSystem.OnFireOffensiveBomb -= SendBombDataFromServer;
     }
 
-    // Start is called before the first frame update
+    //Handle singleton instance no-replication and networking setup
     void Start()
     {
         if (instance != null)
@@ -122,6 +120,7 @@ public class serverHandler : MonoBehaviour
         utils.SetDebugCallback(DebugType.Everything, debugCallback);
     }
 
+    //Handles closing of netorking lib and connections
     private void OnApplicationQuit()
     {
         HandleCloseConnection();
@@ -182,6 +181,7 @@ public class serverHandler : MonoBehaviour
 #endif
     }
 
+    //Connection callbacks for connection status on clients
     [MonoPInvokeCallback(typeof(StatusCallback))]
     private void serverStatusCallback(StatusInfo info, System.IntPtr context)
     {
@@ -275,14 +275,13 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (server != null)
         {
-            switch (mGameState)                 //Handles gameplay networking
+            switch (mGameState)
             {
-                case GameState.GAME_STARTED:
+                case GameState.GAME_STARTED:    //Handles in-game networking
                     server.DispatchCallback(serverNetworkingUtils);
 
                     handleInterpolatePlayerPoses();
@@ -349,7 +348,7 @@ public class serverHandler : MonoBehaviour
                     }
                     mPacketSendTime += Time.deltaTime;
                     break;
-                case GameState.RESULTS_SCREEN:
+                case GameState.RESULTS_SCREEN:          //Handles result screen logic
                     server.DispatchCallback(serverNetworkingUtils);
                     BroadcastResults();
                     break;
@@ -357,11 +356,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        //handleMovePlayer();
-    }
-
+    //Visual for connected clients
     private void OnGUI()
     {
         for (int i = 0; i < connectedClients.Count; i++)
@@ -376,6 +371,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Sends player position data to all connected clients
     private void SendPlayerData()
     {
         if (server != null)
@@ -412,6 +408,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Sends players joined count to all clients lobby screens
     private void BroadcastPlayerCount()
     {
         if (server != null)
@@ -440,6 +437,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Sends all players' results to all clients result screens
     private void BroadcastResults()
     {
         if (server != null)
@@ -478,6 +476,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Broadcasts joining IP to clients wanting to join
     private void SendGameJoinMessage()
     {
         if (mServerIP != null && !mDebugMode)
@@ -486,6 +485,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Handles registering a newly joined player (to be able to send its own connection ID on the server for identification)
     private void handlePlayerJoining(uint playerID)
     {
         if (!mPlayers.ContainsKey(playerID))
@@ -519,6 +519,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Handles a client leaving/disconnecting
     private void handlePlayerLeaving(uint playerID, bool inGame)
     {
         if (mPlayers.ContainsKey(playerID))
@@ -538,6 +539,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Handles intaking player position data
     private void handlePlayerData(clientHandler.PlayerData playerData)
     {
         PlayerGameData player = new PlayerGameData();
@@ -565,6 +567,7 @@ public class serverHandler : MonoBehaviour
         mPlayers[playerData.playerID] = pData;
     }
 
+    //Handles interpolating player poses for clients
     private void handleInterpolatePlayerPoses()
     {
         var keys = mPlayers.Keys;
@@ -588,6 +591,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Handles receiving player result data from clients on their death (or win or disconnect to be implimented)
     private void HandleReceivePlayerResult()
     {
         clientHandler.PlayerSendResultData playerReceivedResult = new clientHandler.PlayerSendResultData();
@@ -622,6 +626,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    //Sends offensive bomb data to all other clients exept for the one that fired thw bomb
     private void SendBombDataToAllOtherClients(Vector2 pos, uint owningClient)
     {
         if (server != null)
@@ -659,6 +664,7 @@ public class serverHandler : MonoBehaviour
         SendBombDataToAllOtherClients(pos, serverPlayerID);
     }
 
+    //On server player die
     private void OnPlayerDie()
     {
         PlayerStoredResultData playerStoreResult = new()
@@ -677,7 +683,7 @@ public class serverHandler : MonoBehaviour
         }
     }
 
-    //This function will be called when a player dies/finished (and also disconnects probobly)
+    //This function will be called when a client player dies/finished (and also disconnects probobly)
     private bool CheckIfGameFinished()
     {
         //Game will finish when all results are in (Add safety exception in case not but level is done maybe)
@@ -689,6 +695,7 @@ public class serverHandler : MonoBehaviour
         return false;
     }
 
+    //Ends the netowrking session
     private void EndSession()
     {
         HandleCloseConnection();

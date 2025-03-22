@@ -17,35 +17,44 @@ using static serverHandler;
 
 public class clientHandler : MonoBehaviour
 {
+    //Serialized buttons and prefabs
     [SerializeField] private Button testClientButton;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
     [SerializeField] private GameObject m_IPDisplay;
+
+    //Networking members (client)
     private NetworkingSockets client;
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
     private StatusCallback clientNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
 
+    //Player data storage
     Dictionary<uint, serverHandler.PlayerGameData> mPlayers = new();
-    Dictionary<uint, serverHandler.PlayerStoredResultData> mPlayerResults = new();
 
+    //Packet sending data
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
 
+    //Joinable IP storage for lobby searching scene
     private Dictionary<string, GameObject> mJoinableIPs = new Dictionary<string, GameObject>();
+
+    //Gamestate storage
     serverHandler.GameState mGameState = serverHandler.GameState.NONE;
 
+    //Singleton instance
     public static clientHandler instance;
 
-    //MessageCallback message;
+    //Netowrking packet message data
     const int maxMessages = 20;
     NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-
     byte[] messageDataBuffer = new byte[256];
 
+    //Debug mode for running multiple games on a single computer (Needs manual input IP to connect)
     [SerializeField] private bool mDebugMode = false;
     [SerializeField] private string mDebugDebugIP;
 
+    //Networking packet types
     public enum PacketType
     {
         PLAYER_DATA,
@@ -56,6 +65,8 @@ public class clientHandler : MonoBehaviour
         SEND_RESULT,
         OFFENSIVE_BOMB_DATA
     }
+
+    ////Packet structs
 
     [StructLayout(LayoutKind.Sequential)]
     public struct TypeFinder
@@ -141,6 +152,7 @@ public class clientHandler : MonoBehaviour
         EventSystem.OnFireOffensiveBomb -= SendBombData;
     }
 
+    //Handles closing of netorking lib and connections
     private void OnApplicationQuit()
     {
         HandleCloseConnection();
@@ -163,7 +175,7 @@ public class clientHandler : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
+    //Handle singleton instance no-replication and networking setup
     void Start()
     {
         if (instance != null)
@@ -259,17 +271,18 @@ public class clientHandler : MonoBehaviour
 
             case ConnectionState.Connected:
                 serverConnection = info.connection;
-                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client connected to server - ID: " + serverConnection);
+                Debug.Log("Client connected to server - ID: " + serverConnection);
                 break;
 
             case ConnectionState.ClosedByPeer:
             case ConnectionState.ProblemDetectedLocally:
                 client.CloseConnection(serverConnection);
-                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Client disconnected from server");
+                Debug.Log("Client disconnected from server");
                 break;
         }
     }
 
+    //Handles displaying the joinable IP's on the searching for a room scene (Could maybe put this somewhere else)
     private void DisplayJoinableIPs()
     {
         int ipYCord = 220;
@@ -307,6 +320,7 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    //Joining trigger on a IP display button ti join that server;
     public void JoinHost(BaseEventData eventData)
     {
         if (eventData.selectedObject != null)
@@ -317,7 +331,6 @@ public class clientHandler : MonoBehaviour
     }
 
 
-    // Update is called once per frame
     void Update()
     {
         if (client != null)
@@ -418,11 +431,7 @@ public class clientHandler : MonoBehaviour
 #endif
     }
 
-    private void FixedUpdate()
-    {
-        //handleMovePlayer();
-    }
-
+    //Sends player position data to server
     void SendPlayerData()
     {
         if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null)
@@ -455,6 +464,7 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    //Handles intaking player position data
     private void handlePlayerData(PlayerData playerData)
     {
         if (playerData.playerID != connectionIDOnServer)
@@ -486,6 +496,7 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    //Handles interpolating player poses for clients
     private void handleInterpolatePlayerPoses()
     {
         var keys = mPlayers.Keys;
@@ -567,12 +578,14 @@ public class clientHandler : MonoBehaviour
         }
     }
 
+    //Ends the netowrking session
     private void EndSession()
     {
         HandleCloseConnection();
         Destroy(gameObject);
     }
 
+    //Sends offensive bomb data to server
     private void SendBombData(Vector2 pos) {
         if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null) {
             OffensiveBombData bombData = new() {
