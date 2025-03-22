@@ -118,6 +118,7 @@ public class clientHandler : MonoBehaviour
     public struct OffensiveBombData
     {
         public int type;
+        public uint playerID;
         public Vector3 pos;
     }
 
@@ -576,6 +577,7 @@ public class clientHandler : MonoBehaviour
         if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null) {
             OffensiveBombData bombData = new() {
                 pos = pos,
+                playerID = connectionIDOnServer,
                 type = (int)PacketType.OFFENSIVE_BOMB_DATA
             };
 

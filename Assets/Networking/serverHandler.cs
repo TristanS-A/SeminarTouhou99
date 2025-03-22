@@ -48,7 +48,7 @@ public class serverHandler : MonoBehaviour
     Dictionary<uint, PlayerStoredResultData> mPlayerResults = new();
 
     private NetworkingSockets server;
-    //private uint serverPlayerID = 0;
+    private uint serverPlayerID = 0;
     private uint pollGroup;
     private StatusCallback serverNetworkingUtils;
     NetworkingUtils utils = new NetworkingUtils();
@@ -86,6 +86,7 @@ public class serverHandler : MonoBehaviour
         EventSystem.gameStarted += HandleGameStart;
         EventSystem.onPlayerDeath += OnPlayerDie;
         EventSystem.onEndGameSession += EndSession;
+        EventSystem.OnFireOffensiveBomb += SendBombDataFromServer;
     }
 
     private void OnDisable()
@@ -93,6 +94,7 @@ public class serverHandler : MonoBehaviour
         EventSystem.gameStarted -= HandleGameStart;
         EventSystem.onPlayerDeath -= OnPlayerDie;
         EventSystem.onEndGameSession -= EndSession;
+        EventSystem.OnFireOffensiveBomb -= SendBombDataFromServer;
     }
 
     // Start is called before the first frame update
@@ -241,7 +243,7 @@ public class serverHandler : MonoBehaviour
             ownPlayer.playerOBJ = player;
             ownPlayer.init();
 
-            mPlayers.Add(0, ownPlayer);
+            mPlayers.Add(serverPlayerID, ownPlayer);
         }
     }
 
@@ -326,8 +328,8 @@ public class serverHandler : MonoBehaviour
                                     break;
                                 case PacketType.OFFENSIVE_BOMB_DATA:
                                     OffensiveBombData data = (OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(OffensiveBombData));
-                                    EventSystem.OffensiveBombAttack(data.pos);
-
+                                    EventSystem.OffensiveBombAttack(data.pos);               //Spawns offensive bomb to server client
+                                    SendBombDataToAllOtherClients(data.pos, data.playerID);  //SPawns offensive bombs to all other clients
                                     break;
                             }
 
@@ -620,6 +622,43 @@ public class serverHandler : MonoBehaviour
         }
     }
 
+    private void SendBombDataToAllOtherClients(Vector2 pos, uint owningClient)
+    {
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                if (connectedClients[i] != owningClient)
+                {
+                    OffensiveBombData bombData = new()
+                    {
+                        pos = pos,
+                        playerID = connectedClients[i],
+                        type = (int)PacketType.OFFENSIVE_BOMB_DATA
+                    };
+
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];
+                    GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
+                    try
+                    {
+                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                    }
+                    finally
+                    {
+                        Debug.Log("SENDING BOMB DATA");
+                        server.SendMessageToConnection(connectedClients[i], bytes);
+                        pinStructure.Free();
+                    }
+                }
+            }
+        }
+    }
+
+    private void SendBombDataFromServer(Vector2 pos)
+    {
+        SendBombDataToAllOtherClients(pos, serverPlayerID);
+    }
+
     private void OnPlayerDie()
     {
         PlayerStoredResultData playerStoreResult = new()
@@ -629,7 +668,7 @@ public class serverHandler : MonoBehaviour
             time = Time.time - PlayerInfo.PlayerTime
         };
 
-        mPlayerResults.Add(0, playerStoreResult);
+        mPlayerResults.Add(serverPlayerID, playerStoreResult);
 
         //Check if game is finished (all players are done playing)
         if (CheckIfGameFinished())
