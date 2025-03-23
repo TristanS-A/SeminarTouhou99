@@ -19,7 +19,7 @@ public static class UDPListener
 
     private static bool isReciving = false;
 
-    private static byte[] messageDataBuffer = new byte[256];
+    private static byte[] messageDataBuffer = new byte[100];
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct IPData
@@ -81,16 +81,17 @@ public static class UDPListener
     {
         if (result != null)
         {
-            IPData receivedIPData = new IPData();
-            int size = Marshal.SizeOf(receivedIPData);
+            byte[] receivedIPData = client.EndReceive(result, ref ip);
+            IPData newIPData = new IPData();
+            int size = Marshal.SizeOf(newIPData);
             IntPtr ptr = IntPtr.Zero;
             try
             {
                 ptr = Marshal.AllocHGlobal(size);
 
-                Marshal.Copy(messageDataBuffer, 0, ptr, size);
+                Marshal.Copy(receivedIPData, 0, ptr, size);
 
-                receivedIPData = (IPData)Marshal.PtrToStructure(ptr, receivedIPData.GetType());
+                newIPData = (IPData)Marshal.PtrToStructure(ptr, newIPData.GetType());
             }
             finally
             {
@@ -98,7 +99,7 @@ public static class UDPListener
 
                 if (isReciving)
                 {
-                    EventSystem.fireEvent(new ReceiveIPEvent(receivedIPData.ip, receivedIPData.name));
+                    EventSystem.fireEvent(new ReceiveIPEvent(newIPData.ip, newIPData.name));
                 }
 
                 client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);

@@ -318,6 +318,8 @@ public class clientHandler : MonoBehaviour
                     entry.callback.AddListener((data) => { JoinHost((BaseEventData)data); });
                     trigger.triggers.Add(entry);
 
+                    joinB.gameObject.AddComponent<IPStorageAttachment>().IP = keys.ElementAt(i);
+
                     mJoinableIPs[keys.ElementAt(i)] = new() { name = mJoinableIPs[keys.ElementAt(i)].name, joinUIOBJ = newIPDisplay };
                 }
 
@@ -339,7 +341,7 @@ public class clientHandler : MonoBehaviour
     {
         if (eventData.selectedObject != null)
         {
-            InitClientJoin(eventData.selectedObject.GetComponentInParent<TextMeshProUGUI>().text);
+            InitClientJoin(eventData.selectedObject.GetComponent<IPStorageAttachment>().IP);
             mGameState = serverHandler.GameState.SEARCHING_FOR_PLAYERS;
         }
     }
