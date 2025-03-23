@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using Valve.Sockets;
 using static clientHandler;
 using static EventType;
+using static UnityEditor.PlayerSettings;
 
 public class serverHandler : MonoBehaviour
 {
@@ -624,6 +625,8 @@ public class serverHandler : MonoBehaviour
                 Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
                 prevData.playerOBJ = null;
                 mPlayers[playerReceivedResult.playerID] = prevData;
+
+                SendPlayerDeathToAllOtherClients(playerReceivedResult.playerID);
             }
 
             //Check if game is finished (all players are done playing)
@@ -705,6 +708,36 @@ public class serverHandler : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void SendPlayerDeathToAllOtherClients(uint clientThatDied)
+    {
+        if (server != null)
+        {
+            for (int i = 0; i < connectedClients.Count; i++)
+            {
+                if (connectedClients[i] != clientThatDied)
+                {
+                    clientHandler.OtherClientDeath data = new()
+                    {
+                        playerID = connectedClients[i],
+                        type = (int)PacketType.OTHER_PLAYER_DEATH
+                    };
+
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];
+                    GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
+                    try
+                    {
+                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                    }
+                    finally
+                    {
+                        server.SendMessageToConnection(connectedClients[i], bytes);
+                        pinStructure.Free();
+                    }
+                }
+            }
+        }
     }
 
     //Ends the netowrking session

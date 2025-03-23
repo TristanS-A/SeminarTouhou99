@@ -75,7 +75,8 @@ public class clientHandler : MonoBehaviour
         GAME_STATE,
         STORE_PLAYER_RESULTS,
         SEND_RESULT,
-        OFFENSIVE_BOMB_DATA
+        OFFENSIVE_BOMB_DATA,
+        OTHER_PLAYER_DEATH
     }
 
     ////Packet structs
@@ -144,6 +145,13 @@ public class clientHandler : MonoBehaviour
         public int type;
         public uint playerID;
         public Vector3 pos;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct OtherClientDeath
+    {
+        public int type;
+        public uint playerID;
     }
 
     private void OnEnable()
@@ -440,6 +448,10 @@ public class clientHandler : MonoBehaviour
                         EventSystem.OffensiveBombAttack(data.pos);
 
                         break;
+                    case PacketType.OTHER_PLAYER_DEATH:
+                        OtherClientDeath otherDeathData = (OtherClientDeath)Marshal.PtrToStructure(ptPoit, typeof(OtherClientDeath));
+                        HandleOtherPlayerDeath(otherDeathData.playerID);
+                        break;
                 }
 
                 Marshal.FreeHGlobal(ptPoit);
@@ -628,5 +640,13 @@ public class clientHandler : MonoBehaviour
                 pinStructure.Free();
             }
         }
+    }
+
+    private void HandleOtherPlayerDeath(uint otherPlayerID)
+    {
+        PlayerGameData prevData = mPlayers[otherPlayerID];
+        Destroy(mPlayers[otherPlayerID].playerOBJ);
+        prevData.playerOBJ = null;
+        mPlayers[otherPlayerID] = prevData;
     }
 }
