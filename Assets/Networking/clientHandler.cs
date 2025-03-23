@@ -37,7 +37,7 @@ public class clientHandler : MonoBehaviour
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
 
     //Joinable IP storage for lobby searching scene
-    private Dictionary<string, GameObject> mJoinableIPs = new Dictionary<string, GameObject>();
+    private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
 
     //Gamestate storage
     serverHandler.GameState mGameState = serverHandler.GameState.NONE;
@@ -53,6 +53,18 @@ public class clientHandler : MonoBehaviour
     //Debug mode for running multiple games on a single computer (Needs manual input IP to connect)
     [SerializeField] private bool mDebugMode = false;
     [SerializeField] private string mDebugDebugIP;
+
+    //IP Joining struct
+    private struct JoinIPData
+    {
+        public GameObject joinUIOBJ;
+        public string name;
+
+        public void setJoinUIOBJ (GameObject newJoinUIOBJ)
+        {
+            joinUIOBJ = newJoinUIOBJ;
+        }
+    }
 
     //Networking packet types
     public enum PacketType
@@ -215,7 +227,7 @@ public class clientHandler : MonoBehaviour
         }
         else
         {
-            mJoinableIPs.Add(mDebugDebugIP, null);
+            mJoinableIPs.Add(mDebugDebugIP, new JoinIPData());
         }
 
         mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
@@ -223,11 +235,12 @@ public class clientHandler : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    private void AddIP(string ip)
+    private void AddIP(string ip, string connectionName)
     {
         if (!mJoinableIPs.ContainsKey(ip))
         {
-            mJoinableIPs.Add(ip, null);
+            JoinIPData joinIPData = new() { name = connectionName, joinUIOBJ = null };
+            mJoinableIPs.Add(ip, joinIPData);
         }
     }
 
@@ -291,11 +304,11 @@ public class clientHandler : MonoBehaviour
             var keys = mJoinableIPs.Keys;
             for (int i = 0; i < keys.Count; i++)
             {
-                if (mJoinableIPs[keys.ElementAt(i)] == null)
+                if (mJoinableIPs[keys.ElementAt(i)].joinUIOBJ == null)
                 {
                     Canvas canvas = FindObjectOfType<Canvas>();
                     GameObject newIPDisplay = Instantiate(m_IPDisplay, canvas.transform);
-                    mJoinableIPs[keys.ElementAt(i)] = newIPDisplay;
+                    mJoinableIPs[keys.ElementAt(i)].setJoinUIOBJ(newIPDisplay);
 
                     Button joinB = newIPDisplay.GetComponentInChildren<Button>();
                     TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
@@ -307,13 +320,13 @@ public class clientHandler : MonoBehaviour
                     trigger.triggers.Add(entry);
                 }
 
-                GameObject displayOBJ = mJoinableIPs[keys.ElementAt(i)];
+                GameObject displayOBJ = mJoinableIPs[keys.ElementAt(i)].joinUIOBJ;
                 TextMeshProUGUI hostName = displayOBJ.GetComponentInChildren<TextMeshProUGUI>();
                 Button joinButton = displayOBJ.GetComponentInChildren<Button>();
                 TextMeshProUGUI joinButtonTextOBJ = joinButton.GetComponentInChildren<TextMeshProUGUI>();
 
                 displayOBJ.transform.position = new Vector3(displayOBJ.transform.position.x, ipYCord, displayOBJ.transform.position.z);
-                hostName.text = keys.ElementAt(i);
+                hostName.text = mJoinableIPs[keys.ElementAt(i)].name;
                 joinButtonTextOBJ.text = "Join!";
                 ipYCord -= (int)hostName.rectTransform.rect.height;
             }

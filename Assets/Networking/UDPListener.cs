@@ -1,8 +1,11 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
+using static clientHandler;
+using static serverHandler;
 
 public static class UDPListener
 {
@@ -15,6 +18,18 @@ public static class UDPListener
     private const int PORT = 20000;
 
     private static bool isReciving = false;
+
+    private static byte[] messageDataBuffer = new byte[256];
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct IPData
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
+        public string ip;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
+        public string name;
+    };
 
     public static void StartClient(bool receive)
     {
@@ -41,34 +56,53 @@ public static class UDPListener
         }
     }
 
-    public static void SendIP(string ip)
+    public static void SendIP(string ip, string serverName)
     {
-        byte[] bytes = Encoding.ASCII.GetBytes(ip);
-        client.BeginSend(bytes, bytes.Length, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
+        //byte[] bytes = Encoding.ASCII.GetBytes(ip);
+        IPData newIPData = new IPData { ip = ip , name = serverName };
+
+        IntPtr ptr = IntPtr.Zero;
+        byte[] bytes = new byte[Marshal.SizeOf(typeof(IPData))];
+
+        try
+        {
+            ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IPData)));
+            Marshal.StructureToPtr(newIPData, ptr, true);
+            Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(IPData)));
+        }
+        finally
+        {
+            client.BeginSend(bytes, bytes.Length, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
+            Marshal.FreeHGlobal(ptr);
+        }
     }
 
     public static void RecieveServerInfo(IAsyncResult result)
     {
         if (result != null)
         {
-            byte[] recievedData = client.EndReceive(result, ref ip);
-            data = Encoding.ASCII.GetString(recievedData);
+            IPData receivedIPData = new IPData();
+            int size = Marshal.SizeOf(receivedIPData);
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                ptr = Marshal.AllocHGlobal(size);
 
-            if (String.IsNullOrEmpty(data))
-            {
-                Debug.Log("No Data Recieved");
+                Marshal.Copy(messageDataBuffer, 0, ptr, size);
+
+                receivedIPData = (IPData)Marshal.PtrToStructure(ptr, receivedIPData.GetType());
             }
-            else
+            finally
             {
-                //Debug.Log("data recived: " + data);
+                Marshal.FreeHGlobal(ptr);
+
                 if (isReciving)
                 {
-                    EventSystem.fireEvent(new ReceiveIPEvent(data));
+                    EventSystem.fireEvent(new ReceiveIPEvent(receivedIPData.ip, receivedIPData.name));
                 }
 
+                client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
             }
-
-            client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
         }
     }
 }

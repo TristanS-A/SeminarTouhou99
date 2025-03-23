@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public static class EventSystem
 {
     public static event Action<GameObject> gameStarted; //Rename this to game start event
-    public static event Action<string> ipReceived;
+    public static event Action<string, string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
     public static event Action<int, int> playerResultReveived;
     public static event Action onPlayerDeath;
@@ -56,7 +56,7 @@ public static class EventSystem
                 break;
             case EventType.EventTypes.RECEIVED_IP:
                 ReceiveIPEvent ip = (ReceiveIPEvent)(type);
-                ipReceived.Invoke(ip.getIP());   
+                ipReceived.Invoke(ip.getIP(), ip.getConnectionName());   
                 break;
             case EventType.EventTypes.PLAYER_DIED:
                 onPlayerDeath.Invoke();

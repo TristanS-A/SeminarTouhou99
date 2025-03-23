@@ -481,7 +481,7 @@ public class serverHandler : MonoBehaviour
     {
         if (mServerIP != null && !mDebugMode)
         {
-            UDPListener.SendIP(mServerIP.ToString());
+            UDPListener.SendIP(mServerIP.ToString(), PlayerInfo.PlayerName);
         }
     }
 
