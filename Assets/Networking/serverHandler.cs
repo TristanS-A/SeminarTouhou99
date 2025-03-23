@@ -575,7 +575,7 @@ public class serverHandler : MonoBehaviour
         for (int i = 0; i < mPlayers.Count; i++)
         {
             uint id = keys.ElementAt(i);
-            if (mPlayers[id].playerPoses.Count > 0)
+            if (mPlayers[id].playerPoses.Count > 0 && mPlayers[id].playerOBJ != null)
             {
                 GameObject playerOBJ = mPlayers[id].playerOBJ;
                 playerOBJ.transform.position = Vector3.Lerp(mPlayers[id].playerPoses[0], mPlayers[id].playerPoses[1], mPlayers[id].playerInterpolationTracker / PACKET_TARGET_SEND_TIME);
@@ -726,7 +726,7 @@ public class serverHandler : MonoBehaviour
                         type = (int)PacketType.OTHER_PLAYER_DEATH
                     };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OtherClientDeath))];
                     GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
                     try
                     {
