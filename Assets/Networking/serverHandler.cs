@@ -614,6 +614,18 @@ public class serverHandler : MonoBehaviour
             Debug.Log("REceived result from : " + playerReceivedResult.playerID);
             mPlayerResults.Add(playerReceivedResult.playerID, playerStoreResult);
 
+            if (playerReceivedResult.playerWon)
+            {
+
+            }
+            else
+            {
+                PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
+                Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
+                prevData.playerOBJ = null;
+                mPlayers[playerReceivedResult.playerID] = prevData;
+            }
+
             //Check if game is finished (all players are done playing)
             if (CheckIfGameFinished())
             {

@@ -125,6 +125,7 @@ public class clientHandler : MonoBehaviour
         public uint playerID;
         public float time;
         public int points;
+        public bool playerWon;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
         public string name;
@@ -577,6 +578,7 @@ public class clientHandler : MonoBehaviour
         playerResults.name = PlayerInfo.PlayerName;
         playerResults.time = Time.time - PlayerInfo.PlayerTime;
         playerResults.points = PlayerInfo.PlayerPoints;
+        playerResults.playerWon = false;
 
         IntPtr ptr = IntPtr.Zero;
         byte[] bytes = new byte[Marshal.SizeOf(typeof(PlayerSendResultData))];
