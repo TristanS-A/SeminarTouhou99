@@ -691,6 +691,8 @@ public class serverHandler : MonoBehaviour
 
         mPlayerResults.Add(serverPlayerID, playerStoreResult);
 
+        SendPlayerDeathToAllOtherClients(serverPlayerID);
+
         //Check if game is finished (all players are done playing)
         if (CheckIfGameFinished())
         {
@@ -720,7 +722,7 @@ public class serverHandler : MonoBehaviour
                 {
                     clientHandler.OtherClientDeath data = new()
                     {
-                        playerID = connectedClients[i],
+                        playerID = clientThatDied,
                         type = (int)PacketType.OTHER_PLAYER_DEATH
                     };
 
