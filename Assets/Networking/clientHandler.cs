@@ -60,7 +60,7 @@ public class clientHandler : MonoBehaviour
         public GameObject joinUIOBJ;
         public string name;
 
-        public void setJoinUIOBJ (GameObject newJoinUIOBJ)
+        public void setJoinUIOBJ(GameObject newJoinUIOBJ)
         {
             joinUIOBJ = newJoinUIOBJ;
         }
@@ -227,7 +227,7 @@ public class clientHandler : MonoBehaviour
         }
         else
         {
-            mJoinableIPs.Add(mDebugDebugIP, new JoinIPData());
+            mJoinableIPs.Add(mDebugDebugIP, new() { name = "Debug Room", joinUIOBJ = null });
         }
 
         mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
@@ -308,7 +308,6 @@ public class clientHandler : MonoBehaviour
                 {
                     Canvas canvas = FindObjectOfType<Canvas>();
                     GameObject newIPDisplay = Instantiate(m_IPDisplay, canvas.transform);
-                    mJoinableIPs[keys.ElementAt(i)].setJoinUIOBJ(newIPDisplay);
 
                     Button joinB = newIPDisplay.GetComponentInChildren<Button>();
                     TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
@@ -318,6 +317,8 @@ public class clientHandler : MonoBehaviour
                     entry.eventID = EventTriggerType.PointerDown;
                     entry.callback.AddListener((data) => { JoinHost((BaseEventData)data); });
                     trigger.triggers.Add(entry);
+
+                    mJoinableIPs[keys.ElementAt(i)] = new() { name = mJoinableIPs[keys.ElementAt(i)].name, joinUIOBJ = newIPDisplay };
                 }
 
                 GameObject displayOBJ = mJoinableIPs[keys.ElementAt(i)].joinUIOBJ;
@@ -599,9 +600,12 @@ public class clientHandler : MonoBehaviour
     }
 
     //Sends offensive bomb data to server
-    private void SendBombData(Vector2 pos) {
-        if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null) {
-            OffensiveBombData bombData = new() {
+    private void SendBombData(Vector2 pos)
+    {
+        if (client != null && mPlayers.ContainsKey(connectionIDOnServer) && mPlayers[connectionIDOnServer].playerOBJ != null)
+        {
+            OffensiveBombData bombData = new()
+            {
                 pos = pos,
                 playerID = connectionIDOnServer,
                 type = (int)PacketType.OFFENSIVE_BOMB_DATA
@@ -609,9 +613,12 @@ public class clientHandler : MonoBehaviour
 
             Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];
             GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
-            try {
+            try
+            {
                 Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-            } finally {
+            }
+            finally
+            {
                 Debug.Log("SENDING BOMB DATA");
                 client.SendMessageToConnection(serverConnection, bytes);
                 pinStructure.Free();
