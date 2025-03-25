@@ -19,3 +19,4 @@ MonoBehaviour:
   bulletType: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
   emmiter: {fileID: 6224333239488190002, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
   angle: 0
+  shouldAttach: 1
