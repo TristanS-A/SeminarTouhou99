@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 2747690628134850419, guid: b670ab75dde984907b8570040daa08c5, type: 3}
   m_Color: {r: 0.6788965, g: 0.1594082, b: 0.7798742, a: 1}
   m_FlipX: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
     endPosition: {x: 0, y: 0}
     intermedatePos: []
   health: 2
-  range: 0
+  range: 0.2
   dropType:
     dropList:
     - dropType: 0
