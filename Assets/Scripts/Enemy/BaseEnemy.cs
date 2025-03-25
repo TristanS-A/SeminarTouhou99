@@ -53,10 +53,7 @@ public class BaseEnemy : MonoBehaviour
             currentSelectedPositon = posData.endPosition;
         }
 
-            //trigger drop event
-        DropEvent evt = new DropEvent(dropType);
-        dropType.SetLocation(this.transform.position);
-        EventSystem.fireEvent(evt);
+      
     }
     private void FixedUpdate()
     {
@@ -70,12 +67,18 @@ public class BaseEnemy : MonoBehaviour
             //this will need to be changed at some point
             //the player will have a damadge value associated with it
             TakeDamadge(1);
+            //trigger drop event
+            DropEvent evt = new DropEvent(dropType);
+            dropType.SetLocation(this.transform.position);
+            EventSystem.fireEvent(evt);
+
             Destroy(collision.gameObject);
         }
     }
 
     protected void TakeDamadge(float damadge)
     {
+
         health -= damadge;
 
         if(health <= 0)
@@ -106,12 +109,12 @@ public class BaseEnemy : MonoBehaviour
 
         //transform.Translate(interpolatedPosition);
 
-        if(Vector2.Distance(transform.position, currentSelectedPositon) < range 
-            && currentSelectedPositon == posData.endPosition)
+        if((Vector2)transform.position == posData.endPosition)
         {
             Debug.Log("ReachedEnd");
             isAtEnd = true;
         }
+        Debug.Log(gameObject.name + " : object position " + transform.position + " endpos: " + posData.endPosition);
     }
 
     //all these returns statments suck change them to not that

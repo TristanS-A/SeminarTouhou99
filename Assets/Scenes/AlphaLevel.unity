@@ -212,12 +212,20 @@ MonoBehaviour:
       endPosition: {x: -4.5, y: -5}
       intermedatePos: []
   - enemy: {fileID: 3091691249233370463, guid: a12205ff835cc444993e75cdc7707d85, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 2
+    pos:
+      spawnPosition: {x: -0.48, y: 5}
+      endPosition: {x: -0.48, y: -5}
+      intermedatePos: []
+  - enemy: {fileID: 2911639964975950362, guid: ec9250652929b984ab20e633b52655a6, type: 3}
     isCustomTime: 0
     isCustomMoveData: 1
     timeTillSpawn: 0
     pos:
-      spawnPosition: {x: -0.48, y: 5}
-      endPosition: {x: -0.48, y: -5}
+      spawnPosition: {x: -2.689958, y: 5}
+      endPosition: {x: 2, y: -5}
       intermedatePos: []
 --- !u!4 &86347501
 Transform:

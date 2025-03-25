@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class PlayerAttacks : MonoBehaviour {
     [Header("Keybinds")]
@@ -57,6 +58,34 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
+       
+        if(target == null)
+        {
+            //this will need to be fixed
+            var list = GameObject.FindGameObjectsWithTag("Enemy");
+
+            if(list == null)
+            {
+                return;
+            }
+
+            float closePosition = float.PositiveInfinity;
+            Transform obj = null;
+
+            foreach (var item in list)
+            {
+                Transform test = item.transform;
+
+                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition)
+                {
+                    obj = test;
+                    closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
+                }
+            }
+
+            target = obj;
+        }
+
         HandleDefensiveBomb(BOMB_COST);
         HandleOffensiveBomb(BOMB_COST);
     }
@@ -69,7 +98,7 @@ public class PlayerAttacks : MonoBehaviour {
             if (bullets[i] != null) {
                 bullets[i].transform.position += bulletSpeed * Time.deltaTime * Vector3.up;
 
-                if (playerMovement.IsInFocusTime()) {
+                if (playerMovement.IsInFocusTime() && target != null) {
                     GameObject bullet = bullets[i];
                     Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
 
