@@ -46,6 +46,9 @@ public static class EventSystem
     public static UnityEvent<float> OnEnemyRespawnUpdate;
     public static void EnemyRespawnUpdate(float health) => OnEnemyRespawnUpdate?.Invoke(health);
 
+    //score
+    public static event UnityAction<DropType, int> OnPickUpUpdate;
+    public static void OnPickUp(DropType type, int ammount) => OnPickUpUpdate?.Invoke(type, ammount);
     public static void fireEvent(EventType type)
     {
         switch (type.getEventType())
