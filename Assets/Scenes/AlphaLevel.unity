@@ -1060,7 +1060,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 274.9, y: 0.000030517578}
+  m_AnchoredPosition: {x: 314.3, y: 0.000030517578}
   m_SizeDelta: {x: 200, y: 72.8}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &930807143
@@ -1421,6 +1421,14 @@ PrefabInstance:
       propertyPath: screenObject
       value: 
       objectReference: {fileID: 1968492547}
+    - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: defensiveBombDelay
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3719647831614739423, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
+      propertyPath: offensiveBombDelay
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3875593617490493976, guid: 9e420922873800c45b29c592c046c0a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.004999995
