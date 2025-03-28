@@ -111,10 +111,8 @@ public class BaseEnemy : MonoBehaviour
 
         if((Vector2)transform.position == posData.endPosition)
         {
-            Debug.Log("ReachedEnd");
             isAtEnd = true;
         }
-        Debug.Log(gameObject.name + " : object position " + transform.position + " endpos: " + posData.endPosition);
     }
 
     //all these returns statments suck change them to not that

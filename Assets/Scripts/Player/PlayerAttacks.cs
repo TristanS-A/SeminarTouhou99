@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class PlayerAttacks : MonoBehaviour {
     [Header("Keybinds")]
@@ -17,9 +15,9 @@ public class PlayerAttacks : MonoBehaviour {
     public static int bulletDamage = 1;
 
     [Header("Homing Missle")]
-    public Transform target;
+    [SerializeField] private Transform target;
     [Range(1, 8)]
-    public int rotateSpeed = 2;
+    [SerializeField] private int rotateSpeed = 2;
 
     [Header("Defensive Bomb")]
     [SerializeField] private int maxDefensiveBombs = 3;
@@ -33,7 +31,6 @@ public class PlayerAttacks : MonoBehaviour {
     private int offensiveBombCount;
     private int attackIndex = 0;
     private bool isOffensiveBombDelayed = false;
-
 
     private static int BOMB_COST = 1;
 
@@ -179,11 +176,17 @@ public class PlayerAttacks : MonoBehaviour {
         isDefensiveBombDelayed = true;
 
         if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
-            defensiveBombCount -= cost;
-            var enemy = target.gameObject.GetComponent<TempEnemy>();
-            enemy.GetSequencer().CleanSequencer();
-
             EventSystem.DefensiveBombAttack(defensiveBombCount);
+
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            foreach (var enemy in enemies) {
+                if (enemy.GetComponent<BaseEnemy>().TryGetComponent<Sequencer>(out var enemySequencer)) {
+                    enemySequencer.CleanSequencer();
+                }
+            }
+            defensiveBombCount -= cost;
+
             yield return new WaitForSeconds(delay);
         }
         isDefensiveBombDelayed = false;
