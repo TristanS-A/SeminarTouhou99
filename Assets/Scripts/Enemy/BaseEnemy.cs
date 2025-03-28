@@ -21,6 +21,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] float health;
     [SerializeField] float range;
     [SerializeField] DropTypes dropType;
+    [SerializeField] float speed = 3f;
     //this needs a sequencer
     Sequencer sqe;
     private Vector2 currentSelectedPositon;
@@ -52,10 +53,7 @@ public class BaseEnemy : MonoBehaviour
             currentSelectedPositon = posData.endPosition;
         }
 
-            //trigger drop event
-        DropEvent evt = new DropEvent(dropType);
-        dropType.SetLocation(this.transform.position);
-        EventSystem.fireEvent(evt);
+      
     }
     private void FixedUpdate()
     {
@@ -65,21 +63,29 @@ public class BaseEnemy : MonoBehaviour
     {
         if(collision.CompareTag("Bullet"))
         {
+            Debug.LogWarning("Got Hit by somthing I was not supposed to");
             //this will need to be changed at some point
             //the player will have a damadge value associated with it
             TakeDamadge(1);
+            //trigger drop event
+            DropEvent evt = new DropEvent(dropType);
+            dropType.SetLocation(this.transform.position);
+            EventSystem.fireEvent(evt);
+
             Destroy(collision.gameObject);
         }
     }
 
     protected void TakeDamadge(float damadge)
     {
+
         health -= damadge;
 
         if(health <= 0)
         {
             //player killed enemy
 
+            Debug.Log("CALLED A DROP EVENT");
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
 
@@ -97,18 +103,18 @@ public class BaseEnemy : MonoBehaviour
 
         //Vector2 direction = currentPos - FindClosestPosition();
         //start the lerp
-        Vector2 interpolatedPosition = Vector2.MoveTowards(currentPos, FindClosestPosition(), Time.deltaTime * 3f);
+        Vector2 interpolatedPosition = Vector2.MoveTowards(currentPos, FindClosestPosition(), Time.deltaTime * speed);
         Vector2 diff = interpolatedPosition - new Vector2(transform.position.x, transform.position.y);
         transform.position += (Vector3)diff;
 
         //transform.Translate(interpolatedPosition);
 
-        if(Vector2.Distance(transform.position, currentSelectedPositon) < range 
-            && currentSelectedPositon == posData.endPosition)
+        if((Vector2)transform.position == posData.endPosition)
         {
             Debug.Log("ReachedEnd");
             isAtEnd = true;
         }
+        Debug.Log(gameObject.name + " : object position " + transform.position + " endpos: " + posData.endPosition);
     }
 
     //all these returns statments suck change them to not that

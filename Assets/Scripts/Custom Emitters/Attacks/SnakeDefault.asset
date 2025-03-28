@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2937b8e272e005040bd8a5650ee9493e, type: 3}
-  m_Name: StrightDown
+  m_Name: SnakeDefault
   m_EditorClassIdentifier: 
   isCenterd: 1
   isCustomTime: 0
-  customLifeTime: 5
-  dirction: {x: 0, y: -1}
+  customLifeTime: 0
+  dirction: {x: 0, y: 0}
   bulletType: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
-  emmiter: {fileID: 6224333239488190002, guid: 0ba390e3bdff0f74180fcbe508cedde2, type: 3}
+  emmiter: {fileID: 7487088172007261916, guid: fdd804c663819da44880049656ff157a, type: 3}
   angle: 0
-  shouldAttach: 1
+  shouldAttach: 0
