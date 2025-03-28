@@ -2752,6 +2752,75 @@ RectTransform:
   m_AnchoredPosition: {x: -25, y: 3}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1001 &2041908868
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.7176967
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.5244933
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.037097424
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 449837133467873983, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1135624634296912084, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: radius
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1135624634296912084, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: scaler
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1135624634296912084, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: ammount
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7487088172007261916, guid: fdd804c663819da44880049656ff157a, type: 3}
+      propertyPath: m_Name
+      value: SnakeEmitter
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fdd804c663819da44880049656ff157a, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2764,3 +2833,4 @@ SceneRoots:
   - {fileID: 1073282802}
   - {fileID: 737865355}
   - {fileID: 1808391617}
+  - {fileID: 2041908868}

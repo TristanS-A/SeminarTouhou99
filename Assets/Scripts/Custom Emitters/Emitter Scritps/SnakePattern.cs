@@ -72,12 +72,12 @@ public class SnakePattern : Pattern
         //create objects
         for (int i = 0; i < ammount; i++)
         { 
-            float x = center.x + Mathf.Sin(i * 0.3f) * 3;
-            float y = center.y - i * 0.2f;
+            float x = center.x + Mathf.Sin(i * 0.6f) * 2;
+            float y = center.y - i * 0.6f - 1;
 
             Vector2 spawnPos = new Vector2(x, y);
             GameObject dummy = Instantiate(bullet, spawnPos, Quaternion.identity);
-            //Vector2 directionVector = Vector2.down;
+            Vector2 directionVector = Vector2.down;
 
 
             var bul = dummy.GetComponent<BaseBullet>();
@@ -89,6 +89,8 @@ public class SnakePattern : Pattern
             }
 
             bul.initProj(center, transform);
+
+            bul.direction = - new Vector2(x - center.x, y - center.y).normalized;
 
             bullets.Add(bul);
 
