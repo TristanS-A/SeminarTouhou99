@@ -1379,8 +1379,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   list:
-  - type: 0
+  - type: 1
     prefab: {fileID: 6434526298434354140, guid: ba37d646d503d54469d7eeae69e6f768, type: 3}
+  - type: 0
+    prefab: {fileID: 6434526298434354140, guid: d576eb518054cfa4597b5679c1bd6418, type: 3}
+  - type: 2
+    prefab: {fileID: 6434526298434354140, guid: f51a69ad84b66e14d8419cc5cbba9cbe, type: 3}
+  - type: 4
+    prefab: {fileID: 6434526298434354140, guid: b7898e79160afb74194427335c0b0cfa, type: 3}
   spawnRad: 2
 --- !u!4 &1073282802
 Transform:

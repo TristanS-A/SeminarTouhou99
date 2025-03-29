@@ -14,10 +14,13 @@ public class ScoreUI : MonoBehaviour
     }
     void UpdateDrop(DropType type, int ammount)
     {
-        
-        score += ammount;
-        PlayerInfo.PlayerPoints = score;
-        text.text = score.ToString();
+        if (type == DropType.SCORE)
+        {
+            score += ammount;
+            PlayerInfo.PlayerPoints = score;
+            text.text = score.ToString();
+        }
+       
 
     }
     private void OnDisable()

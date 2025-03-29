@@ -107,10 +107,13 @@ MonoBehaviour:
   range: 0.2
   dropType:
     dropList:
-    - dropType: 0
+    - dropType: 1
       ammount: 3
+    - dropType: 0
+      ammount: 1
   speed: 1
   isAtEnd: 0
+  isDead: 0
 --- !u!114 &6537239597854384393
 MonoBehaviour:
   m_ObjectHideFlags: 0

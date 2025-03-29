@@ -28,6 +28,7 @@ public class PickUp : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             EventSystem.OnPickUp(dropType, 5);
+            Debug.Log("Picked Up " + dropType.ToString());
             Destroy(gameObject);
         }
 

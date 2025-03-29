@@ -61,8 +61,8 @@ public class PlayerAttacks : MonoBehaviour {
         }
 
 
-        if (target == null) {
-            //this will need to be fixed
+        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isDead){
+            //this will need to be fixed -- kinda buggy for when enemeys die :/
             var list = GameObject.FindGameObjectsWithTag("Enemy");
 
             if (list == null) {
@@ -75,7 +75,8 @@ public class PlayerAttacks : MonoBehaviour {
             foreach (var item in list) {
                 Transform test = item.transform;
 
-                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition) {
+                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition 
+                    && !item.gameObject.GetComponent<BaseEnemy>().isDead) {
                     obj = test;
                     closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
                 }
