@@ -28,20 +28,11 @@ public class BaseEnemy : MonoBehaviour
     int currentIndex = 0;
 
     public bool isAtEnd = false;
+    public bool isDead = false;
+    private float despawnTimer = 5.0f;
     void Start()
     {
-        //if (sqe = gameObject.GetComponent<Sequencer>())
-        //{
-        //    //found the sequencer
-        //    Debug.Log("found sequencer");
-
-        //}
-        //else
-        //{
-        //    //we did not have a sequencer --> might have issues becasue it is full of nothing!!
-        //    sqe = gameObject.AddComponent<Sequencer>();
-        //}
-        
+        sqe = GetComponent<Sequencer>();
         //we are in the range of our array 
         if(currentIndex < posData.intermedatePos.Count)
         {
@@ -63,15 +54,10 @@ public class BaseEnemy : MonoBehaviour
     {
         if(collision.CompareTag("Bullet"))
         {
-            Debug.LogWarning("Got Hit by somthing I was not supposed to");
             //this will need to be changed at some point
             //the player will have a damadge value associated with it
             TakeDamadge(1);
-            //trigger drop event
-            DropEvent evt = new DropEvent(dropType);
-            dropType.SetLocation(this.transform.position);
-            EventSystem.fireEvent(evt);
-
+            
             Destroy(collision.gameObject);
         }
     }
@@ -86,16 +72,36 @@ public class BaseEnemy : MonoBehaviour
             //player killed enemy
 
             Debug.Log("CALLED A DROP EVENT");
+          
+
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
-
-            //make sure to save the position of the object to that it does not spawn in some weird place
-            
             dropType.SetLocation(this.transform.position);
             EventSystem.fireEvent(evt);
 
-            Destroy(this.gameObject);
+            //turn the sprite render off before chaning the game state
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            Destroy(gameObject);
         }
+    }
+    public bool ShouldDestroy()
+    {
+        if (isAtEnd && sqe.GetIfAtEnd())
+        {
+            return true;
+        }
+        //this is so that if the player has been of screen for a long time then just remove it
+        else if (isAtEnd && !sqe.GetIfAtEnd())
+        {
+            if(despawnTimer <= 0)
+            {
+                return true;
+            }
+            despawnTimer -= Time.deltaTime;
+        }
+
+            return false;
+
     }
     public void DoMovement() 
     {
@@ -112,6 +118,7 @@ public class BaseEnemy : MonoBehaviour
         if((Vector2)transform.position == posData.endPosition)
         {
             isAtEnd = true;
+            isDead = false;
         }
     }
 

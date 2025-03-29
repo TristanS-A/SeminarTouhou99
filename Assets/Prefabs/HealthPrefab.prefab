@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 2324660973447896409}
   - component: {fileID: 5434926035680586430}
   - component: {fileID: 1109594162188747349}
+  - component: {fileID: 2422303641084215351}
   m_Layer: 0
-  m_Name: PowerPrefab
+  m_Name: HealthPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
-  m_Color: {r: 0.31110308, g: 0.7372549, b: 0.81761, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -143,4 +144,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6816a01ece256143926a6506420c8d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropType: 0
+  dropType: 2
+--- !u!50 &2422303641084215351
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6434526298434354140}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

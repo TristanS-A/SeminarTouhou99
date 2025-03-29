@@ -1381,7 +1381,7 @@ MonoBehaviour:
   list:
   - type: 0
     prefab: {fileID: 6434526298434354140, guid: ba37d646d503d54469d7eeae69e6f768, type: 3}
-  spawnRad: 5
+  spawnRad: 2
 --- !u!4 &1073282802
 Transform:
   m_ObjectHideFlags: 0

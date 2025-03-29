@@ -100,7 +100,7 @@ public class WaveManager : MonoBehaviour
     {
         foreach(var active in activeList)
         {
-            if(active.Item2.isAtEnd == true)
+            if(active.Item2.ShouldDestroy())
             {
                 Debug.Log("Destoryed enemy :(");
                 Destroy(active.Item1);

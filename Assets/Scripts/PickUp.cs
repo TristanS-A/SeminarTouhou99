@@ -6,16 +6,22 @@ public class PickUp : MonoBehaviour
 {
     //make them move and destroy after a while
     [SerializeField] private DropType dropType;
+    float lifeTime = 10.0f;
+    private Rigidbody2D rb;
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = gameObject.GetComponent<Rigidbody2D>();
+        rb.isKinematic = true;
     }
-
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        transform.position += Vector3.down * Time.deltaTime;
+        if(lifeTime <= 0)
+        {
+            Destroy(gameObject);
+        }
+        lifeTime -= Time.deltaTime; 
     }
     private void OnTriggerEnter2D(Collider2D other)
     {

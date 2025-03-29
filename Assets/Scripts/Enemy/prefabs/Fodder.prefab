@@ -103,7 +103,7 @@ MonoBehaviour:
     spawnPosition: {x: 0, y: 0}
     endPosition: {x: 0, y: 0}
     intermedatePos: []
-  health: 2
+  health: 20
   range: 0.2
   dropType:
     dropList:

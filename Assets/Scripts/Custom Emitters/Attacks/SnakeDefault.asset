@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SnakeDefault
   m_EditorClassIdentifier: 
   isCenterd: 1
-  isCustomTime: 0
-  customLifeTime: 0
+  isCustomTime: 1
+  customLifeTime: 30
   dirction: {x: 0, y: 0}
   bulletType: {fileID: 4285272338807687441, guid: 72c0f4f375d3fc94ca14826d0b83766b, type: 3}
   emmiter: {fileID: 7487088172007261916, guid: fdd804c663819da44880049656ff157a, type: 3}
   angle: 0
-  shouldAttach: 0
+  shouldAttach: 1

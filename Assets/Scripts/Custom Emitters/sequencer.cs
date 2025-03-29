@@ -118,22 +118,6 @@ public class Sequencer : MonoBehaviour
     }
     private void CleanList()
     {
-        //List<int> deadList = new List<int>();
-        //int index = 0;
-
-        //foreach (var emitter in activeEmmiter)
-        //{
-        //    if(emitter.Equals(null))
-        //    {
-        //        deadList.Add(index);
-        //    }
-        //    index++;
-        //}
-
-        //foreach (var dead in deadList)
-        //{
-        //    activeEmmiter.RemoveAt(dead);
-        //}
 
         activeEmmiter.RemoveAll(x => x == null);
     }
@@ -224,4 +208,12 @@ public class Sequencer : MonoBehaviour
     public List<AttackData> GetAttacks => attacks;
     public int GetAttackLength => attacks.Count;
     public void SetSpawnPos(Nullable<Vector2> newSpawnPos) => overridenSpawnPos = newSpawnPos;
+    public bool GetIfAtEnd()
+    {
+        if(activeEmmiter.Count <= 0)
+        {
+            return true;
+        }
+        return false;
+    }
 }
