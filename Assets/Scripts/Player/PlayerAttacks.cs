@@ -60,7 +60,6 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
-
         if (target == null || target.gameObject.GetComponent<BaseEnemy>().isDead){
             //this will need to be fixed -- kinda buggy for when enemeys die :/
             var list = GameObject.FindGameObjectsWithTag("Enemy");
@@ -177,16 +176,17 @@ public class PlayerAttacks : MonoBehaviour {
         isDefensiveBombDelayed = true;
 
         if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
+            defensiveBombCount -= cost;
             EventSystem.DefensiveBombAttack(defensiveBombCount);
 
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            BaseEnemy[] enemies = FindObjectsByType<BaseEnemy>(FindObjectsSortMode.None);
 
             foreach (var enemy in enemies) {
-                if (enemy.GetComponent<BaseEnemy>().TryGetComponent<Sequencer>(out var enemySequencer)) {
+                if (enemy.TryGetComponent<Sequencer>(out var enemySequencer)) {
+                    enemySequencer.CleanSequencer();
                     enemySequencer.CleanSequencer();
                 }
             }
-            defensiveBombCount -= cost;
 
             yield return new WaitForSeconds(delay);
         }
