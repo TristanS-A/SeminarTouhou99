@@ -8,7 +8,6 @@ public static class EventSystem
     public static event Action<string, string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
     public static event Action<int, int> playerResultReveived;
-    public static event Action onPlayerDeath;
     public static event Action<clientHandler.PlayerSendResultData> onReceiveResult;
     public static event Action onEndGameSession;
     public static event Action<DropTypes> dropEvent;
@@ -17,8 +16,8 @@ public static class EventSystem
     public static event UnityAction<int> OnHealthUpdate;
     public static void HealthUpdate(int health) => OnHealthUpdate?.Invoke(health);
 
-    public static event UnityAction OnDeathUpdate;
-    public static void OnDeath() => OnDeathUpdate?.Invoke();
+    public static event UnityAction OnPlayerDeathUpdate;
+    public static void OnPlayerDeath() => OnPlayerDeathUpdate?.Invoke();
 
     public static UnityEvent<float> OnRespawnUpdate;
     public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
@@ -49,6 +48,10 @@ public static class EventSystem
     //score
     public static event UnityAction<DropType, int> OnPickUpUpdate;
     public static void OnPickUp(DropType type, int ammount) => OnPickUpUpdate?.Invoke(type, ammount);
+
+    public static event UnityAction<serverHandler.ResultContext> OnSendPlayerResultData;
+    public static void SendPlayerResultData(serverHandler.ResultContext resultContext) => OnSendPlayerResultData?.Invoke(resultContext);
+
     public static void fireEvent(EventType type)
     {
         switch (type.getEventType())
@@ -60,9 +63,6 @@ public static class EventSystem
             case EventType.EventTypes.RECEIVED_IP:
                 ReceiveIPEvent ip = (ReceiveIPEvent)(type);
                 ipReceived.Invoke(ip.getIP(), ip.getConnectionName());   
-                break;
-            case EventType.EventTypes.PLAYER_DIED:
-                onPlayerDeath.Invoke();
                 break;
             case EventType.EventTypes.NUMBER_OF_PLAYERS_JOINED_CHANGED:
                 PlayerCountChangedEvent newPlayerCountEvent = (PlayerCountChangedEvent)(type);

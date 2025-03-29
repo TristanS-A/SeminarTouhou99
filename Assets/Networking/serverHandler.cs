@@ -35,6 +35,14 @@ public class serverHandler : MonoBehaviour
         public int points;
         public float time;
         public int placement;
+        public ResultContext resultContext;
+    }
+
+    public enum ResultContext
+    {
+        PLAYER_WON,
+        PLAYER_DIED,
+        PLAYER_DISCONNECTED
     }
 
     //Serialized buttons and prefabs
@@ -83,7 +91,7 @@ public class serverHandler : MonoBehaviour
     private void OnEnable()
     {
         EventSystem.gameStarted += HandleGameStart;
-        EventSystem.onPlayerDeath += OnPlayerDie;
+        EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombDataFromServer;
     }
@@ -91,7 +99,7 @@ public class serverHandler : MonoBehaviour
     private void OnDisable()
     {
         EventSystem.gameStarted -= HandleGameStart;
-        EventSystem.onPlayerDeath -= OnPlayerDie;
+        EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
         EventSystem.OnFireOffensiveBomb -= SendBombDataFromServer;
     }
@@ -610,23 +618,26 @@ public class serverHandler : MonoBehaviour
             {
                 name = playerReceivedResult.name,
                 points = playerReceivedResult.points,
-                time = playerReceivedResult.time
+                time = playerReceivedResult.time,
+                resultContext = playerReceivedResult.resultContext
             };
             Debug.Log("REceived result from : " + playerReceivedResult.playerID);
             mPlayerResults.Add(playerReceivedResult.playerID, playerStoreResult);
 
-            if (playerReceivedResult.playerWon)
+            switch (playerReceivedResult.resultContext)
             {
+                case ResultContext.PLAYER_WON:
+                    break;
+                case ResultContext.PLAYER_DIED:
+                    PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
+                    Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
+                    prevData.playerOBJ = null;
+                    mPlayers[playerReceivedResult.playerID] = prevData;
 
-            }
-            else
-            {
-                PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
-                Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
-                prevData.playerOBJ = null;
-                mPlayers[playerReceivedResult.playerID] = prevData;
-
-                SendPlayerDeathToAllOtherClients(playerReceivedResult.playerID);
+                    SendPlayerDeathToAllOtherClients(playerReceivedResult.playerID, playerReceivedResult.resultContext);
+                    break;
+                case ResultContext.PLAYER_DISCONNECTED:
+                    break;
             }
 
             //Check if game is finished (all players are done playing)
@@ -680,18 +691,19 @@ public class serverHandler : MonoBehaviour
     }
 
     //On server player die
-    private void OnPlayerDie()
+    private void HandleSendPlayerResults(serverHandler.ResultContext resContext)
     {
         PlayerStoredResultData playerStoreResult = new()
         {
             name = PlayerInfo.PlayerName,
             points = PlayerInfo.PlayerPoints,
-            time = Time.time - PlayerInfo.PlayerTime
+            time = Time.time - PlayerInfo.PlayerTime,
+            resultContext = resContext
         };
 
         mPlayerResults.Add(serverPlayerID, playerStoreResult);
 
-        SendPlayerDeathToAllOtherClients(serverPlayerID);
+        SendPlayerDeathToAllOtherClients(serverPlayerID, resContext);
 
         //Check if game is finished (all players are done playing)
         if (CheckIfGameFinished())
@@ -712,7 +724,7 @@ public class serverHandler : MonoBehaviour
         return false;
     }
 
-    private void SendPlayerDeathToAllOtherClients(uint clientThatDied)
+    private void SendPlayerDeathToAllOtherClients(uint clientThatDied, serverHandler.ResultContext finishReason)
     {
         if (server != null)
         {
@@ -720,13 +732,14 @@ public class serverHandler : MonoBehaviour
             {
                 if (connectedClients[i] != clientThatDied)
                 {
-                    clientHandler.OtherClientDeath data = new()
+                    clientHandler.OtherClientFinishState data = new()
                     {
                         playerID = clientThatDied,
-                        type = (int)PacketType.OTHER_PLAYER_DEATH
+                        type = (int)PacketType.OTHER_PLAYER_FINISH,
+                        finishState = finishReason
                     };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OtherClientDeath))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OtherClientFinishState))];
                     GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
                     try
                     {
