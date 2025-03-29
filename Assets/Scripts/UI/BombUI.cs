@@ -14,8 +14,20 @@ public class BombUI : MonoBehaviour {
             UpdateDefensiveBomb(playerAttacks.GetDefensiveBombCount);
             UpdateOffensiveBomb(playerAttacks.GetOffensiveBombCount);
         }
+       
     }
-
+    private void TranslateEvent(DropType type, int ammount)
+    {
+        switch (type)
+        {
+            case DropType.OFF_BOMB:
+                UpdateOffensiveBomb(ammount);
+                break;
+            case DropType.DEF_BOMB:
+                UpdateDefensiveBomb(ammount);
+                break;
+        }
+    }
     private void UpdateDefensiveBomb(int amount) {
         HandleUI(amount, defensivePrefab, defensiveContainer);
     }
@@ -41,11 +53,13 @@ public class BombUI : MonoBehaviour {
     private void OnEnable() {
         EventSystem.OnDefensiveBombAttack += UpdateDefensiveBomb;
         EventSystem.OnOffensiveBombUI += UpdateOffensiveBomb;
+        EventSystem.OnPickUpUpdate += TranslateEvent;
     }
 
     // OFFLOADS UI FROM EVENT
     private void OnDisable() {
         EventSystem.OnDefensiveBombAttack -= UpdateDefensiveBomb;
         EventSystem.OnOffensiveBombUI -= UpdateOffensiveBomb;
+        EventSystem.OnPickUpUpdate -= TranslateEvent;
     }
 }
