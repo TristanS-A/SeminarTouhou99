@@ -21,7 +21,10 @@ public class WaveContainter
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] List<WaveContainter> wave = new();    // Start is called before the first frame update
-    List<Tuple<GameObject, BaseEnemy>> activeList = new List<Tuple<GameObject, BaseEnemy>>(); 
+    List<Tuple<GameObject, BaseEnemy>> activeList = new List<Tuple<GameObject, BaseEnemy>>();
+    [SerializeField] GameObject midBoss;
+    [SerializeField] GameObject finalBoss;
+
     bool shouldSpawn = true;
     int waveIndex = 0;
     float currentTime;
@@ -110,6 +113,7 @@ public class WaveManager : MonoBehaviour
         }
 
         activeList.RemoveAll(x => x.Item1 == null);
+
         
     }
     //void InitWaveContainer()

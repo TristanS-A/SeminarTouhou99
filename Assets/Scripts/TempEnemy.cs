@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TempEnemy : MonoBehaviour {
@@ -31,13 +32,14 @@ public class TempEnemy : MonoBehaviour {
         currentHealth = stages[0].maxHealth;
         currentRespawnTime = stages[0].respawnTime;
 
-        EventSystem.HealthUpdate(currentHealth);
-        EventSystem.RespawnUpdate(currentRespawnTime);
+       // EventSystem.HealthUpdate(currentHealth);
+        //EventSystem.RespawnUpdate(currentRespawnTime);
 
         IsDead = false;
 
         // WILL NYE THE SCIENCE GUY
         sequencer = gameObject.GetComponent<Sequencer>();
+        sequencer.SpawnEmmiter();
     }
 
     public void TakeDamage(int stage, int damage) {
@@ -49,7 +51,7 @@ public class TempEnemy : MonoBehaviour {
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
 
         // CALLS EVENT FOR UI
-        EventSystem.EnemyHealthUpdate(currentHealth);
+        //EventSystem.EnemyHealthUpdate(currentHealth);
 
         if (currentHealth <= 0) {
             if (currentStage != stages.Count - 1) {
@@ -84,7 +86,7 @@ public class TempEnemy : MonoBehaviour {
 
         conIndex++;
         sequencer.SetSequeceList(containter[conIndex].attacks);
-
+        sequencer.SpawnEmmiter();
         EventSystem.EnemyRespawnUpdate(currentRespawnTime);
     }
 

@@ -6,7 +6,7 @@ public class PickUp : MonoBehaviour
 {
     //make them move and destroy after a while
     [SerializeField] private DropType dropType;
-    // Will asked me to do this, idk what for ¯\_(ツ)_/¯
+    // Will asked me to do this, idk what for ¯\_(ツ)_/¯ <- thank you jerry :)
     [SerializeField] private int amount = 1;
     float lifeTime = 10.0f;
     private Rigidbody2D rb;
@@ -29,7 +29,7 @@ public class PickUp : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-            EventSystem.OnPickUp(dropType, 5);
+            EventSystem.OnPickUp(dropType, amount);
             Debug.Log("Picked Up " + dropType.ToString());
             Destroy(gameObject);
         }

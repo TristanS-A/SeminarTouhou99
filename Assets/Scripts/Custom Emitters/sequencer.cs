@@ -9,7 +9,7 @@ public class Sequencer : MonoBehaviour
 {
     [SerializeField] List<AttackData> attacks;
     [SerializeField] bool shouldLoop;
-    private int currentAttackIndex = 0;
+    public int currentAttackIndex = 0;
     private List<GameObject> activeEmmiter = new();
 
     List<float> timeTillNextAttack = new();

@@ -21,10 +21,20 @@ public class BombUI : MonoBehaviour {
         switch (type)
         {
             case DropType.OFF_BOMB:
-                UpdateOffensiveBomb(ammount);
+                //only if we have room to add
+                if (playerAttacks.GetOffensiveBombCount < playerAttacks.GetMaxDefensiveBombs)
+                {
+                    playerAttacks.SetOffensiveBombCount(playerAttacks.GetOffensiveBombCount + ammount);
+                    UpdateOffensiveBomb(playerAttacks.GetOffensiveBombCount);
+                }
                 break;
             case DropType.DEF_BOMB:
-                UpdateDefensiveBomb(ammount);
+                //only if we have room to add
+                if (playerAttacks.GetOffensiveBombCount < playerAttacks.GetMaxDefensiveBombs)
+                {
+                    playerAttacks.SetDefensiveBombCount(playerAttacks.GetDefensiveBombCount + ammount);
+                    UpdateDefensiveBomb(playerAttacks.GetDefensiveBombCount);
+                }
                 break;
         }
     }

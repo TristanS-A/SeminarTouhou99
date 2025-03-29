@@ -22,6 +22,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] float range;
     [SerializeField] DropTypes dropType;
     [SerializeField] float speed = 3f;
+    [SerializeField] bool isBoss = false;
     //this needs a sequencer
     Sequencer sqe;
     private Vector2 currentSelectedPositon;
@@ -30,6 +31,7 @@ public class BaseEnemy : MonoBehaviour
     public bool isAtEnd = false;
     public bool isDead = false;
     private float despawnTimer = 5.0f;
+
     void Start()
     {
         sqe = GetComponent<Sequencer>();
@@ -52,11 +54,11 @@ public class BaseEnemy : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Bullet"))
+        if(collision.CompareTag("Bullet") && !isBoss)
         {
             //this will need to be changed at some point
             //the player will have a damadge value associated with it
-            TakeDamadge(1);
+            TakeDamadge(PlayerAttacks.bulletDamage);
             
             Destroy(collision.gameObject);
         }
@@ -115,7 +117,7 @@ public class BaseEnemy : MonoBehaviour
 
         //transform.Translate(interpolatedPosition);
 
-        if((Vector2)transform.position == posData.endPosition)
+        if((Vector2)transform.position == posData.endPosition && !isBoss)
         {
             isAtEnd = true;
             isDead = false;

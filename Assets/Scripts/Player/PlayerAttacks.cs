@@ -12,6 +12,8 @@ public class PlayerAttacks : MonoBehaviour {
     [Range(1, 8)]
     public float bulletSpeed = 4.5f;
     public float bulletDelay = 0.1f;
+
+    //talk about chaning this to a float for more control ;)
     public static int bulletDamage = 1;
 
     [Header("Homing Missle")]
@@ -60,7 +62,7 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
-        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isDead){
+        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd){
             //this will need to be fixed -- kinda buggy for when enemeys die :/
             var list = GameObject.FindGameObjectsWithTag("Enemy");
 
@@ -193,10 +195,38 @@ public class PlayerAttacks : MonoBehaviour {
         isDefensiveBombDelayed = false;
     }
 
+    private void TranslateEvent(DropType drop, int ammount)
+    {
+        switch (drop)
+        {
+            case DropType.POWER:
+                if (bulletDamage < 4)
+                {
+                    bulletDamage += ammount;
+                }
+                break;
+        }
+    }
     public int GetDefensiveBombCount => defensiveBombCount;
     public int GetOffensiveBombCount => offensiveBombCount;
+    //might want to change this later
+    public void SetDefensiveBombCount(int ammount) => defensiveBombCount = ammount;
+    public void SetOffensiveBombCount(int ammount) => offensiveBombCount = ammount;
+    public int GetMaxDefensiveBombs => maxDefensiveBombs;
+    public int GetMaxOffensiveBombs => maxOffensiveBombs;
     public static int GetBombCost => BOMB_COST;
-    private void OnEnable() => EventSystem.OnOffensiveBombAttack += SpawnOffensiveBomb;
-    private void OnDisable() => EventSystem.OnOffensiveBombAttack -= SpawnOffensiveBomb;
+    private void OnEnable()
+    {
+        EventSystem.OnOffensiveBombAttack += SpawnOffensiveBomb;
+        EventSystem.OnPickUpUpdate += TranslateEvent;
+    }
+    
+    private void OnDisable()
+    {
+        EventSystem.OnOffensiveBombAttack -= SpawnOffensiveBomb;
+        EventSystem.OnPickUpUpdate -= TranslateEvent;
+
+    }
+  
 
 }
