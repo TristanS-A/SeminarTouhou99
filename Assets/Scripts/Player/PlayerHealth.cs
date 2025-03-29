@@ -57,8 +57,8 @@ public class PlayerHealth : MonoBehaviour {
 
     private void KillPlayer() {
         isDead = true;
-        EventSystem.fireEvent(new EventType(EventType.EventTypes.PLAYER_DIED));
-        EventSystem.OnDeath();
+        EventSystem.OnPlayerDeath();
+        EventSystem.SendPlayerResultData(serverHandler.ResultContext.PLAYER_DIED);
         Debug.Log("Player died");
         Destroy(gameObject);
     }

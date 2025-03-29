@@ -76,7 +76,7 @@ public class clientHandler : MonoBehaviour
         STORE_PLAYER_RESULTS,
         SEND_RESULT,
         OFFENSIVE_BOMB_DATA,
-        OTHER_PLAYER_DEATH
+        OTHER_PLAYER_FINISH
     }
 
     ////Packet structs
@@ -126,7 +126,7 @@ public class clientHandler : MonoBehaviour
         public uint playerID;
         public float time;
         public int points;
-        public bool playerWon;
+        public serverHandler.ResultContext resultContext;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
         public string name;
@@ -148,17 +148,18 @@ public class clientHandler : MonoBehaviour
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct OtherClientDeath
+    public struct OtherClientFinishState
     {
         public int type;
         public uint playerID;
+        public serverHandler.ResultContext finishState;
     }
 
     private void OnEnable()
     {
         EventSystem.gameStarted += HandleGameStart;
         EventSystem.ipReceived += AddIP;
-        EventSystem.onPlayerDeath += OnPlayerDie;
+        EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombData;
     }
@@ -168,7 +169,7 @@ public class clientHandler : MonoBehaviour
     {
         EventSystem.gameStarted -= HandleGameStart;
         EventSystem.ipReceived -= AddIP;
-        EventSystem.onPlayerDeath -= OnPlayerDie;
+        EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
         EventSystem.OnFireOffensiveBomb -= SendBombData;
     }
@@ -448,9 +449,9 @@ public class clientHandler : MonoBehaviour
                         EventSystem.OffensiveBombAttack(data.pos);
 
                         break;
-                    case PacketType.OTHER_PLAYER_DEATH:
-                        OtherClientDeath otherDeathData = (OtherClientDeath)Marshal.PtrToStructure(ptPoit, typeof(OtherClientDeath));
-                        HandleOtherPlayerDeath(otherDeathData.playerID);
+                    case PacketType.OTHER_PLAYER_FINISH:
+                        OtherClientFinishState otherPlayerData = (OtherClientFinishState)Marshal.PtrToStructure(ptPoit, typeof(OtherClientFinishState));
+                        HandleOtherPlayerFinish(otherPlayerData.playerID, otherPlayerData.finishState);
                         break;
                 }
 
@@ -582,7 +583,7 @@ public class clientHandler : MonoBehaviour
         mPlayers.Add(connectionIDOnServer, pData);
     }
 
-    private void OnPlayerDie()
+    private void HandleSendPlayerResults(serverHandler.ResultContext resContext)
     {
         PlayerSendResultData playerResults = new PlayerSendResultData();
         playerResults.type = (int)clientHandler.PacketType.STORE_PLAYER_RESULTS;
@@ -590,7 +591,7 @@ public class clientHandler : MonoBehaviour
         playerResults.name = PlayerInfo.PlayerName;
         playerResults.time = Time.time - PlayerInfo.PlayerTime;
         playerResults.points = PlayerInfo.PlayerPoints;
-        playerResults.playerWon = false;
+        playerResults.resultContext = resContext;
 
         IntPtr ptr = IntPtr.Zero;
         byte[] bytes = new byte[Marshal.SizeOf(typeof(PlayerSendResultData))];
@@ -642,11 +643,21 @@ public class clientHandler : MonoBehaviour
         }
     }
 
-    private void HandleOtherPlayerDeath(uint otherPlayerID)
+    private void HandleOtherPlayerFinish(uint otherPlayerID, serverHandler.ResultContext finishReason)
     {
         PlayerGameData prevData = mPlayers[otherPlayerID];
         Destroy(mPlayers[otherPlayerID].playerOBJ);
         prevData.playerOBJ = null;
         mPlayers[otherPlayerID] = prevData;
+
+        switch (finishReason)
+        {
+            case ResultContext.PLAYER_WON:
+                break;
+            case ResultContext.PLAYER_DIED:
+                break;
+            case ResultContext.PLAYER_DISCONNECTED:
+                break;
+        }
     }
 }

@@ -12,7 +12,7 @@ public class EventType
         NUMBER_OF_PLAYERS_JOINED_CHANGED,
         START_GAME,
         PLAYER_RESULT_RECEIVED,
-        PLAYER_DIED,
+        SEND_PLAYER_RESULTS,
         GAME_FINISHED,
         RESULT_SENT,
         END_GAME_SESSION,

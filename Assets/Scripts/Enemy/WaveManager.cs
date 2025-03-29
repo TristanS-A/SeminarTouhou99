@@ -55,6 +55,8 @@ public class WaveManager : MonoBehaviour
             }
             else
             {
+                //Finishes the level and triggers the sending of result data
+                EventSystem.SendPlayerResultData(serverHandler.ResultContext.PLAYER_WON);
                 return;
             }
 
