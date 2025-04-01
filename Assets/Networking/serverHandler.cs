@@ -461,7 +461,7 @@ public class serverHandler : MonoBehaviour
                     playerSendResultData.type = (int)clientHandler.PacketType.SEND_RESULT;
                     playerSendResultData.playerID = playerID;
                     playerSendResultData.time = player.time;
-                    playerSendResultData.points = 0;
+                    playerSendResultData.points = player.points;
                     playerSendResultData.name = player.name;
 
                     IntPtr ptr = IntPtr.Zero;

@@ -7,7 +7,7 @@ public class ScoreUI : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI text;
     // Start is called before the first frame update
-    int score;
+
     private void OnEnable()
     {
         EventSystem.OnPickUpUpdate += UpdateDrop;
@@ -16,9 +16,8 @@ public class ScoreUI : MonoBehaviour
     {
         if (type == DropType.SCORE)
         {
-            score += ammount;
-            PlayerInfo.PlayerPoints = score;
-            text.text = score.ToString();
+            PlayerInfo.PlayerPoints += ammount;
+            text.text = PlayerInfo.PlayerPoints.ToString();
         }
        
 

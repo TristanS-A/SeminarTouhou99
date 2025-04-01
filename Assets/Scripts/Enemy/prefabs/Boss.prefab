@@ -178,6 +178,7 @@ MonoBehaviour:
     respawnTime: 10
   - maxHealth: 2000
     respawnTime: 25
+  mEnemyType: 2
   sequencer: {fileID: 203904684061855997}
   containter:
   - attacks:
@@ -205,6 +206,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
   - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
   shouldLoop: 1
+  currentAttackIndex: 0
 --- !u!114 &6554289043577548351
 MonoBehaviour:
   m_ObjectHideFlags: 0

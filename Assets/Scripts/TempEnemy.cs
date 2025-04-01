@@ -5,6 +5,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class TempEnemy : MonoBehaviour {
+    private enum EnemyType
+    {
+        ENEMY,
+        MID_BOSS,
+        FINAL_BOSS
+    }
+
     [Serializable]
     public class BossStage {
         public int maxHealth = 100;
@@ -23,6 +30,8 @@ public class TempEnemy : MonoBehaviour {
     private int currentStage = 0;
     private float currentRespawnTime;
     private bool isInvincible = false;
+
+    [SerializeField] private EnemyType mEnemyType = EnemyType.ENEMY;
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
@@ -68,7 +77,8 @@ public class TempEnemy : MonoBehaviour {
 
     //I think this naming is wrong?
     private void Kill() {
-        //EventSystem.fireEvent(new EventType(EventType.EventTypes.PLAYER_DIED));
+        //Finishes the level and triggers the sending of result data
+        EventSystem.SendPlayerResultData(serverHandler.ResultContext.PLAYER_WON);
         Debug.Log("Killed");
         IsDead = true;
         sequencer.ClearAttackList();
