@@ -12,8 +12,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.Sockets;
-using static clientHandler;
-using static serverHandler;
 
 public class clientHandler : MonoBehaviour
 {
@@ -440,7 +438,7 @@ public class clientHandler : MonoBehaviour
                                 break;
                             case EventType.EventTypes.GAME_FINISHED:
                                 SceneManager.LoadScene(4);
-                                mGameState = GameState.RESULTS_SCREEN;
+                                mGameState = serverHandler.GameState.RESULTS_SCREEN;
                                 break;
                         }
                         break;
@@ -499,7 +497,7 @@ public class clientHandler : MonoBehaviour
     {
         if (playerData.playerID != connectionIDOnServer)
         {
-            PlayerGameData player = new PlayerGameData();
+            serverHandler.PlayerGameData player = new serverHandler.PlayerGameData();
             if (!mPlayers.ContainsKey(playerData.playerID))
             {
                 player.playerOBJ = Instantiate(m_PlayerHologramPrefab); ;
@@ -520,7 +518,7 @@ public class clientHandler : MonoBehaviour
             mPlayers[playerData.playerID].playerPoses.Add(mPlayers[playerData.playerID].playerOBJ.transform.position);
             mPlayers[playerData.playerID].playerPoses.Add(playerData.pos);
 
-            PlayerGameData pData = mPlayers[playerData.playerID];
+            serverHandler.PlayerGameData pData = mPlayers[playerData.playerID];
             pData.playerInterpolationTracker = 0.0f;
             mPlayers[playerData.playerID] = pData;
         }
@@ -538,7 +536,7 @@ public class clientHandler : MonoBehaviour
                 GameObject playerOBJ = mPlayers[id].playerOBJ;
                 playerOBJ.transform.position = Vector3.Lerp(mPlayers[id].playerPoses[0], mPlayers[id].playerPoses[1], mPlayers[id].playerInterpolationTracker / PACKET_TARGET_SEND_TIME);
 
-                PlayerGameData pData = mPlayers[id];
+                serverHandler.PlayerGameData pData = mPlayers[id];
                 pData.playerInterpolationTracker += Time.deltaTime;
                 mPlayers[id] = pData;
 
@@ -552,21 +550,21 @@ public class clientHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
-        mGameState = GameState.GAME_STARTED;
+        mGameState = serverHandler.GameState.GAME_STARTED;
 
         var keys = mPlayers.Keys;
         for (int i = 0; i < mPlayers.Count; i++)
         {
             if (keys.ElementAt(i) != connectionIDOnServer)
             {
-                PlayerGameData pD = new();
+                serverHandler.PlayerGameData pD = new();
                 pD.init();
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
             }
         }
 
-        PlayerGameData pData = new();
+        serverHandler.PlayerGameData pData = new();
         pData.init();
         pData.playerOBJ = player;
         mPlayers[connectionIDOnServer] = pData;
@@ -577,7 +575,7 @@ public class clientHandler : MonoBehaviour
     {
         connectionIDOnServer = playerData.playerID;
 
-        PlayerGameData pData = new();
+        serverHandler.PlayerGameData pData = new();
         pData.init();
 
         mPlayers.Add(connectionIDOnServer, pData);
@@ -645,18 +643,18 @@ public class clientHandler : MonoBehaviour
 
     private void HandleOtherPlayerFinish(uint otherPlayerID, serverHandler.ResultContext finishReason)
     {
-        PlayerGameData prevData = mPlayers[otherPlayerID];
+        serverHandler.PlayerGameData prevData = mPlayers[otherPlayerID];
         Destroy(mPlayers[otherPlayerID].playerOBJ);
         prevData.playerOBJ = null;
         mPlayers[otherPlayerID] = prevData;
 
         switch (finishReason)
         {
-            case ResultContext.PLAYER_WON:
+            case serverHandler.ResultContext.PLAYER_WON:
                 break;
-            case ResultContext.PLAYER_DIED:
+            case serverHandler.ResultContext.PLAYER_DIED:
                 break;
-            case ResultContext.PLAYER_DISCONNECTED:
+            case serverHandler.ResultContext.PLAYER_DISCONNECTED:
                 break;
         }
     }
