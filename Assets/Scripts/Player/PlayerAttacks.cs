@@ -199,6 +199,7 @@ public class PlayerAttacks : MonoBehaviour {
     {
         switch (drop)
         {
+            //this is where the homing unlock will be (just check the damnage) - will
             case DropType.POWER:
                 if (bulletDamage < 4)
                 {
