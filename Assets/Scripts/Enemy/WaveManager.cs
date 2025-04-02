@@ -40,8 +40,8 @@ public class WaveManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        DoTime();
-        SpawnEnemy();
+        DoTimer();
+        //SpawnEnemy();
         CheckActives();
     }
    
@@ -83,21 +83,21 @@ public class WaveManager : MonoBehaviour
                 currentTime = 0;
             }
 
+            StartCoroutine(Co_WaitForNextSpawn());
+
             waveIndex++;
         }
         
     }
-    void DoTime()
+    void DoTimer()
     {
-        if(currentTime <= 0)
+        if (currentTime > 0)
         {
-            shouldSpawn = true;
+            currentTime -= Time.deltaTime;
+            return;
         }
-        else
-        {
-            shouldSpawn = false;
-        }
-        currentTime -= Time.deltaTime;
+
+        currentTime = 0;
     }
 
     //think about chaning this to a event using the event system :) event would be sent from the base enemy script
@@ -130,5 +130,16 @@ public class WaveManager : MonoBehaviour
     public void CleanEnemy()
     {
         activeList.Clear();
+    }
+
+    private bool ReadyToSpawnNextEnemy()
+    {
+        return currentTime <= 0;
+    }
+
+    private IEnumerator Co_WaitForNextSpawn()
+    {
+        yield return new WaitUntil(ReadyToSpawnNextEnemy);
+        SpawnEnemy();
     }
 }

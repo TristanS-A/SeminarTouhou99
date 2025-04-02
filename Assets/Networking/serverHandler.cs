@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
 
-public class serverHandler : MonoBehaviour
+public class ServerHandler : MonoBehaviour
 {
     //Handles storing all networked player data (position, player gameobjects, and position interpolation)
     public struct PlayerGameData
@@ -26,7 +26,8 @@ public class serverHandler : MonoBehaviour
     }
 
     //Add a state for collecting result data and once it is all collected then send it maybe
-    public struct PlayerStoredResultData    //Add to a dictionary of this when a player disconnects or dies/wins which sends an event with this data
+    //Add to a dictionary of this when a player disconnects or dies/wins which sends an event with this data
+    public struct PlayerStoredResultData
     {
         public string name;
         public int points;
@@ -55,23 +56,23 @@ public class serverHandler : MonoBehaviour
     private NetworkingSockets server;
     private uint serverPlayerID = 0;
     private StatusCallback serverNetworkingUtils;
-    NetworkingUtils utils = new NetworkingUtils();
+    private NetworkingUtils utils = new NetworkingUtils();
     private uint listenSocket;
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
     private System.Net.IPAddress mServerIP;
-    List<uint> connectedClients = new();
+    private List<uint> connectedClients = new();
 
     //Netowrking packet message data
-    const int maxMessages = 20;
-    NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-    byte[] messageDataBuffer = new byte[256];
+    private const int MAX_MESSAGES = 20;
+    private NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
+    private byte[] messageDataBuffer = new byte[256];
 
     //Gamestate storage
-    GameState mGameState = GameState.NONE;
+    private GameState mGameState = GameState.NONE;
 
     //Singleton instance
-    public static serverHandler instance;
+    public static ServerHandler instance;
 
     //Debug mode for running multiple games on a single computer
     [SerializeField] private bool mDebugMode = false;
@@ -108,7 +109,6 @@ public class serverHandler : MonoBehaviour
         {
             Destroy(this);
         }
-
         instance = this;
 
         Valve.Sockets.Library.Initialize();
@@ -156,11 +156,10 @@ public class serverHandler : MonoBehaviour
         //Sets callbacks
         serverNetworkingUtils = serverStatusCallback;
 
-        Address address = new Address();
+        Address address = new();
 
         //Gets IP address to host from
         mServerIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-
         address.SetAddress(mServerIP.ToString(), 5000);
 
         listenSocket = server.CreateListenSocket(address);
@@ -181,9 +180,7 @@ public class serverHandler : MonoBehaviour
             Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
         };
 #else
-        const int maxMessages = 20;
-
-        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+        NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
 #endif
     }
 
@@ -195,19 +192,17 @@ public class serverHandler : MonoBehaviour
         {
             case ConnectionState.None:
                 break;
-
             case ConnectionState.Connecting:
                 server.AcceptConnection(info.connection);
                 break;
-
             case ConnectionState.Connected:
                 handlePlayerJoining(info.connection);
                 Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
-
             case ConnectionState.ClosedByPeer:
             case ConnectionState.ProblemDetectedLocally:
-                bool inGame = mGameState == GameState.GAME_STARTED;    //MAKE SURE TO SEND RESULT DATA FROM CLIENT BEFORE DETECTING
+                //MAKE SURE TO SEND RESULT DATA FROM CLIENT BEFORE DETECTING
+                bool inGame = mGameState == GameState.GAME_STARTED;    
                 handlePlayerLeaving(info.connection, inGame);
                 Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
@@ -228,11 +223,11 @@ public class serverHandler : MonoBehaviour
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
 
-                clientHandler.GameStateData gameState = new clientHandler.GameStateData();
-                gameState.type = (int)clientHandler.PacketType.GAME_STATE;
+                ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
+                gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
                 gameState.gameState = (int)EventType.EventTypes.START_GAME;
 
-                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStateData))];
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
                 GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
                 try
                 {
@@ -262,13 +257,14 @@ public class serverHandler : MonoBehaviour
         {
             for (int i = 0; i < connectedClients.Count; i++)
             {
-                clientHandler.GameStateData gameState = new clientHandler.GameStateData();
-                gameState.type = (int)clientHandler.PacketType.GAME_STATE;
+                ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
+                gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
                 gameState.gameState = (int)EventType.EventTypes.GAME_FINISHED;
 
-                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.GameStateData))];
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
+                ////CONVERT THIS SENDING CODE INTO A FUNCTION MAYBE
                 GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
-                try                                                                                 ////CONVERT THIS SENDING CODE INTO A FUNCTION MAYBE
+                try                                                                                 
                 {
                     Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
                 }
@@ -287,9 +283,9 @@ public class serverHandler : MonoBehaviour
         {
             switch (mGameState)
             {
-                case GameState.GAME_STARTED:    //Handles in-game networking
-                    server.DispatchCallback(serverNetworkingUtils);
-
+                case GameState.GAME_STARTED:
+                    //Handles in-game networking
+                    server.DispatchCallback(serverNetworkingUtils); 
                     handleInterpolatePlayerPoses();
                     if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
                     {
@@ -302,8 +298,7 @@ public class serverHandler : MonoBehaviour
 #if VALVESOCKETS_SPAN
                 server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
 #else
-                    int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, maxMessages);
-
+                    int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, MAX_MESSAGES);
                     if (netMessagesCount > 0)
                     {
                         for (int i = 0; i < netMessagesCount; i++)
@@ -320,33 +315,34 @@ public class serverHandler : MonoBehaviour
                             IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
                             Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
-                            clientHandler.TypeFinder packetType = (clientHandler.TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(clientHandler.TypeFinder));
+                            ClientHandler.TypeFinder packetType = (ClientHandler.TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(ClientHandler.TypeFinder));
 
-                            switch ((clientHandler.PacketType)packetType.type)
+                            switch ((ClientHandler.PacketType)packetType.type)
                             {
-                                case clientHandler.PacketType.PLAYER_DATA:
-                                    clientHandler.PlayerData packetData = (clientHandler.PlayerData)Marshal.PtrToStructure(ptPoit, typeof(clientHandler.PlayerData));
+                                case ClientHandler.PacketType.PLAYER_DATA:
+                                    ClientHandler.PlayerData packetData = (ClientHandler.PlayerData)Marshal.PtrToStructure(ptPoit, typeof(ClientHandler.PlayerData));
                                     handlePlayerData(packetData);
                                     break;
-                                case clientHandler.PacketType.STORE_PLAYER_RESULTS:
+                                case ClientHandler.PacketType.STORE_PLAYER_RESULTS:
                                     HandleReceivePlayerResult();
                                     break;
-                                case clientHandler.PacketType.OFFENSIVE_BOMB_DATA:
-                                    clientHandler.OffensiveBombData data = (clientHandler.OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(clientHandler.OffensiveBombData));
+                                case ClientHandler.PacketType.OFFENSIVE_BOMB_DATA:
+                                    ClientHandler.OffensiveBombData data = (ClientHandler.OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(ClientHandler.OffensiveBombData));
                                     EventSystem.OffensiveBombAttack(data.pos);               //Spawns offensive bomb to server client
                                     SendBombDataToAllOtherClients(data.pos, data.playerID);  //SPawns offensive bombs to all other clients
                                     break;
                             }
-
                             Marshal.FreeHGlobal(ptPoit);
                         }
                     }
 #endif
                     break;
-                case GameState.SEARCHING_FOR_PLAYERS:    //Handles joining players
+                case GameState.SEARCHING_FOR_PLAYERS:    
+                    //Handles joining players
                     server.DispatchCallback(serverNetworkingUtils);
 
-                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    ////Refactor this to reset packet send time for actual game maybe (and to look better)
+                    ////Refactor this to reset packet send time for actual game maybe (and to look better)
+                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)    
                     {
                         SendGameJoinMessage();
                         BroadcastPlayerCount();
@@ -354,7 +350,8 @@ public class serverHandler : MonoBehaviour
                     }
                     mPacketSendTime += Time.deltaTime;
                     break;
-                case GameState.RESULTS_SCREEN:          //Handles result screen logic
+                case GameState.RESULTS_SCREEN:          
+                    //Handles result screen logic
                     server.DispatchCallback(serverNetworkingUtils);
                     BroadcastResults();
                     break;
@@ -374,14 +371,13 @@ public class serverHandler : MonoBehaviour
                     PlayerGameData player = mPlayers[playerID];
                     if (playerID != connectedClients[i] && player.playerOBJ != null)
                     {
-                        clientHandler.PlayerData playerData = new clientHandler.PlayerData();
+                        ClientHandler.PlayerData playerData = new ClientHandler.PlayerData();
                         playerData.pos = player.playerOBJ.transform.position;
                         playerData.speed = 12;
-                        playerData.type = (int)clientHandler.PacketType.PLAYER_DATA;
+                        playerData.type = (int)ClientHandler.PacketType.PLAYER_DATA;
                         playerData.playerID = playerID;
 
-
-                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerData))];
+                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.PlayerData))];
                         GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
                         try
                         {
@@ -408,11 +404,11 @@ public class serverHandler : MonoBehaviour
             {
                 foreach (uint playerID in mPlayers.Keys)
                 {
-                    clientHandler.PlayerCountData playerCount = new clientHandler.PlayerCountData();
-                    playerCount.type = (int)clientHandler.PacketType.PLAYER_COUNT;
+                    ClientHandler.PlayerCountData playerCount = new ClientHandler.PlayerCountData();
+                    playerCount.type = (int)ClientHandler.PacketType.PLAYER_COUNT;
                     playerCount.playerCount = connectedClients.Count + 1;
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.PlayerCountData))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.PlayerCountData))];
                     GCHandle pinStructure = GCHandle.Alloc(playerCount, GCHandleType.Pinned);
                     try
                     {
@@ -439,21 +435,21 @@ public class serverHandler : MonoBehaviour
                 {
                     PlayerStoredResultData player = mPlayerResults[playerID];
 
-                    clientHandler.PlayerSendResultData playerSendResultData = new clientHandler.PlayerSendResultData();
-                    playerSendResultData.type = (int)clientHandler.PacketType.SEND_RESULT;
+                    ClientHandler.PlayerSendResultData playerSendResultData = new ClientHandler.PlayerSendResultData();
+                    playerSendResultData.type = (int)ClientHandler.PacketType.SEND_RESULT;
                     playerSendResultData.playerID = playerID;
                     playerSendResultData.time = player.time;
                     playerSendResultData.points = player.points;
                     playerSendResultData.name = player.name;
 
                     IntPtr ptr = IntPtr.Zero;
-                    byte[] bytes = new byte[Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData))];
+                    byte[] bytes = new byte[Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData))];
 
                     try
                     {
-                        ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData)));
+                        ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData)));
                         Marshal.StructureToPtr(playerSendResultData, ptr, true);
-                        Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(clientHandler.PlayerSendResultData)));
+                        Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData)));
                     }
                     finally
                     {
@@ -488,12 +484,11 @@ public class serverHandler : MonoBehaviour
 
             mPlayers.Add(playerID, player);
 
-            clientHandler.RegisterPlayer playerData = new clientHandler.RegisterPlayer();
-            playerData.type = (int)clientHandler.PacketType.REGISTER_PLAYER;
+            ClientHandler.RegisterPlayer playerData = new ClientHandler.RegisterPlayer();
+            playerData.type = (int)ClientHandler.PacketType.REGISTER_PLAYER;
             playerData.playerID = playerID;
 
-
-            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.RegisterPlayer))];
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.RegisterPlayer))];
             GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
             try
             {
@@ -506,7 +501,8 @@ public class serverHandler : MonoBehaviour
                 pinStructure.Free();
             }
 
-            EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+            //Refactor to use player dictionary
+            EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); 
         }
     }
 
@@ -525,13 +521,14 @@ public class serverHandler : MonoBehaviour
 
             if (mGameState == GameState.SEARCHING_FOR_PLAYERS)
             {
-                EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); //Refactor to use player dictionary
+                // Refactor to use player dictionary
+                EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); 
             }
         }
     }
 
     //Handles intaking player position data
-    private void handlePlayerData(clientHandler.PlayerData playerData)
+    private void handlePlayerData(ClientHandler.PlayerData playerData)
     {
         PlayerGameData player = new PlayerGameData();
         if (!mPlayers.ContainsKey(playerData.playerID))
@@ -542,7 +539,8 @@ public class serverHandler : MonoBehaviour
 
             mPlayers.Add(playerData.playerID, player);
         }
-        else if (mPlayers[playerData.playerID].playerOBJ == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
+        //Maybe refactor this to instantiate holograms when HandleStartGame is run
+        else if (mPlayers[playerData.playerID].playerOBJ == null)    
         {
             //playerOBJ = Instantiate(m_PlayerHologramPrefab);
             //playerPoses.Add(playerData.playerID, new());
@@ -585,7 +583,7 @@ public class serverHandler : MonoBehaviour
     //Handles receiving player result data from clients on their death (or win or disconnect to be implimented)
     private void HandleReceivePlayerResult()
     {
-        clientHandler.PlayerSendResultData playerReceivedResult = new clientHandler.PlayerSendResultData();
+        ClientHandler.PlayerSendResultData playerReceivedResult = new ClientHandler.PlayerSendResultData();
         int size = Marshal.SizeOf(playerReceivedResult);
         IntPtr ptr = IntPtr.Zero;
         try
@@ -594,7 +592,7 @@ public class serverHandler : MonoBehaviour
 
             Marshal.Copy(messageDataBuffer, 0, ptr, size);
 
-            playerReceivedResult = (clientHandler.PlayerSendResultData)Marshal.PtrToStructure(ptr, playerReceivedResult.GetType());
+            playerReceivedResult = (ClientHandler.PlayerSendResultData)Marshal.PtrToStructure(ptr, playerReceivedResult.GetType());
 
             PlayerStoredResultData playerStoreResult = new()
             {
@@ -613,9 +611,9 @@ public class serverHandler : MonoBehaviour
                 case ResultContext.PLAYER_DIED:
                     PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
                     Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
+
                     prevData.playerOBJ = null;
                     mPlayers[playerReceivedResult.playerID] = prevData;
-
                     SendPlayerDeathToAllOtherClients(playerReceivedResult.playerID, playerReceivedResult.resultContext);
                     break;
                 case ResultContext.PLAYER_DISCONNECTED:
@@ -643,14 +641,14 @@ public class serverHandler : MonoBehaviour
             {
                 if (connectedClients[i] != owningClient)
                 {
-                    clientHandler.OffensiveBombData bombData = new()
+                    ClientHandler.OffensiveBombData bombData = new()
                     {
                         pos = pos,
                         playerID = connectedClients[i],
-                        type = (int)clientHandler.PacketType.OFFENSIVE_BOMB_DATA
+                        type = (int)ClientHandler.PacketType.OFFENSIVE_BOMB_DATA
                     };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.OffensiveBombData))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.OffensiveBombData))];
                     GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
                     try
                     {
@@ -673,7 +671,7 @@ public class serverHandler : MonoBehaviour
     }
 
     //On server player die
-    private void HandleSendPlayerResults(serverHandler.ResultContext resContext)
+    private void HandleSendPlayerResults(ServerHandler.ResultContext resContext)
     {
         PlayerStoredResultData playerStoreResult = new()
         {
@@ -698,15 +696,10 @@ public class serverHandler : MonoBehaviour
     private bool CheckIfGameFinished()
     {
         //Game will finish when all results are in (Add safety exception in case not but level is done maybe)
-        if (mPlayers.Count == mPlayerResults.Count)
-        {
-            return true;
-        }
-
-        return false;
+        return mPlayers.Count == mPlayerResults.Count;
     }
 
-    private void SendPlayerDeathToAllOtherClients(uint clientThatDied, serverHandler.ResultContext finishReason)
+    private void SendPlayerDeathToAllOtherClients(uint clientThatDied, ServerHandler.ResultContext finishReason)
     {
         if (server != null)
         {
@@ -714,14 +707,14 @@ public class serverHandler : MonoBehaviour
             {
                 if (connectedClients[i] != clientThatDied)
                 {
-                    clientHandler.OtherClientFinishState data = new()
+                    ClientHandler.OtherClientFinishState data = new()
                     {
                         playerID = clientThatDied,
-                        type = (int)clientHandler.PacketType.OTHER_PLAYER_FINISH,
+                        type = (int)ClientHandler.PacketType.OTHER_PLAYER_FINISH,
                         finishState = finishReason
                     };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.OtherClientFinishState))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.OtherClientFinishState))];
                     GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
                     try
                     {

@@ -78,7 +78,7 @@ public class TempEnemy : MonoBehaviour {
     //I think this naming is wrong?
     private void Kill() {
         //Finishes the level and triggers the sending of result data
-        EventSystem.SendPlayerResultData(serverHandler.ResultContext.PLAYER_WON);
+        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
         Debug.Log("Killed");
         IsDead = true;
         sequencer.ClearAttackList();

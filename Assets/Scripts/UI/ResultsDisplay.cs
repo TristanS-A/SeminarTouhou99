@@ -15,7 +15,7 @@ public class ResultsDisplay : MonoBehaviour
 
     struct ResultUI
     {
-        public clientHandler.PlayerSendResultData resultData;
+        public ClientHandler.PlayerSendResultData resultData;
         public GameObject resultOBJ;
     }
 
@@ -32,7 +32,7 @@ public class ResultsDisplay : MonoBehaviour
         EventSystem.onReceiveResult -= InsertResult;
     }
 
-    private void InsertResult(clientHandler.PlayerSendResultData result)
+    private void InsertResult(ClientHandler.PlayerSendResultData result)
     {
         if (!mStoredIDs.Contains(result.playerID))
         { 
@@ -65,7 +65,7 @@ public class ResultsDisplay : MonoBehaviour
         }
     }
 
-    private bool GetIfNewScoreIsHigher(clientHandler.PlayerSendResultData newResult, clientHandler.PlayerSendResultData storedResult)
+    private bool GetIfNewScoreIsHigher(ClientHandler.PlayerSendResultData newResult, ClientHandler.PlayerSendResultData storedResult)
     {
         return newResult.points + newResult.time > storedResult.points + storedResult.time;
     }

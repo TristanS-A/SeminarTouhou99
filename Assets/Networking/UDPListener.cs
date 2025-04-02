@@ -4,8 +4,8 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
-using static clientHandler;
-using static serverHandler;
+using static ClientHandler;
+using static ServerHandler;
 
 public static class UDPListener
 {

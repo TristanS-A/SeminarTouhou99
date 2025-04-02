@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class ReceiveResultEvent : EventType
 {
-    private clientHandler.PlayerSendResultData mResult;
+    private ClientHandler.PlayerSendResultData mResult;
 
-    public ReceiveResultEvent(clientHandler.PlayerSendResultData result) : base(EventType.EventTypes.RESULT_SENT)
+    public ReceiveResultEvent(ClientHandler.PlayerSendResultData result) : base(EventType.EventTypes.RESULT_SENT)
     {
         mResult = result;
     }
 
-    public clientHandler.PlayerSendResultData getResult()
+    public ClientHandler.PlayerSendResultData getResult()
     {
         return mResult;
     }

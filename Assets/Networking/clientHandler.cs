@@ -3,17 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.XR;
 using Valve.Sockets;
 
-public class clientHandler : MonoBehaviour
+public class ClientHandler : MonoBehaviour
 {
     //Serialized buttons and prefabs
     [SerializeField] private Button testClientButton;
@@ -25,10 +22,10 @@ public class clientHandler : MonoBehaviour
     private uint connectionIDOnServer = 0;
     private uint serverConnection = 0;
     private StatusCallback clientNetworkingUtils;
-    NetworkingUtils utils = new NetworkingUtils();
+    private NetworkingUtils utils = new NetworkingUtils();
 
     //Player data storage
-    Dictionary<uint, serverHandler.PlayerGameData> mPlayers = new();
+    private Dictionary<uint, ServerHandler.PlayerGameData> mPlayers = new();
 
     //Packet sending data
     private float mPacketSendTime = 0.0f;
@@ -38,15 +35,15 @@ public class clientHandler : MonoBehaviour
     private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
 
     //Gamestate storage
-    serverHandler.GameState mGameState = serverHandler.GameState.NONE;
+    private ServerHandler.GameState mGameState = ServerHandler.GameState.NONE;
 
     //Singleton instance
-    public static clientHandler instance;
+    public static ClientHandler instance;
 
     //Netowrking packet message data
-    const int maxMessages = 20;
-    NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-    byte[] messageDataBuffer = new byte[256];
+    private const int MAX_MESSAGES = 20;
+    private NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
+    private byte[] messageDataBuffer = new byte[256];
 
     //Debug mode for running multiple games on a single computer (Needs manual input IP to connect)
     [SerializeField] private bool mDebugMode = false;
@@ -124,7 +121,7 @@ public class clientHandler : MonoBehaviour
         public uint playerID;
         public float time;
         public int points;
-        public serverHandler.ResultContext resultContext;
+        public ServerHandler.ResultContext resultContext;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
         public string name;
@@ -150,7 +147,7 @@ public class clientHandler : MonoBehaviour
     {
         public int type;
         public uint playerID;
-        public serverHandler.ResultContext finishState;
+        public ServerHandler.ResultContext finishState;
     }
 
     private void OnEnable()
@@ -161,7 +158,6 @@ public class clientHandler : MonoBehaviour
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombData;
     }
-
 
     private void OnDisable()
     {
@@ -238,7 +234,7 @@ public class clientHandler : MonoBehaviour
             mJoinableIPs.Add(mDebugDebugIP, new() { name = "Debug Room", joinUIOBJ = null });
         }
 
-        mGameState = serverHandler.GameState.LOOKING_FOR_HOST;
+        mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
 
         SceneManager.LoadScene(1);
     }
@@ -289,7 +285,6 @@ public class clientHandler : MonoBehaviour
         {
             case ConnectionState.None:
                 break;
-
             case ConnectionState.Connected:
                 serverConnection = info.connection;
                 Debug.Log("Client connected to server - ID: " + serverConnection);
@@ -350,7 +345,7 @@ public class clientHandler : MonoBehaviour
         if (eventData.selectedObject != null)
         {
             InitClientJoin(eventData.selectedObject.GetComponent<IPStorageAttachment>().IP);
-            mGameState = serverHandler.GameState.SEARCHING_FOR_PLAYERS;
+            mGameState = ServerHandler.GameState.SEARCHING_FOR_PLAYERS;
         }
     }
 
@@ -363,7 +358,7 @@ public class clientHandler : MonoBehaviour
 
             switch (mGameState)
             {
-                case serverHandler.GameState.GAME_STARTED:
+                case ServerHandler.GameState.GAME_STARTED:
                     handleInterpolatePlayerPoses();
                     if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
                     {
@@ -374,13 +369,13 @@ public class clientHandler : MonoBehaviour
                     HandleNetMessages();
                     break;
 
-                case serverHandler.GameState.LOOKING_FOR_HOST:
+                case ServerHandler.GameState.LOOKING_FOR_HOST:
                     DisplayJoinableIPs();
                     break;
-                case serverHandler.GameState.SEARCHING_FOR_PLAYERS:
+                case ServerHandler.GameState.SEARCHING_FOR_PLAYERS:
                     HandleNetMessages();
                     break;
-                case serverHandler.GameState.RESULTS_SCREEN:
+                case ServerHandler.GameState.RESULTS_SCREEN:
                     HandleNetMessages();
                     break;
             }
@@ -392,7 +387,7 @@ public class clientHandler : MonoBehaviour
 #if VALVESOCKETS_SPAN
                     client.ReceiveMessagesOnConnection(serverConnection, message, 20);
 #else
-        int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, maxMessages);
+        int netMessagesCount = client.ReceiveMessagesOnConnection(serverConnection, netMessages, MAX_MESSAGES);
 
         if (netMessagesCount > 0)
         {
@@ -438,7 +433,7 @@ public class clientHandler : MonoBehaviour
                                 break;
                             case EventType.EventTypes.GAME_FINISHED:
                                 SceneManager.LoadScene(4);
-                                mGameState = serverHandler.GameState.RESULTS_SCREEN;
+                                mGameState = ServerHandler.GameState.RESULTS_SCREEN;
                                 break;
                         }
                         break;
@@ -497,7 +492,7 @@ public class clientHandler : MonoBehaviour
     {
         if (playerData.playerID != connectionIDOnServer)
         {
-            serverHandler.PlayerGameData player = new serverHandler.PlayerGameData();
+            ServerHandler.PlayerGameData player = new ServerHandler.PlayerGameData();
             if (!mPlayers.ContainsKey(playerData.playerID))
             {
                 player.playerOBJ = Instantiate(m_PlayerHologramPrefab); ;
@@ -518,7 +513,7 @@ public class clientHandler : MonoBehaviour
             mPlayers[playerData.playerID].playerPoses.Add(mPlayers[playerData.playerID].playerOBJ.transform.position);
             mPlayers[playerData.playerID].playerPoses.Add(playerData.pos);
 
-            serverHandler.PlayerGameData pData = mPlayers[playerData.playerID];
+            ServerHandler.PlayerGameData pData = mPlayers[playerData.playerID];
             pData.playerInterpolationTracker = 0.0f;
             mPlayers[playerData.playerID] = pData;
         }
@@ -536,7 +531,7 @@ public class clientHandler : MonoBehaviour
                 GameObject playerOBJ = mPlayers[id].playerOBJ;
                 playerOBJ.transform.position = Vector3.Lerp(mPlayers[id].playerPoses[0], mPlayers[id].playerPoses[1], mPlayers[id].playerInterpolationTracker / PACKET_TARGET_SEND_TIME);
 
-                serverHandler.PlayerGameData pData = mPlayers[id];
+                ServerHandler.PlayerGameData pData = mPlayers[id];
                 pData.playerInterpolationTracker += Time.deltaTime;
                 mPlayers[id] = pData;
 
@@ -550,21 +545,21 @@ public class clientHandler : MonoBehaviour
 
     private void HandleGameStart(GameObject player)
     {
-        mGameState = serverHandler.GameState.GAME_STARTED;
+        mGameState = ServerHandler.GameState.GAME_STARTED;
 
         var keys = mPlayers.Keys;
         for (int i = 0; i < mPlayers.Count; i++)
         {
             if (keys.ElementAt(i) != connectionIDOnServer)
             {
-                serverHandler.PlayerGameData pD = new();
+                ServerHandler.PlayerGameData pD = new();
                 pD.init();
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
             }
         }
 
-        serverHandler.PlayerGameData pData = new();
+        ServerHandler.PlayerGameData pData = new();
         pData.init();
         pData.playerOBJ = player;
         mPlayers[connectionIDOnServer] = pData;
@@ -575,16 +570,16 @@ public class clientHandler : MonoBehaviour
     {
         connectionIDOnServer = playerData.playerID;
 
-        serverHandler.PlayerGameData pData = new();
+        ServerHandler.PlayerGameData pData = new();
         pData.init();
 
         mPlayers.Add(connectionIDOnServer, pData);
     }
 
-    private void HandleSendPlayerResults(serverHandler.ResultContext resContext)
+    private void HandleSendPlayerResults(ServerHandler.ResultContext resContext)
     {
         PlayerSendResultData playerResults = new PlayerSendResultData();
-        playerResults.type = (int)clientHandler.PacketType.STORE_PLAYER_RESULTS;
+        playerResults.type = (int)ClientHandler.PacketType.STORE_PLAYER_RESULTS;
         playerResults.playerID = connectionIDOnServer;
         playerResults.name = PlayerInfo.PlayerName;
         playerResults.time = Time.time - PlayerInfo.PlayerTime;
@@ -641,20 +636,20 @@ public class clientHandler : MonoBehaviour
         }
     }
 
-    private void HandleOtherPlayerFinish(uint otherPlayerID, serverHandler.ResultContext finishReason)
+    private void HandleOtherPlayerFinish(uint otherPlayerID, ServerHandler.ResultContext finishReason)
     {
-        serverHandler.PlayerGameData prevData = mPlayers[otherPlayerID];
+        ServerHandler.PlayerGameData prevData = mPlayers[otherPlayerID];
         Destroy(mPlayers[otherPlayerID].playerOBJ);
         prevData.playerOBJ = null;
         mPlayers[otherPlayerID] = prevData;
 
         switch (finishReason)
         {
-            case serverHandler.ResultContext.PLAYER_WON:
+            case ServerHandler.ResultContext.PLAYER_WON:
                 break;
-            case serverHandler.ResultContext.PLAYER_DIED:
+            case ServerHandler.ResultContext.PLAYER_DIED:
                 break;
-            case serverHandler.ResultContext.PLAYER_DISCONNECTED:
+            case ServerHandler.ResultContext.PLAYER_DISCONNECTED:
                 break;
         }
     }

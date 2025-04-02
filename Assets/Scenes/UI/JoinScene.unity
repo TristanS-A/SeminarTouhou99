@@ -420,7 +420,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 639239335}
-  - component: {fileID: 639239334}
   m_Layer: 0
   m_Name: Serverhandler
   m_TagString: Untagged
@@ -428,22 +427,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &639239334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 639239333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd69ce2606489a649b6c2318a4eca503, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testServerButton: {fileID: 1449178437}
-  m_PlayerPrefab: {fileID: 0}
-  m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
-  mDebugMode: 1
 --- !u!4 &639239335
 Transform:
   m_ObjectHideFlags: 0
@@ -1071,11 +1054,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 117419270c055c941b40fe6735735379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testClientButton: {fileID: 2107932677}
-  m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
-  m_IPDisplay: {fileID: 1463750753901123346, guid: ff24a004bcea3a949b84f0bb7a039903, type: 3}
-  mDebugMode: 0
-  mDebugDebugIP: 100.69.37.173
 --- !u!4 &1410010107
 Transform:
   m_ObjectHideFlags: 0

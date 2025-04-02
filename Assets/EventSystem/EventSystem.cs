@@ -8,7 +8,7 @@ public static class EventSystem
     public static event Action<string, string> ipReceived;
     public static event Action<int> numberOfJoinedPlayersChanged;
     public static event Action<int, int> playerResultReveived;
-    public static event Action<clientHandler.PlayerSendResultData> onReceiveResult;
+    public static event Action<ClientHandler.PlayerSendResultData> onReceiveResult;
     public static event Action onEndGameSession;
     public static event Action<DropTypes> dropEvent;
 
@@ -49,8 +49,8 @@ public static class EventSystem
     public static event UnityAction<DropType, int> OnPickUpUpdate;
     public static void OnPickUp(DropType type, int ammount) => OnPickUpUpdate?.Invoke(type, ammount);
 
-    public static event UnityAction<serverHandler.ResultContext> OnSendPlayerResultData;
-    public static void SendPlayerResultData(serverHandler.ResultContext resultContext) => OnSendPlayerResultData?.Invoke(resultContext);
+    public static event UnityAction<ServerHandler.ResultContext> OnSendPlayerResultData;
+    public static void SendPlayerResultData(ServerHandler.ResultContext resultContext) => OnSendPlayerResultData?.Invoke(resultContext);
 
     public static void fireEvent(EventType type)
     {

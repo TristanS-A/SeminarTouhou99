@@ -19,7 +19,7 @@ public class ButtonHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(serverHandler.instance == null && mOnlyServerButton)
+        if(ServerHandler.instance == null && mOnlyServerButton)
         {
             gameObject.SetActive(false);
         }
