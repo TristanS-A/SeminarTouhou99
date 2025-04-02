@@ -275,7 +275,7 @@ MonoBehaviour:
   - enemy: {fileID: 3091691249233370463, guid: a12205ff835cc444993e75cdc7707d85, type: 3}
     isCustomTime: 1
     isCustomMoveData: 1
-    timeTillSpawn: 2
+    timeTillSpawn: 5
     pos:
       spawnPosition: {x: -0.48, y: 5.16}
       endPosition: {x: -0.48, y: -5}

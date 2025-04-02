@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stages:
-  - maxHealth: 100
-    respawnTime: 10
+  - maxHealth: 500
+    respawnTime: 4
   - maxHealth: 2000
     respawnTime: 25
   mEnemyType: 2
