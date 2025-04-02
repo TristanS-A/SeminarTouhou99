@@ -15,25 +15,20 @@ public class WaveContainter
     public PositionContainer pos;
 
 }
-//TODO: test this code :3
-//TODO: add a way to clear active enemys
-//TODO: try to make a stage with all this stuff
+
 public class WaveManager : MonoBehaviour
 {
-    [SerializeField] List<WaveContainter> wave = new();    // Start is called before the first frame update
-    List<Tuple<GameObject, BaseEnemy>> activeList = new List<Tuple<GameObject, BaseEnemy>>();
+    [SerializeField] List<WaveContainter> wave = new();    
     [SerializeField] GameObject midBoss;
     [SerializeField] GameObject finalBoss;
 
+    List<Tuple<GameObject, BaseEnemy>> activeList = new();
+    float currentTime;
     bool shouldSpawn = true;
     int waveIndex = 0;
-    float currentTime;
-
 
     void Start()
     {
-       
-        //InitWaveContainer();
         SpawnEnemy();
     }
 
@@ -66,11 +61,11 @@ public class WaveManager : MonoBehaviour
             //now that we have the next wave to spawn it
 
             GameObject obj = Instantiate(enemyToSpawn.enemy, enemyToSpawn.pos.spawnPosition, Quaternion.identity);
-            BaseEnemy scr = obj.GetComponent<BaseEnemy>();
-            scr.SetPositionContainer(enemyToSpawn.pos);
+            BaseEnemy mov = obj.GetComponent<BaseEnemy>();
+            mov.SetPositionContainer(enemyToSpawn.pos);
 
             //add it to the active list
-            activeList.Add(new(obj, scr));
+            activeList.Add(new(obj, mov));
 
             Debug.Log("spawned enemy");
 
@@ -112,24 +107,7 @@ public class WaveManager : MonoBehaviour
             }
         }
 
-        activeList.RemoveAll(x => x.Item1 == null);
-
-        
-    }
-    //void InitWaveContainer()
-    //{
-    //    foreach (WaveContainter waveContainter in wave)
-    //    {
-    //        if(waveContainter != null && waveContainter.isCustomMoveData)
-    //        {
-    //            Debug.Log("Assigning New Pos Data to " + waveContainter.enemy.gameObject.name);
-    //            waveContainter.enemy.GetComponent<BaseEnemy>().SetPositionContainer(waveContainter.pos);
-    //        }
-    //    }
-    //}
-    public void CleanEnemy()
-    {
-        activeList.Clear();
+        activeList.RemoveAll(x => x.Item1 == null);    
     }
 
     private bool ReadyToSpawnNextEnemy()
@@ -142,4 +120,7 @@ public class WaveManager : MonoBehaviour
         yield return new WaitUntil(ReadyToSpawnNextEnemy);
         SpawnEnemy();
     }
+
+    public void CleanEnemy() => activeList.Clear();
+
 }

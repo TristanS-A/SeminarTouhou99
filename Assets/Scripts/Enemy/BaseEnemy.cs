@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 
@@ -39,14 +35,11 @@ public class BaseEnemy : MonoBehaviour
         if(currentIndex < posData.intermedatePos.Count)
         {
             currentSelectedPositon = posData.intermedatePos[currentIndex];
-
         }
         else
         {
             currentSelectedPositon = posData.endPosition;
         }
-
-      
     }
     private void FixedUpdate()
     {
@@ -56,26 +49,18 @@ public class BaseEnemy : MonoBehaviour
     {
         if(collision.CompareTag("Bullet") && !isBoss)
         {
-            //this will need to be changed at some point
-            //the player will have a damadge value associated with it
-            TakeDamadge(PlayerAttacks.bulletDamage);
+            //the player will have a damage value associated with it
+            TakeDamage(PlayerAttacks.bulletDamage);
             
             Destroy(collision.gameObject);
         }
     }
 
-    protected void TakeDamadge(float damadge)
+    protected void TakeDamage(float damadge)
     {
-
         health -= damadge;
-
         if(health <= 0)
         {
-            //player killed enemy
-
-            Debug.Log("CALLED A DROP EVENT");
-          
-
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
             dropType.SetLocation(this.transform.position);
@@ -101,21 +86,16 @@ public class BaseEnemy : MonoBehaviour
             }
             despawnTimer -= Time.deltaTime;
         }
-
-            return false;
-
+        return false;
     }
     public void DoMovement() 
     {
         Vector2 currentPos = transform.position;
 
-        //Vector2 direction = currentPos - FindClosestPosition();
         //start the lerp
         Vector2 interpolatedPosition = Vector2.MoveTowards(currentPos, FindClosestPosition(), Time.deltaTime * speed);
         Vector2 diff = interpolatedPosition - new Vector2(transform.position.x, transform.position.y);
         transform.position += (Vector3)diff;
-
-        //transform.Translate(interpolatedPosition);
 
         if((Vector2)transform.position == posData.endPosition && !isBoss)
         {
@@ -124,7 +104,6 @@ public class BaseEnemy : MonoBehaviour
         }
     }
 
-    //all these returns statments suck change them to not that
     private Vector2 FindClosestPosition()
     {
         //if the distance is to close then change to the next
@@ -138,10 +117,8 @@ public class BaseEnemy : MonoBehaviour
                 return currentSelectedPositon;
             }
 
-
             currentSelectedPositon = posData.intermedatePos[currentIndex];
             return currentSelectedPositon;
-
         }
 
         return currentSelectedPositon;
@@ -157,7 +134,7 @@ public class BaseEnemy : MonoBehaviour
     }
 
 
-    //when we distroy the object make sure to clear the squ so to that the attacks clear
+    //when we destroy the object make sure to clear the sequencer so to that the attacks clear
     private void OnDestroy()
     {
         if(sqe != null)
@@ -165,8 +142,5 @@ public class BaseEnemy : MonoBehaviour
             sqe.ClearAttackList();
             sqe.CleanSequencer();
         }
-       
     }
-
-    
 }
