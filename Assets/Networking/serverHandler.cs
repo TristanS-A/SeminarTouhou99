@@ -8,9 +8,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
-using static clientHandler;
-using static EventType;
-using static UnityEditor.PlayerSettings;
 
 public class serverHandler : MonoBehaviour
 {
@@ -323,19 +320,19 @@ public class serverHandler : MonoBehaviour
                             IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
                             Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
 
-                            TypeFinder packetType = (TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(TypeFinder));
+                            clientHandler.TypeFinder packetType = (clientHandler.TypeFinder)Marshal.PtrToStructure(ptPoit, typeof(clientHandler.TypeFinder));
 
-                            switch ((PacketType)packetType.type)
+                            switch ((clientHandler.PacketType)packetType.type)
                             {
-                                case PacketType.PLAYER_DATA:
-                                    PlayerData packetData = (PlayerData)Marshal.PtrToStructure(ptPoit, typeof(PlayerData));
+                                case clientHandler.PacketType.PLAYER_DATA:
+                                    clientHandler.PlayerData packetData = (clientHandler.PlayerData)Marshal.PtrToStructure(ptPoit, typeof(clientHandler.PlayerData));
                                     handlePlayerData(packetData);
                                     break;
-                                case PacketType.STORE_PLAYER_RESULTS:
+                                case clientHandler.PacketType.STORE_PLAYER_RESULTS:
                                     HandleReceivePlayerResult();
                                     break;
-                                case PacketType.OFFENSIVE_BOMB_DATA:
-                                    OffensiveBombData data = (OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(OffensiveBombData));
+                                case clientHandler.PacketType.OFFENSIVE_BOMB_DATA:
+                                    clientHandler.OffensiveBombData data = (clientHandler.OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(clientHandler.OffensiveBombData));
                                     EventSystem.OffensiveBombAttack(data.pos);               //Spawns offensive bomb to server client
                                     SendBombDataToAllOtherClients(data.pos, data.playerID);  //SPawns offensive bombs to all other clients
                                     break;
@@ -361,21 +358,6 @@ public class serverHandler : MonoBehaviour
                     server.DispatchCallback(serverNetworkingUtils);
                     BroadcastResults();
                     break;
-            }
-        }
-    }
-
-    //Visual for connected clients
-    private void OnGUI()
-    {
-        for (int i = 0; i < connectedClients.Count; i++)
-        {
-            GUI.TextArea(new Rect(100, 10 + 20 * i, 200, 20), "ClientID: " + (connectedClients[i]).ToString());
-
-            if (GUI.Button(new Rect(300, 10 + 20 * i, 100, 20), "Remove"))
-            {
-                server.CloseConnection(connectedClients[i]);
-                connectedClients.RemoveAt(i);
             }
         }
     }
@@ -661,14 +643,14 @@ public class serverHandler : MonoBehaviour
             {
                 if (connectedClients[i] != owningClient)
                 {
-                    OffensiveBombData bombData = new()
+                    clientHandler.OffensiveBombData bombData = new()
                     {
                         pos = pos,
                         playerID = connectedClients[i],
-                        type = (int)PacketType.OFFENSIVE_BOMB_DATA
+                        type = (int)clientHandler.PacketType.OFFENSIVE_BOMB_DATA
                     };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.OffensiveBombData))];
                     GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
                     try
                     {
@@ -735,11 +717,11 @@ public class serverHandler : MonoBehaviour
                     clientHandler.OtherClientFinishState data = new()
                     {
                         playerID = clientThatDied,
-                        type = (int)PacketType.OTHER_PLAYER_FINISH,
+                        type = (int)clientHandler.PacketType.OTHER_PLAYER_FINISH,
                         finishState = finishReason
                     };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OtherClientFinishState))];
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(clientHandler.OtherClientFinishState))];
                     GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
                     try
                     {
