@@ -67,7 +67,7 @@ public class ResultsDisplay : MonoBehaviour
 
     private bool GetIfNewScoreIsHigher(ClientHandler.PlayerSendResultData newResult, ClientHandler.PlayerSendResultData storedResult)
     {
-        return newResult.points + newResult.time > storedResult.points + storedResult.time;
+        return newResult.points > storedResult.points;
     }
 
     private void UpdateTop3()
