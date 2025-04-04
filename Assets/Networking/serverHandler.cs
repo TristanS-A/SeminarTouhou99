@@ -33,6 +33,7 @@ public class ServerHandler : MonoBehaviour
         public int points;
         public float time;
         public int placement;
+        public int score;
         public ResultContext resultContext;
     }
 
@@ -441,6 +442,7 @@ public class ServerHandler : MonoBehaviour
                     playerSendResultData.time = player.time;
                     playerSendResultData.points = player.points;
                     playerSendResultData.name = player.name;
+                    playerSendResultData.score = player.score;
 
                     IntPtr ptr = IntPtr.Zero;
                     byte[] bytes = new byte[Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData))];
@@ -599,6 +601,7 @@ public class ServerHandler : MonoBehaviour
                 name = playerReceivedResult.name,
                 points = playerReceivedResult.points,
                 time = playerReceivedResult.time,
+                score = playerReceivedResult.score,
                 resultContext = playerReceivedResult.resultContext
             };
             Debug.Log("REceived result from : " + playerReceivedResult.playerID);
@@ -678,6 +681,7 @@ public class ServerHandler : MonoBehaviour
             name = PlayerInfo.PlayerName,
             points = PlayerInfo.PlayerPoints,
             time = Time.time - PlayerInfo.PlayerTime,
+            score = PlayerInfo.CalculateScore(),
             resultContext = resContext
         };
 

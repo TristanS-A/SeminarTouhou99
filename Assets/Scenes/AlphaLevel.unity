@@ -282,7 +282,7 @@ MonoBehaviour:
       intermedatePos:
       - {x: -2.63, y: 0.24}
       - {x: -2.74, y: 3.6}
-  - enemy: {fileID: 3750078320338701201, guid: 2b6922be13ca27e439386bffb35bcd60, type: 3}
+  - enemy: {fileID: 3750078320338701201, guid: 821f42dfeef3acf42931389d2860ca02, type: 3}
     isCustomTime: 1
     isCustomMoveData: 1
     timeTillSpawn: 2

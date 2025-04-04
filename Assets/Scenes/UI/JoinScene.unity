@@ -458,7 +458,7 @@ MonoBehaviour:
   testServerButton: {fileID: 1449178437}
   m_PlayerPrefab: {fileID: 5546967965176595841, guid: 9aaa859407f9a9848929d40242f0ecc2, type: 3}
   m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
-  mDebugMode: 0
+  mDebugMode: 1
 --- !u!1 &685037804
 GameObject:
   m_ObjectHideFlags: 0

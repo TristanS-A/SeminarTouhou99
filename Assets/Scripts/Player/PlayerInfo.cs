@@ -7,6 +7,7 @@ public static class PlayerInfo
     private static string mPlayerName;
     private static float mPlayerTime;
     private static int mPlayerPoints;
+    private static int mPlayerTimeBonus;
 
     public static string PlayerName
     {
@@ -24,5 +25,16 @@ public static class PlayerInfo
     {
         get { return mPlayerPoints; }
         set { mPlayerPoints = value; }
+    }
+
+    public static int PlayerTimeBonus
+    {
+        get { return mPlayerTimeBonus; }
+        set { mPlayerTimeBonus = value; }
+    }
+
+    public static int CalculateScore()
+    {
+        return mPlayerPoints + mPlayerTimeBonus;
     }
 }

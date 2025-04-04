@@ -121,6 +121,7 @@ public class ClientHandler : MonoBehaviour
         public uint playerID;
         public float time;
         public int points;
+        public int score;
         public ServerHandler.ResultContext resultContext;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
@@ -584,6 +585,7 @@ public class ClientHandler : MonoBehaviour
         playerResults.name = PlayerInfo.PlayerName;
         playerResults.time = Time.time - PlayerInfo.PlayerTime;
         playerResults.points = PlayerInfo.PlayerPoints;
+        playerResults.score = PlayerInfo.CalculateScore();
         playerResults.resultContext = resContext;
 
         IntPtr ptr = IntPtr.Zero;

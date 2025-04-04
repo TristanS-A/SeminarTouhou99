@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -60,14 +58,14 @@ public class ResultsDisplay : MonoBehaviour
             }
 
             newResult.resultOBJ.transform.SetSiblingIndex(mResultsContent.transform.childCount);
-            mSortedResults.Insert(0, newResult);
+            mSortedResults.Add(newResult);
             UpdateTop3();
         }
     }
 
     private bool GetIfNewScoreIsHigher(ClientHandler.PlayerSendResultData newResult, ClientHandler.PlayerSendResultData storedResult)
     {
-        return newResult.points > storedResult.points;
+        return newResult.score > storedResult.score;
     }
 
     private void UpdateTop3()

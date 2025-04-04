@@ -37,11 +37,17 @@ public class TempEnemy : MonoBehaviour {
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
     private int conIndex = 0;
 
-    private void Start() {
+    private void Start() 
+    {
+        Init();
+    }
+
+    protected virtual void Init()
+    {
         currentHealth = stages[0].maxHealth;
         currentRespawnTime = stages[0].respawnTime;
 
-       // EventSystem.HealthUpdate(currentHealth);
+        // EventSystem.HealthUpdate(currentHealth);
         //EventSystem.RespawnUpdate(currentRespawnTime);
 
         IsDead = false;
@@ -76,14 +82,15 @@ public class TempEnemy : MonoBehaviour {
     }
 
     //I think this naming is wrong?
-    private void Kill() {
-        //Finishes the level and triggers the sending of result data
-        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+    protected virtual void Kill() {
         Debug.Log("Killed");
         IsDead = true;
         sequencer.ClearAttackList();
         sequencer.CleanSequencer();
         EventSystem.OnEnemyDeath();
+
+        //Finishes the level and triggers the sending of result data
+        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
     }
 
     public void Revive() {
