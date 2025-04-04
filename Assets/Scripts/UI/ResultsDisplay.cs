@@ -42,6 +42,7 @@ public class ResultsDisplay : MonoBehaviour
             resultTexts[0].text = result.name;
             resultTexts[1].text = result.time.ToString("0.00");
             resultTexts[2].text = result.points.ToString();
+            resultTexts[3].text = result.score.ToString();
 
             mStoredIDs.Add(result.playerID);
 

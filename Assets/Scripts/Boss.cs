@@ -35,8 +35,9 @@ public class Boss : TempEnemy
     {
         for (int i = 0; i < completionTimeBonusList.Count; i++)
         {
-            if (completionTime >= completionTimeBonusList[i].timeToCompleteIn)
+            if (completionTime <= completionTimeBonusList[i].timeToCompleteIn)
             {
+                //Debug.Log("Completion TIME: " + completionTime);
                 PlayerInfo.PlayerTimeBonus += completionTimeBonusList[i].bonusPoints;
                 return;
             }
