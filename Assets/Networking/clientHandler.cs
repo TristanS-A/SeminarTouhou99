@@ -645,6 +645,9 @@ public class ClientHandler : MonoBehaviour
         switch (finishReason)
         {
             case ServerHandler.ResultContext.PLAYER_WON:
+                //Handles sending win data event for other handling of a player win (from client)
+                //The z = 2 makes the grave show up in front the bullets
+                EventSystem.SendPlayerWinData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, -2));
                 break;
             case ServerHandler.ResultContext.PLAYER_DIED:
                 //Handles sending death data event for other handling of a player death (from client)

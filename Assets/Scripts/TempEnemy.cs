@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -89,8 +90,18 @@ public class TempEnemy : MonoBehaviour {
         sequencer.CleanSequencer();
         EventSystem.OnEnemyDeath();
 
-        //Finishes the level and triggers the sending of result data
-        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+        if (mEnemyType == EnemyType.FINAL_BOSS)
+        {
+            //Lazy
+            GameObject playerOBJ = GameObject.FindGameObjectWithTag("Player");
+
+            //Handles sending win data event for other handling of a player win (from client)
+            //The z = 2 makes the grave show up in front the bullets
+            EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, -2));
+
+            //Finishes the level and triggers the sending of result data
+            EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+        }
     }
 
     public void Revive() {

@@ -52,6 +52,9 @@ public static class EventSystem
     public static event UnityAction<bool, Vector3> OnPlayerDie;
     public static void SendPlayerDeathData(bool isOwningPlayer, Vector3 deathPos) => OnPlayerDie?.Invoke(isOwningPlayer, deathPos);
 
+    public static event UnityAction<bool, Vector3> OnPlayerWin;
+    public static void SendPlayerWinData(bool isOwningPlayer, Vector3 winPos) => OnPlayerWin?.Invoke(isOwningPlayer, winPos);
+
     public static void fireEvent(EventType type)
     {
         switch (type.getEventType())

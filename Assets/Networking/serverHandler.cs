@@ -607,24 +607,29 @@ public class ServerHandler : MonoBehaviour
             Debug.Log("REceived result from : " + playerReceivedResult.playerID);
             mPlayerResults.Add(playerReceivedResult.playerID, playerStoreResult);
 
+            PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
+
             switch (playerReceivedResult.resultContext)
             {
                 case ResultContext.PLAYER_WON:
+                    //Handles sending win data event for other handling of a player win (from client)
+                    //The z = 2 makes the grave show up in front the bullets
+                    EventSystem.SendPlayerWinData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, -2));
                     break;
                 case ResultContext.PLAYER_DIED:
-                    PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
-
                     //Handles sending death data event for other handling of a player death (from client)
+                    //The z = 1 makes the grave show up behind the bullets
                     EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, 1));
-                    Destroy(prevData.playerOBJ);
-
-                    prevData.playerOBJ = null;
-                    mPlayers[playerReceivedResult.playerID] = prevData;
                     SendPlayerDeathToAllOtherClients(playerReceivedResult.playerID, playerReceivedResult.resultContext);
                     break;
                 case ResultContext.PLAYER_DISCONNECTED:
                     break;
             }
+
+            //Removes finished player
+            Destroy(prevData.playerOBJ);
+            prevData.playerOBJ = null;
+            mPlayers[playerReceivedResult.playerID] = prevData;
 
             //Check if game is finished (all players are done playing)
             if (CheckIfGameFinished())
