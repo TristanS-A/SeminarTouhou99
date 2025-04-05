@@ -620,11 +620,12 @@ public class ServerHandler : MonoBehaviour
                     //Handles sending death data event for other handling of a player death (from client)
                     //The z = 1 makes the grave show up behind the bullets
                     EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, 1));
-                    SendPlayerDeathToAllOtherClients(playerReceivedResult.playerID, playerReceivedResult.resultContext);
                     break;
                 case ResultContext.PLAYER_DISCONNECTED:
                     break;
             }
+
+            SendPlayerFinishToAllOtherClients(playerReceivedResult.playerID, playerReceivedResult.resultContext);
 
             //Removes finished player
             Destroy(prevData.playerOBJ);
@@ -695,7 +696,7 @@ public class ServerHandler : MonoBehaviour
 
         mPlayerResults.Add(serverPlayerID, playerStoreResult);
 
-        SendPlayerDeathToAllOtherClients(serverPlayerID, resContext);
+        SendPlayerFinishToAllOtherClients(serverPlayerID, resContext);
 
         //Check if game is finished (all players are done playing)
         if (CheckIfGameFinished())
@@ -711,7 +712,7 @@ public class ServerHandler : MonoBehaviour
         return mPlayers.Count == mPlayerResults.Count;
     }
 
-    private void SendPlayerDeathToAllOtherClients(uint clientThatDied, ServerHandler.ResultContext finishReason)
+    private void SendPlayerFinishToAllOtherClients(uint clientThatDied, ServerHandler.ResultContext finishReason)
     {
         if (server != null)
         {
