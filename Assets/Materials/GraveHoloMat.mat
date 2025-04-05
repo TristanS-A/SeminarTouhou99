@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HologramMat
+  m_Name: GraveHoloMat
   m_Shader: {fileID: -6465566751694194690, guid: 150e4304a40eda442a8d633159940f9f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -94,7 +94,7 @@ Material:
     - _BUILTIN_ZWriteControl: 0
     - _BumpScale: 1
     - _ColorMask: 15
-    - _ColorTransparancy: 0
+    - _ColorTransparancy: 1
     - _CullMode: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -131,7 +131,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _HologramColor: {r: 1, g: 0.40566027, b: 0.40566027, a: 0}
-    - _HologramTint: {r: 0, g: 0.11258077, b: 1, a: 0}
+    - _HologramTint: {r: 0, g: 0, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ScanLineColor: {r: 0, g: 0.31021687, b: 1, a: 0}
+    - _ScanLineColor: {r: 0.390566, g: 0.57937104, b: 1, a: 0}
   m_BuildTextureStacks: []

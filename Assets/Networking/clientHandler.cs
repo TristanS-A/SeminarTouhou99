@@ -641,18 +641,21 @@ public class ClientHandler : MonoBehaviour
     private void HandleOtherPlayerFinish(uint otherPlayerID, ServerHandler.ResultContext finishReason)
     {
         ServerHandler.PlayerGameData prevData = mPlayers[otherPlayerID];
-        Destroy(mPlayers[otherPlayerID].playerOBJ);
-        prevData.playerOBJ = null;
-        mPlayers[otherPlayerID] = prevData;
 
         switch (finishReason)
         {
             case ServerHandler.ResultContext.PLAYER_WON:
                 break;
             case ServerHandler.ResultContext.PLAYER_DIED:
+                //Handles sending death data event for other handling of a player death (from client)
+                EventSystem.SendPlayerDeathData(false, prevData.playerOBJ.transform.position);
                 break;
             case ServerHandler.ResultContext.PLAYER_DISCONNECTED:
                 break;
         }
+
+        Destroy(mPlayers[otherPlayerID].playerOBJ);
+        prevData.playerOBJ = null;
+        mPlayers[otherPlayerID] = prevData;
     }
 }

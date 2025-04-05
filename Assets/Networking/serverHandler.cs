@@ -613,6 +613,9 @@ public class ServerHandler : MonoBehaviour
                     break;
                 case ResultContext.PLAYER_DIED:
                     PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
+
+                    //Handles sending death data event for other handling of a player death (from client)
+                    EventSystem.SendPlayerDeathData(false, mPlayers[playerReceivedResult.playerID].playerOBJ.transform.position);
                     Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
 
                     prevData.playerOBJ = null;

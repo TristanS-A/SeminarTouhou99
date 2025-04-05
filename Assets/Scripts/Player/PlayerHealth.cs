@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour {
+    [SerializeField] private GameObject m_GraveStone;
+    [SerializeField] private Material m_GraveMat;
     public int maxHealth = 3;
     public float invinciblityTime = 1.5f;
 
@@ -57,9 +59,14 @@ public class PlayerHealth : MonoBehaviour {
 
     private void KillPlayer() {
         isDead = true;
-        EventSystem.OnPlayerDeath();
+        EventSystem.SendPlayerDeathData(true, transform.position);
         EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_DIED);
         Debug.Log("Player died");
+
+        //The z = 1 makes the grave show up behin the bullets
+        GameObject grave = Instantiate(m_GraveStone, new Vector3(transform.position.x, transform.position.y, 1), Quaternion.identity);
+        grave.GetComponentInChildren<Renderer>().material = m_GraveMat;
+
         Destroy(gameObject);
     }
 

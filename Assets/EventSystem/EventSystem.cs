@@ -16,9 +16,6 @@ public static class EventSystem
     public static event UnityAction<int> OnHealthUpdate;
     public static void HealthUpdate(int health) => OnHealthUpdate?.Invoke(health);
 
-    public static event UnityAction OnPlayerDeathUpdate;
-    public static void OnPlayerDeath() => OnPlayerDeathUpdate?.Invoke();
-
     public static UnityEvent<float> OnRespawnUpdate;
     public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
 
@@ -51,6 +48,9 @@ public static class EventSystem
 
     public static event UnityAction<ServerHandler.ResultContext> OnSendPlayerResultData;
     public static void SendPlayerResultData(ServerHandler.ResultContext resultContext) => OnSendPlayerResultData?.Invoke(resultContext);
+
+    public static event UnityAction<bool, Vector3> OnPlayerDie;
+    public static void SendPlayerDeathData(bool isOwningPlayer, Vector3 deathPos) => OnPlayerDie?.Invoke(isOwningPlayer, deathPos);
 
     public static void fireEvent(EventType type)
     {

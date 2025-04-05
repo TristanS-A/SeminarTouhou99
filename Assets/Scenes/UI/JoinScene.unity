@@ -421,6 +421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 639239335}
   - component: {fileID: 639239336}
+  - component: {fileID: 639239337}
   m_Layer: 0
   m_Name: Serverhandler
   m_TagString: Untagged
@@ -459,6 +460,21 @@ MonoBehaviour:
   m_PlayerPrefab: {fileID: 5546967965176595841, guid: 9aaa859407f9a9848929d40242f0ecc2, type: 3}
   m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
   mDebugMode: 1
+--- !u!114 &639239337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639239333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97dc986a3f19c241a7729069729c4a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GraveStone: {fileID: 8177859136854377481, guid: 6aae205c46a9e0344aab2a249beac2b1, type: 3}
+  m_GraveMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
+  m_HoloGraveMat: {fileID: 2100000, guid: 3433602beaa39a24991e0ad0c5d50d97, type: 2}
 --- !u!1 &685037804
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,6 +1068,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1410010107}
   - component: {fileID: 1410010106}
+  - component: {fileID: 1410010108}
   m_Layer: 0
   m_Name: ClientHandler
   m_TagString: Untagged
@@ -1091,6 +1108,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1410010108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410010105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97dc986a3f19c241a7729069729c4a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GraveStone: {fileID: 8177859136854377481, guid: 6aae205c46a9e0344aab2a249beac2b1, type: 3}
+  m_GraveMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
+  m_HoloGraveMat: {fileID: 2100000, guid: 3433602beaa39a24991e0ad0c5d50d97, type: 2}
 --- !u!1 &1449178434
 GameObject:
   m_ObjectHideFlags: 0

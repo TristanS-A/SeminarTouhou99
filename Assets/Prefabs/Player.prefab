@@ -190,7 +190,9 @@ MonoBehaviour:
   target: {fileID: 0}
   rotateSpeed: 2
   maxDefensiveBombs: 3
+  defensiveBombDelay: 1
   maxOffensiveBombs: 3
+  offensiveBombDelay: 1
   bulletPrefab: {fileID: 435637448550865365, guid: 107be95e213d16c4ebeec299d20dea14, type: 3}
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}
@@ -208,6 +210,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a112d6f626179468b473eacb7b9c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_GraveStone: {fileID: 8177859136854377481, guid: 6aae205c46a9e0344aab2a249beac2b1, type: 3}
+  m_GraveMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   maxHealth: 3
   invinciblityTime: 1
 --- !u!114 &2317277070188080296
@@ -227,6 +231,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   shouldLoop: 0
+  currentAttackIndex: 0
 --- !u!1 &4342171893642893423
 GameObject:
   m_ObjectHideFlags: 0
