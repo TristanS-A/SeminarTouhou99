@@ -30,6 +30,7 @@ public class ClientHandler : MonoBehaviour
     //Packet sending data
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
+    private bool mShouldSendData = true;
 
     //Joinable IP storage for lobby searching scene
     private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
@@ -361,7 +362,7 @@ public class ClientHandler : MonoBehaviour
             {
                 case ServerHandler.GameState.GAME_STARTED:
                     handleInterpolatePlayerPoses();
-                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME)
+                    if (mPacketSendTime >= PACKET_TARGET_SEND_TIME && mShouldSendData)
                     {
                         SendPlayerData();
                         mPacketSendTime = 0.0f;
@@ -496,7 +497,7 @@ public class ClientHandler : MonoBehaviour
             ServerHandler.PlayerGameData player = new ServerHandler.PlayerGameData();
             if (!mPlayers.ContainsKey(playerData.playerID))
             {
-                player.playerOBJ = Instantiate(m_PlayerHologramPrefab); ;
+                player.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 player.init();
                 player.playerInterpolationTracker = 0.0f;
 
@@ -504,9 +505,7 @@ public class ClientHandler : MonoBehaviour
             }
             else if (mPlayers[playerData.playerID].playerOBJ == null)    //Maybe refactor this to instantiate holograms when HandleStartGame is run
             {
-                //playerOBJ = Instantiate(m_PlayerHologramPrefab);
-                //playerPoses.Add(playerData.playerID, new());
-                //playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+                return;
             }
 
             mPlayers[playerData.playerID].playerPoses.Clear();
@@ -602,6 +601,8 @@ public class ClientHandler : MonoBehaviour
             client.SendMessageToConnection(serverConnection, bytes);
             Marshal.FreeHGlobal(ptr);
         }
+
+        mShouldSendData = false;
     }
 
     //Ends the netowrking session

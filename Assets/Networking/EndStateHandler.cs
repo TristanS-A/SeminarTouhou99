@@ -22,7 +22,6 @@ public class EndStateHandler : MonoBehaviour
         EventSystem.OnPlayerWin -= HandlePlayerWins;
     }
 
-
     public void HandlePlayerDies(bool isOwningPlayer, Vector3 deathPos)
     {
         Material graveMat;
@@ -49,12 +48,10 @@ public class EndStateHandler : MonoBehaviour
         else
         {
             confettiMat = m_HoloMat;
+            confettiMat.SetFloat("ColorTransparency", -0.8f);
         }
 
-        //Sets values of holo mat for confetti
-        confettiMat.SetFloat("ColorTransparency", -0.8f);
-
         GameObject confettiOBJ = Instantiate(m_Confetti, winPos, Quaternion.identity);
-        confettiMat.GetComponentInChildren<Renderer>().material = confettiMat;
+        confettiOBJ.GetComponentInChildren<Renderer>().material = confettiMat;
     }
 }

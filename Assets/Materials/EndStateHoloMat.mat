@@ -94,7 +94,7 @@ Material:
     - _BUILTIN_ZWriteControl: 0
     - _BumpScale: 1
     - _ColorMask: 15
-    - _ColorTransparancy: 1
+    - _ColorTransparancy: -0.8
     - _CullMode: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1

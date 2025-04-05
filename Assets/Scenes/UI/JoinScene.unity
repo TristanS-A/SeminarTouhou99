@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_GraveStone: {fileID: 8177859136854377481, guid: 6aae205c46a9e0344aab2a249beac2b1, type: 3}
-  m_SpriteMat: {fileID: 2100000, guid: 93bfd77a9fff3cd48b48592015dc72c1, type: 2}
+  m_SpriteMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   m_HoloMat: {fileID: 2100000, guid: 3433602beaa39a24991e0ad0c5d50d97, type: 2}
   m_Confetti: {fileID: 6087239232231171050, guid: 18441fff972bbd54ea0cd9ac7bb1c5bf, type: 3}
 --- !u!1 &685037804

@@ -544,9 +544,7 @@ public class ServerHandler : MonoBehaviour
         //Maybe refactor this to instantiate holograms when HandleStartGame is run
         else if (mPlayers[playerData.playerID].playerOBJ == null)    
         {
-            //playerOBJ = Instantiate(m_PlayerHologramPrefab);
-            //playerPoses.Add(playerData.playerID, new());
-            //playerInterpolationTracker.Add(playerData.playerID, 0.0f);
+            return;
         }
 
         mPlayers[playerData.playerID].playerPoses.Clear();
