@@ -615,8 +615,8 @@ public class ServerHandler : MonoBehaviour
                     PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
 
                     //Handles sending death data event for other handling of a player death (from client)
-                    EventSystem.SendPlayerDeathData(false, mPlayers[playerReceivedResult.playerID].playerOBJ.transform.position);
-                    Destroy(mPlayers[playerReceivedResult.playerID].playerOBJ);
+                    EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, 1));
+                    Destroy(prevData.playerOBJ);
 
                     prevData.playerOBJ = null;
                     mPlayers[playerReceivedResult.playerID] = prevData;

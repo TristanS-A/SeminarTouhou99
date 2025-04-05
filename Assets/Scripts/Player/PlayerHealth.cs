@@ -59,14 +59,10 @@ public class PlayerHealth : MonoBehaviour {
 
     private void KillPlayer() {
         isDead = true;
-        EventSystem.SendPlayerDeathData(true, transform.position);
+        EventSystem.SendPlayerDeathData(true, new Vector3(transform.position.x, transform.position.y, 1));
         EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_DIED);
+        
         Debug.Log("Player died");
-
-        //The z = 1 makes the grave show up behin the bullets
-        GameObject grave = Instantiate(m_GraveStone, new Vector3(transform.position.x, transform.position.y, 1), Quaternion.identity);
-        grave.GetComponentInChildren<Renderer>().material = m_GraveMat;
-
         Destroy(gameObject);
     }
 

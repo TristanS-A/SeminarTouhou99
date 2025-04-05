@@ -25,6 +25,7 @@ public class EndStateHandler : MonoBehaviour
         {
             graveMat = m_GraveMat;
         }
+        else 
         {
             graveMat = m_HoloGraveMat;
         }

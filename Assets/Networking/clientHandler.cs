@@ -648,7 +648,7 @@ public class ClientHandler : MonoBehaviour
                 break;
             case ServerHandler.ResultContext.PLAYER_DIED:
                 //Handles sending death data event for other handling of a player death (from client)
-                EventSystem.SendPlayerDeathData(false, prevData.playerOBJ.transform.position);
+                EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, 1));
                 break;
             case ServerHandler.ResultContext.PLAYER_DISCONNECTED:
                 break;
