@@ -38,11 +38,13 @@ public class BombUI : MonoBehaviour {
                 break;
         }
     }
-    private void UpdateDefensiveBomb(int amount) {
+    private void UpdateDefensiveBomb(int amount) 
+    {
         HandleUI(amount, defensivePrefab, defensiveContainer);
     }
 
-    private void UpdateOffensiveBomb(int amount) {
+    private void UpdateOffensiveBomb(int amount) 
+    {
         HandleUI(amount, offensivePrefab, offensiveContainer);
     }
 

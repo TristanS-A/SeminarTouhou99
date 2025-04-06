@@ -199,6 +199,7 @@ MonoBehaviour:
   rightBulletSpawn: {fileID: 3484360881877885786}
   playerSequencer: {fileID: 2317277070188080296}
   m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
+  m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
 --- !u!114 &281478293746345220
 MonoBehaviour:
   m_ObjectHideFlags: 0

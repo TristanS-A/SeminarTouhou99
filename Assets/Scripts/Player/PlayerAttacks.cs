@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class PlayerAttacks : MonoBehaviour {
     [Header("Keybinds")]
@@ -43,6 +44,7 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private Sequencer playerSequencer;
 
     [SerializeField] private GameObject m_OffensiveBombVFX;
+    [SerializeField] private GameObject m_DefensiveBombVFX;
 
     private List<GameObject> bullets = new();
     private bool isShooting = false;
@@ -137,6 +139,12 @@ public class PlayerAttacks : MonoBehaviour {
     public void SpawnOffensiveBomb(Vector2 pos) {
         playerSequencer.SetSpawnPos(pos);
         playerSequencer.enabled = true;
+
+        //Handle spawn offensive bomb vfx
+        GameObject bombVFX = Instantiate(m_OffensiveBombVFX, transform.position, Quaternion.identity);
+        bombVFX.transform.parent = transform;
+        bombVFX.GetComponent<VisualEffect>().SetBool("ShouldBeHologram", true);
+
         StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
     }
 
@@ -195,6 +203,9 @@ public class PlayerAttacks : MonoBehaviour {
                     enemySequencer.CleanSequencer();
                 }
             }
+
+            GameObject bombVFX = Instantiate(m_DefensiveBombVFX, transform.position, Quaternion.identity);
+            bombVFX.transform.parent = transform;
 
             yield return new WaitForSeconds(delay);
         }
