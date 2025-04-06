@@ -141,8 +141,7 @@ public class PlayerAttacks : MonoBehaviour {
         playerSequencer.enabled = true;
 
         //Handle spawn offensive bomb vfx
-        GameObject bombVFX = Instantiate(m_OffensiveBombVFX, transform.position, Quaternion.identity);
-        bombVFX.transform.parent = transform;
+        GameObject bombVFX = Instantiate(m_OffensiveBombVFX, pos, Quaternion.identity);
         bombVFX.GetComponent<VisualEffect>().SetBool("ShouldBeHologram", true);
 
         StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
