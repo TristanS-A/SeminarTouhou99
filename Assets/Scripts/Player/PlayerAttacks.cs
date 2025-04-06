@@ -42,6 +42,8 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private Transform leftBulletSpawn, rightBulletSpawn;
     [SerializeField] private Sequencer playerSequencer;
 
+    [SerializeField] private GameObject m_OffensiveBombVFX;
+
     private List<GameObject> bullets = new();
     private bool isShooting = false;
 
@@ -169,6 +171,10 @@ public class PlayerAttacks : MonoBehaviour {
             offensiveBombCount -= cost;
             EventSystem.OffensiveBombAttackUI(offensiveBombCount);
             EventSystem.FireOffensiveBomb(transform.position);
+
+            GameObject bombVFX = Instantiate(m_OffensiveBombVFX, transform.position, Quaternion.identity);
+            bombVFX.transform.parent = transform;
+
             yield return new WaitForSeconds(delay);
         }
         isOffensiveBombDelayed = false;

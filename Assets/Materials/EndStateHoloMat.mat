@@ -32,8 +32,9 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap:
-    RenderType: Transparent
-  disabledShaderPasses: []
+    RenderType: Opaque
+  disabledShaderPasses:
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -78,9 +79,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - PixelSnap: 0
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _BUILTIN_AlphaClip: 0
     - _BUILTIN_Blend: 0
     - _BUILTIN_CullMode: 2
@@ -92,9 +107,12 @@ Material:
     - _BUILTIN_ZTest: 4
     - _BUILTIN_ZWrite: 0
     - _BUILTIN_ZWriteControl: 0
+    - _Blend: 0
     - _BumpScale: 1
+    - _CastShadows: 0
     - _ColorMask: 15
-    - _ColorTransparancy: -0.8
+    - _ColorTransparancy: 0
+    - _Cull: 2
     - _CullMode: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -108,6 +126,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _ScanLineHeight: 0.2
     - _ScrollSpeed: -0.5
     - _SecondScanLineHeight: 0.01
@@ -120,18 +140,34 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _TintFalloff: 0.5
+    - _Surface: 0
+    - _TintFalloff: 0
     - _Transparency: 1
     - _UVSec: 0
     - _UseUIAlphaClip: 0
+    - _ZTest: 4
     - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _HologramColor: {r: 1, g: 0.40566027, b: 0.40566027, a: 0}
-    - _HologramTint: {r: 0, g: 0, b: 0, a: 0}
+    - _HologramTint: {r: 0, g: 0.32961154, b: 1, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _ScanLineColor: {r: 0.390566, g: 0.57937104, b: 1, a: 0}
   m_BuildTextureStacks: []
+--- !u!114 &5438106798466670856
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7

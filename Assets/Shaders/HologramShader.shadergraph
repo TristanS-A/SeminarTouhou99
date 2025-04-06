@@ -826,8 +826,8 @@
     ],
     "m_VertexContext": {
         "m_Position": {
-            "x": 2346.399658203125,
-            "y": 1249.5999755859375
+            "x": -495.199951171875,
+            "y": 674.4000244140625
         },
         "m_Blocks": [
             {
@@ -843,8 +843,8 @@
     },
     "m_FragmentContext": {
         "m_Position": {
-            "x": 2346.399658203125,
-            "y": 1463.1998291015625
+            "x": -495.199951171875,
+            "y": 888.0000610351563
         },
         "m_Blocks": [
             {
@@ -875,6 +875,9 @@
     "m_ActiveTargets": [
         {
             "m_Id": "95fdee5f8d1d4d8f8316a6a2efd651bb"
+        },
+        {
+            "m_Id": "856b0947caed4b3f9134af0614982ade"
         }
     ]
 }
@@ -1211,6 +1214,12 @@
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.Rendering.Universal.ShaderGraph.UniversalSpriteUnlitSubTarget",
+    "m_ObjectId": "1053f47fd9ba4774a2f6fddb10ed9e63"
 }
 
 {
@@ -1999,7 +2008,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "AlphaClipThreshold",
     "m_StageCapability": 2,
-    "m_Value": 0.5,
+    "m_Value": 0.0,
     "m_DefaultValue": 0.5,
     "m_Labels": []
 }
@@ -2714,7 +2723,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.5,
+    "m_Value": 0.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -2734,10 +2743,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 503.1999816894531,
-            "y": -116.0000228881836,
-            "width": 208.00003051757813,
-            "height": 432.0000305175781
+            "x": 570.4000244140625,
+            "y": -115.99999237060547,
+            "width": 208.0,
+            "height": 432.0
         }
     },
     "m_Slots": [
@@ -2965,7 +2974,7 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1017.5999755859375,
+            "x": -1016.0,
             "y": 757.5999755859375,
             "width": 276.0,
             "height": 541.5999755859375
@@ -3029,7 +3038,7 @@
     "m_SourceType": 1,
     "m_FunctionName": "GetScanLineColor",
     "m_FunctionSource": "",
-    "m_FunctionBody": "float scanline = (sin((UV.y - Time * ScrollSpeed) * 1.0 / ScanLineHeight) + 1) * 0.5;\nscanline += (sin((UV.y - Time * SecondScanLineSpeed) * 1.0 / (SecondScanLineHeight)) + 1) * 0.5;\nscanline = (scanline + 1) * 0.5;\r\nfloat3 crtColor = ScanLineColor.rgb * scanline;\r\n\nfloat4 originalColor = tex2D(Tex, UV);\r\nfloat3 finalColor = originalColor.rgb * crtColor;\n\nfloat notScanline = (scanline - 1) * -1;\nfinalColor += notScanline * (originalColor.rgb * TintFalloff + HologramTint);\n\nScanColor = finalColor;\n\nAlpha = clamp((originalColor.a * clamp(scanline + ColorTransparency, 0, 1)) * FullTransparency, 0, 1);"
+    "m_FunctionBody": "float scanline = (sin((UV.y - Time * ScrollSpeed) * 1.0 / ScanLineHeight) + 1) * 0.5;\nscanline += (sin((UV.y - Time * SecondScanLineSpeed) * 1.0 / (SecondScanLineHeight)) + 1) * 0.5;\nscanline = (scanline + 1) * 0.5;\r\nfloat3 crtColor = ScanLineColor.rgb * scanline;\r\n\nfloat4 originalColor = tex2D(Tex, UV);\r\nfloat3 finalColor = originalColor.rgb * crtColor;\n\nfloat notScanline = (clamp(-1, 0, scanline - 1)) * -1;\nfinalColor += notScanline * clamp(0, 1, originalColor.rgb * TintFalloff + HologramTint);\n\nScanColor = finalColor;\n\nAlpha = clamp(0, 1, (originalColor.a * clamp(0, 1, scanline + ColorTransparency)) * FullTransparency);"
 }
 
 {
@@ -3891,6 +3900,28 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.Rendering.Universal.ShaderGraph.UniversalTarget",
+    "m_ObjectId": "856b0947caed4b3f9134af0614982ade",
+    "m_Datas": [],
+    "m_ActiveSubTarget": {
+        "m_Id": "1053f47fd9ba4774a2f6fddb10ed9e63"
+    },
+    "m_AllowMaterialOverride": true,
+    "m_SurfaceType": 1,
+    "m_ZTestMode": 4,
+    "m_ZWriteControl": 0,
+    "m_AlphaMode": 0,
+    "m_RenderFace": 2,
+    "m_AlphaClip": true,
+    "m_CastShadows": false,
+    "m_ReceiveShadows": false,
+    "m_SupportsLODCrossFade": false,
+    "m_CustomEditorGUI": "",
+    "m_SupportVFX": false
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.SamplerStateMaterialSlot",
     "m_ObjectId": "8758620c0d124d5f83ea448aefdf3898",
@@ -4293,10 +4324,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1782.39990234375,
-            "y": 1195.9998779296875,
+            "x": 1739.199951171875,
+            "y": 1186.4000244140625,
             "width": 208.0,
-            "height": 301.5999755859375
+            "height": 301.599853515625
         }
     },
     "m_Slots": [
@@ -5561,7 +5592,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":10904,\"guid\":\"0000000000000000f000000000000000\",\"type\":0}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"8bac7a454c10b7a44960e563037afb2c\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -5941,9 +5972,9 @@
     "m_Hidden": false,
     "m_Value": {
         "r": 0.0,
-        "g": 0.11258077621459961,
+        "g": 0.13206958770751954,
         "b": 1.0,
-        "a": 0.0
+        "a": 1.0
     },
     "isMainColor": false,
     "m_ColorMode": 0
