@@ -19,7 +19,14 @@ public class SoundManager : MonoBehaviour {
     [SerializeField] private AudioSource sfx;
 
     private void Awake() {
+        Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnDestroy() {
+        if (Instance == this) {
+            Instance = null;
+        }
     }
 
     public void PlaySFXClip(AudioClip clip, Transform spawnPos, float volume) {
