@@ -7,6 +7,7 @@ public class ChangePlayerSprite : MonoBehaviour
     [SerializeField] PlayerMovement PlayerMovement;
     // Start is called before the first frame update
     [SerializeField] List<Sprite> sprites = new();
+    [SerializeField] bool changeSpite = true;
     SpriteRenderer render;
     bool isSecondSprite = false;
     void Start()
@@ -24,7 +25,11 @@ public class ChangePlayerSprite : MonoBehaviour
     private void FixedUpdate()
     {
         RotateAsset();
-        SwitchSprite();
+        if(changeSpite)
+        {
+            SwitchSprite();
+        }
+        
     }
 
     private void RotateAsset()
