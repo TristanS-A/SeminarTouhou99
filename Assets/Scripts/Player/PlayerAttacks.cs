@@ -46,6 +46,10 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private GameObject m_OffensiveBombVFX;
     [SerializeField] private GameObject m_DefensiveBombVFX;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip attackSFX;
+    [SerializeField] private AudioClip bombSFX;
+
     private List<GameObject> bullets = new();
     private bool isShooting = false;
 
@@ -63,6 +67,7 @@ public class PlayerAttacks : MonoBehaviour {
 
     void Update() {
         if (Input.GetKeyDown(shootKey) && !isShooting) {
+            SoundManager.Instance.PlaySFXClip(attackSFX, transform, 1f);
             StartCoroutine(ShootBullets());
         }
 

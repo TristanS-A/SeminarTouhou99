@@ -11,6 +11,9 @@ public class PickUp : MonoBehaviour
     float lifeTime = 10.0f;
     private Rigidbody2D rb;
     // Start is called before the first frame update
+
+    [SerializeField] private List<AudioClip> pickupSFX;
+
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -30,8 +33,9 @@ public class PickUp : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             EventSystem.OnPickUp(dropType, amount);
+            SoundManager.Instance.PlayRandomSFXClip(pickupSFX, transform, 1f);
             Debug.Log("Picked Up " + dropType.ToString());
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
         }
 
     }

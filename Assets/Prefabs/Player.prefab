@@ -200,6 +200,8 @@ MonoBehaviour:
   playerSequencer: {fileID: 2317277070188080296}
   m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
   m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
+  attackSFX: {fileID: 8300000, guid: a9f287e59ca0fad4683e9e78c6d6668c, type: 3}
+  bombSFX: {fileID: 0}
 --- !u!114 &281478293746345220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +218,9 @@ MonoBehaviour:
   m_GraveMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   maxHealth: 3
   invinciblityTime: 1
-  damageSound: {fileID: 8300000, guid: 98cfd6c6408ba8f4b872a85b548facd7, type: 3}
+  damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
+  healSound: {fileID: 8300000, guid: 4f16e31b3d3367249b4f3c54be364258, type: 3}
+  deathSound: {fileID: 8300000, guid: fd41a831b15391541808bf2c46c07f2c, type: 3}
 --- !u!114 &2317277070188080296
 MonoBehaviour:
   m_ObjectHideFlags: 0

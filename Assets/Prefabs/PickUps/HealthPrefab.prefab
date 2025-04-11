@@ -145,6 +145,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dropType: 2
+  amount: 1
+  pickupSFX: []
 --- !u!50 &2422303641084215351
 Rigidbody2D:
   serializedVersion: 4
