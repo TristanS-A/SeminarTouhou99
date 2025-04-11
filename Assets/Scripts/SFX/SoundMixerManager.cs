@@ -8,8 +8,8 @@ public class SoundMixerManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
-    public void SetMasterVolume(float volume) => mixer.SetFloat("masterVolume", volume);
-    public void SetSoundEffectsVolume(float volume) => mixer.SetFloat("soundEffectsVolume", volume);
-    public void SetMusicVolume(float volume) => mixer.SetFloat("musicVolume", volume);
+    public void SetMasterVolume(float volume) => mixer.SetFloat("masterVolume", Mathf.Log10(volume) * 20f);
+    public void SetSoundEffectsVolume(float volume) => mixer.SetFloat("soundEffectsVolume", Mathf.Log10(volume) * 20f);
+    public void SetMusicVolume(float volume) => mixer.SetFloat("musicVolume", Mathf.Log10(volume) * 20f);
 
 }
