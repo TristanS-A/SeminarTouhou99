@@ -13,7 +13,14 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private List<Option> options;
     private int currentIndex = 0;
 
+    [Header("Temp Fix")]
+    [SerializeField] private GameObject lobbyPanel, optionPanel;
+    [SerializeField] private Button lobbyButton, optionButton;
+
+    private SoundMixerManager mixerManager;
+
     private void Awake() {
+        mixerManager = FindObjectOfType<SoundMixerManager>();
         SwitchPanelByIndex(currentIndex);
     }
 
@@ -39,5 +46,19 @@ public class OptionsMenu : MonoBehaviour {
     private IEnumerator SetSelectedAfterDelay(Action action) {
         yield return null;
         action.Invoke();
+    }
+
+    public void HideOptionPanel() {
+        optionPanel.SetActive(false);
+        lobbyPanel.SetActive(true);
+        optionButton.gameObject.SetActive(true);
+        lobbyButton.gameObject.SetActive(false);
+    }
+
+    public void HideLobbyPanel() {
+        lobbyPanel.SetActive(false);
+        optionPanel.SetActive(true);
+        optionButton.gameObject.SetActive(false);
+        lobbyButton.gameObject.SetActive(true);
     }
 }

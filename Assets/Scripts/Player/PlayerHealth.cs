@@ -14,6 +14,9 @@ public class PlayerHealth : MonoBehaviour {
     private int currentHealth;
     private bool isInvincible = false;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioClip damageSound;
+
     private void Start() {
         currentHealth = maxHealth;
         EventSystem.HealthUpdate(currentHealth);
@@ -28,6 +31,7 @@ public class PlayerHealth : MonoBehaviour {
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
 
         // CALLS EVENT FOR UI
         EventSystem.HealthUpdate(currentHealth);
