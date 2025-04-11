@@ -20,6 +20,7 @@ public class HologramPlayer : MonoBehaviour
         bombVFX.GetComponent<VisualEffect>().SetBool("ShouldBeHologram", true);
 
         StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
+        Debug.Log("HERE");
     }
 
     // Waits for the lifetime of the AttackData, disables the sequencer, cleans and increments to next index

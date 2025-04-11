@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3631701709515794689}
   - component: {fileID: 1112828099582750112}
   - component: {fileID: 8862979761039350806}
+  - component: {fileID: 7592557770594357841}
   m_Layer: 0
   m_Name: Circle 1
   m_TagString: Untagged
@@ -103,3 +104,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   shouldLoop: 0
   currentAttackIndex: 0
+--- !u!114 &7592557770594357841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5546967965176595841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 199179277cd2f9c46abe7100588aa70b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerSequencer: {fileID: 8862979761039350806}
+  m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
+  m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
