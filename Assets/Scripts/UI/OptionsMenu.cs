@@ -14,13 +14,11 @@ public class OptionsMenu : MonoBehaviour {
     private int currentIndex = 0;
 
     [Header("Temp Fix")]
-    [SerializeField] private GameObject lobbyPanel, optionPanel;
+    [SerializeField] private GameObject lobbyPanel;
+    [SerializeField] private GameObject optionPanel;
     [SerializeField] private Button lobbyButton, optionButton;
 
-    private SoundMixerManager mixerManager;
-
     private void Awake() {
-        mixerManager = FindObjectOfType<SoundMixerManager>();
         SwitchPanelByIndex(currentIndex);
     }
 
