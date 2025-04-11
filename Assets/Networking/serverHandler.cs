@@ -329,7 +329,8 @@ public class ServerHandler : MonoBehaviour
                                     break;
                                 case ClientHandler.PacketType.OFFENSIVE_BOMB_DATA:
                                     ClientHandler.OffensiveBombData data = (ClientHandler.OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(ClientHandler.OffensiveBombData));
-                                    EventSystem.OffensiveBombAttack(data.pos);               //Spawns offensive bomb to server client
+                                    //EventSystem.OffensiveBombAttack(data.pos);               //Spawns offensive bomb to server client
+                                    mPlayers[data.playerID].playerOBJ.GetComponent<HologramPlayer>().SpawnOffensiveBomb(data.pos);
                                     SendBombDataToAllOtherClients(data.pos, data.playerID);  //SPawns offensive bombs to all other clients
                                     break;
                             }

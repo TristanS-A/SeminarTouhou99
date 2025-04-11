@@ -441,8 +441,8 @@ public class ClientHandler : MonoBehaviour
                         break;
                     case PacketType.OFFENSIVE_BOMB_DATA:
                         OffensiveBombData data = (OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(OffensiveBombData));
-                        EventSystem.OffensiveBombAttack(data.pos);
-
+                        //EventSystem.OffensiveBombAttack(data.pos);
+                        mPlayers[data.playerID].playerOBJ.GetComponent<HologramPlayer>().SpawnOffensiveBomb(data.pos);
                         break;
                     case PacketType.OTHER_PLAYER_FINISH:
                         OtherClientFinishState otherPlayerData = (OtherClientFinishState)Marshal.PtrToStructure(ptPoit, typeof(OtherClientFinishState));
