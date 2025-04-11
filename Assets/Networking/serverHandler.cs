@@ -655,7 +655,7 @@ public class ServerHandler : MonoBehaviour
                     ClientHandler.OffensiveBombData bombData = new()
                     {
                         pos = pos,
-                        playerID = connectedClients[i],
+                        playerID = owningClient,
                         type = (int)ClientHandler.PacketType.OFFENSIVE_BOMB_DATA
                     };
 
