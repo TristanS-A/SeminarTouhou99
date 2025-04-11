@@ -1844,7 +1844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd69ce2606489a649b6c2318a4eca503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testServerButton: {fileID: 0}
+  testServerButton: {fileID: 1604800209}
   m_PlayerPrefab: {fileID: 5546967965176595841, guid: 9aaa859407f9a9848929d40242f0ecc2, type: 3}
   m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
   mDebugMode: 1
@@ -3324,7 +3324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 117419270c055c941b40fe6735735379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testClientButton: {fileID: 0}
+  testClientButton: {fileID: 20626077}
   m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
   m_IPDisplay: {fileID: 1463750753901123346, guid: ff24a004bcea3a949b84f0bb7a039903, type: 3}
   mDebugMode: 0
