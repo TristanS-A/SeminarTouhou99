@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2317277070188080296}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 885559242883235853}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.004999995, y: -0.40499997, z: -1}
+  m_LocalPosition: {x: -0.004999995, y: -0.40499997, z: 0}
   m_LocalScale: {x: 0.083333336, y: 0.05, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -190,9 +190,9 @@ MonoBehaviour:
   target: {fileID: 0}
   rotateSpeed: 2
   maxDefensiveBombs: 3
-  defensiveBombDelay: 1
+  defensiveBombDelay: 0.5
   maxOffensiveBombs: 3
-  offensiveBombDelay: 1
+  offensiveBombDelay: 0.5
   bulletPrefab: {fileID: 435637448550865365, guid: 107be95e213d16c4ebeec299d20dea14, type: 3}
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}
@@ -259,7 +259,7 @@ Transform:
   m_GameObject: {fileID: 4342171893642893423}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.95, y: 0.64, z: 2}
+  m_LocalPosition: {x: 0.95, y: 0.64, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -290,7 +290,7 @@ Transform:
   m_GameObject: {fileID: 5579520053233322147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.95, y: 0.64, z: 2}
+  m_LocalPosition: {x: -0.95, y: 0.64, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -355,7 +355,7 @@ Transform:
   m_GameObject: {fileID: 8888102887890306067}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

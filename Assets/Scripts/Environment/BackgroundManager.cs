@@ -11,13 +11,16 @@ public class BackgroundManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Camera camera = FindAnyObjectByType<Camera>();
+        Vector3 originalRot = transform.eulerAngles;
+        //transform.LookAt(camera.transform);
+        //transform.eulerAngles = new Vector3(-originalRot.x, transform.eulerAngles.y, transform.eulerAngles.z);
     }
 
     // Update is called once per frame
     void Update()
     {
-        mPanel1.transform.position = new Vector3(transform.position.x, -Mathf.Repeat(Time.time * mScrollSpeed, mPanel1.GetComponent<SpriteRenderer>().bounds.size.y), 10);
-        mPanel2.transform.position = new Vector3(transform.position.x, -Mathf.Repeat(Time.time * mScrollSpeed, mPanel2.GetComponent<SpriteRenderer>().bounds.size.y) + mPanel1.GetComponent<SpriteRenderer>().bounds.size.y, 10);
+        mPanel1.transform.localPosition = new Vector3(mPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mScrollSpeed, mPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mPanel1.transform.localPosition.z);
+        mPanel2.transform.localPosition = new Vector3(mPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mScrollSpeed, mPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mPanel2.transform.localPosition.z);
     }
 }
