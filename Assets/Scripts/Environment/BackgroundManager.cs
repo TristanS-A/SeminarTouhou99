@@ -30,6 +30,39 @@ public class BackgroundManager : MonoBehaviour
         //transform.LookAt(camera.transform);
         //transform.eulerAngles = new Vector3(-originalRot.x, transform.eulerAngles.y, transform.eulerAngles.z);
 
+        ParalaxSetUp();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        UpdateBackgroundLevel();
+
+        UpdateCloudLevel();
+
+        UpdateCloudShadowLevel();
+    }
+
+    private void UpdateBackgroundLevel()
+    {
+        mBGPanel1.transform.localPosition = new Vector3(mBGPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mBGScrollSpeed, mBGPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mBGPanel1.transform.localPosition.z);
+        mBGPanel2.transform.localPosition = new Vector3(mBGPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mBGScrollSpeed, mBGPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mBGPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mBGPanel2.transform.localPosition.z);
+    }
+
+    private void UpdateCloudLevel()
+    {
+        mCloudPanel1.transform.localPosition = new Vector3(mCloudPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudScrollSpeed, mCloudPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mCloudPanel1.transform.localPosition.z);
+        mCloudPanel2.transform.localPosition = new Vector3(mCloudPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudScrollSpeed, mCloudPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mCloudPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mCloudPanel2.transform.localPosition.z);
+    }
+
+    private void UpdateCloudShadowLevel()
+    {
+        mCloudShadowsPanel1.transform.localPosition = new Vector3(mCloudShadowsPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudShadowsScrollSpeed, mCloudShadowsPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mCloudShadowsPanel1.transform.localPosition.z);
+        mCloudShadowsPanel2.transform.localPosition = new Vector3(mCloudShadowsPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudShadowsScrollSpeed, mCloudShadowsPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mCloudShadowsPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mCloudShadowsPanel1.transform.localPosition.z);
+    }
+
+    private void ParalaxSetUp()
+    {
         mBGPanel1 = Instantiate(m_BGPanelPrefab, transform);
         mBGPanel2 = Instantiate(m_BGPanelPrefab, transform);
 
@@ -55,19 +88,6 @@ public class BackgroundManager : MonoBehaviour
         cloudShadowsSR2.sprite = mCloudShadows;
         cloudShadowsSR1.sortingOrder = cloudSR1.sortingOrder - 1;
         cloudShadowsSR2.sortingOrder = cloudSR2.sortingOrder - 1;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        mBGPanel1.transform.localPosition = new Vector3(mBGPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mBGScrollSpeed, mBGPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mBGPanel1.transform.localPosition.z);
-        mBGPanel2.transform.localPosition = new Vector3(mBGPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mBGScrollSpeed, mBGPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mBGPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mBGPanel2.transform.localPosition.z);
-
-        mCloudPanel1.transform.localPosition = new Vector3(mCloudPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudScrollSpeed, mCloudPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mCloudPanel1.transform.localPosition.z);
-        mCloudPanel2.transform.localPosition = new Vector3(mCloudPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudScrollSpeed, mCloudPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mCloudPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mCloudPanel2.transform.localPosition.z);
-
-        mCloudShadowsPanel1.transform.localPosition = new Vector3(mCloudShadowsPanel1.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudShadowsScrollSpeed, mCloudShadowsPanel1.GetComponent<SpriteRenderer>().sprite.bounds.size.y), mCloudShadowsPanel1.transform.localPosition.z);
-        mCloudShadowsPanel2.transform.localPosition = new Vector3(mCloudShadowsPanel2.transform.localPosition.x, -Mathf.Repeat(Time.time * mCloudShadowsScrollSpeed, mCloudShadowsPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y) + mCloudShadowsPanel2.GetComponent<SpriteRenderer>().sprite.bounds.size.y, mCloudShadowsPanel1.transform.localPosition.z);
     }
 }
 

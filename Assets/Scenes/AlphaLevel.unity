@@ -606,9 +606,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd0eb17ce0983c14fae7af63e79095e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mBGScrollSpeed: 5
-  mCloudScrollSpeed: 2
-  mCloudShadowsScrollSpeed: 2.2
+  mBGScrollSpeed: 3
+  mCloudScrollSpeed: 5
+  mCloudShadowsScrollSpeed: 2
   m_BGPanelPrefab: {fileID: 7620956154152908413, guid: 99553c8b2e3a5414c8518723e9c22ea8, type: 3}
   m_CloudPanelPrefab: {fileID: 7620956154152908413, guid: e698821230c225d4fa392098ca3ebc2b, type: 3}
   mBackground1: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
