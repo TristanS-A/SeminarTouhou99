@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour
+{
 
     [Header("Normal Player Controls")]
     public float movementSpeed;
@@ -21,7 +22,8 @@ public class PlayerMovement : MonoBehaviour {
     private Rigidbody2D rb;
     private Vector2 input;
 
-    void Start() {
+    void Start()
+    {
         rb = GetComponent<Rigidbody2D>();
 
         // Collider Visual - will automatically reset the visual to represent an accurate radius shape
@@ -34,7 +36,8 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
-    void Update() {
+    void Update()
+    {
         // Handles the general movement
         HandleInput();
 
@@ -42,7 +45,8 @@ public class PlayerMovement : MonoBehaviour {
         HandleFocusTime();
     }
 
-    private void HandleInput() {
+    private void HandleInput()
+    {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
@@ -53,12 +57,15 @@ public class PlayerMovement : MonoBehaviour {
         rb.velocity = input * currentMoveSpeed;
     }
 
-    private void HandleFocusTime() {
+    private void HandleFocusTime()
+    {
         // Handles the switch between if player is holding down the focus key and sets the isInFocusTime bool
-        if (Input.GetKeyDown(focusKey)) {
+        if (Input.GetKeyDown(focusKey))
+        {
             isInFocusTime |= !isInFocusTime;
         }
-        if (Input.GetKeyUp(focusKey) && isInFocusTime) {
+        if (Input.GetKeyUp(focusKey) && isInFocusTime)
+        {
             isInFocusTime &= !isInFocusTime;
         }
 
