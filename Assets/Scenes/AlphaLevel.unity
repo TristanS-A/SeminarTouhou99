@@ -612,6 +612,12 @@ MonoBehaviour:
   m_BGPanelPrefab: {fileID: 7620956154152908413, guid: 99553c8b2e3a5414c8518723e9c22ea8, type: 3}
   m_CloudPanelPrefab: {fileID: 7620956154152908413, guid: e698821230c225d4fa392098ca3ebc2b, type: 3}
   mBackground1: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
+  mBackground2: {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
+  mBackground1To2Transition: {fileID: 21300000, guid: 91b5f0363d59f7a45b0dbd12b10a3a5a, type: 3}
+  mTransitions:
+  - transitionImage: {fileID: 21300000, guid: 91b5f0363d59f7a45b0dbd12b10a3a5a, type: 3}
+    to: {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
+    from: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
   mClouds: {fileID: 21300000, guid: fcf751f037a6bf24ab8f60a5384b6bac, type: 3}
   mCloudShadows: {fileID: 21300000, guid: 4cfcda93cee73c34ca80c1d855ba657a, type: 3}
 --- !u!4 &247487442
