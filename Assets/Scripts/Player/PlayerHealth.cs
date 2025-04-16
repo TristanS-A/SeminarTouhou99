@@ -20,6 +20,10 @@ public class PlayerHealth : MonoBehaviour {
         EventSystem.OnPickUpUpdate += TranslateDropEvent;
         isDead = false;
     }
+    private void OnDestroy()
+    {
+        EventSystem.OnPickUpUpdate -= TranslateDropEvent;
+    }
 
     void TranslateDropEvent(DropType drop, int ammount)
     {

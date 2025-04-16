@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 650900280563246777}
   - component: {fileID: 4006593418814495359}
   - component: {fileID: 203904684061855997}
-  - component: {fileID: 6554289043577548351}
   - component: {fileID: -2511881294761270438}
   m_Layer: 0
   m_Name: NewBoss
@@ -30,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3750078320338701201}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.24999999, z: 0}
   m_LocalScale: {x: 1, y: 1.5, z: 2}
   m_ConstrainProportionsScale: 0
@@ -179,32 +178,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
---- !u!114 &6554289043577548351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3750078320338701201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1df09e735d1b7b74a8c8f7c573604ac8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  posData:
-    spawnPosition: {x: 0, y: 0}
-    endPosition: {x: 0, y: 0}
-    intermedatePos: []
-  health: 0
-  range: 0
-  dropType:
-    dropList:
-    - dropType: 1
-      ammount: 20
-  speed: 3
-  isBoss: 1
-  isAtEnd: 0
-  isDead: 0
 --- !u!114 &-2511881294761270438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,8 +193,18 @@ MonoBehaviour:
   stages:
   - maxHealth: 500
     respawnTime: 4
+    drops:
+      dropList:
+      - dropType: 3
+        ammount: 1
+      - dropType: 2
+        ammount: 2
+      - dropType: 1
+        ammount: 7
   - maxHealth: 2000
     respawnTime: 25
+    drops:
+      dropList: []
   mEnemyType: 2
   sequencer: {fileID: 203904684061855997}
   containter:

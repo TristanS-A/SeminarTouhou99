@@ -115,6 +115,13 @@ public class TempEnemy : MonoBehaviour {
             //Finishes the level and triggers the sending of result data
             EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
         }
+
+        else if (mEnemyType == EnemyType.MID_BOSS)
+        {
+
+        }
+        
+
     }
 
     public void Revive() {
