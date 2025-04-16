@@ -30,26 +30,30 @@ public class SoundManager : MonoBehaviour {
     }
 
     public void PlaySFXClip(AudioClip clip, Transform spawnPos, float volume) {
-        AudioSource audio = Instantiate(sfx, spawnPos.position, Quaternion.identity);
-        audio.clip = clip;
-        audio.volume = volume;
-        audio.Play();
+        if (clip != null) {
+            AudioSource audio = Instantiate(sfx, spawnPos.position, Quaternion.identity);
+            audio.clip = clip;
+            audio.volume = volume;
+            audio.Play();
 
-        float duration = audio.clip.length;
+            float duration = audio.clip.length;
 
-        Destroy(audio.gameObject, duration);
+            Destroy(audio.gameObject, duration);
+        }
     }
 
     public void PlayRandomSFXClip(List<AudioClip> clip, Transform spawnPos, float volume) {
-        int rand = Random.Range(0, clip.Count);
+        if (clip != null) {
+            int rand = Random.Range(0, clip.Count);
 
-        AudioSource audio = Instantiate(sfx, spawnPos.position, Quaternion.identity);
-        audio.clip = clip[rand];
-        audio.volume = volume;
-        audio.Play();
+            AudioSource audio = Instantiate(sfx, spawnPos.position, Quaternion.identity);
+            audio.clip = clip[rand];
+            audio.volume = volume;
+            audio.Play();
 
-        float duration = audio.clip.length;
+            float duration = audio.clip.length;
 
-        Destroy(audio.gameObject, duration);
+            Destroy(audio.gameObject, duration);
+        }
     }
 }
