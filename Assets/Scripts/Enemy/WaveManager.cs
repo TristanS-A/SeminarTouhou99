@@ -31,6 +31,7 @@ public class WaveManager : MonoBehaviour
     float currentTime;
     bool shouldSpawn = true;
     bool bossState = false;
+    bool miniBossSpawned = false;
     int waveIndex = 0;
 
     void Start()
@@ -117,7 +118,17 @@ public class WaveManager : MonoBehaviour
     }
     void SpawnBoss()
     {
-        var obj = Instantiate(finalBoss, new Vector3(-2.66f, 3.13f, 0f), Quaternion.identity);
+        GameObject toSpawn;
+        if(!miniBossSpawned)
+        {
+            toSpawn = midBoss;
+            miniBossSpawned = true;
+        }
+        else
+        {
+            toSpawn = finalBoss;
+        }
+        var obj = Instantiate(toSpawn, new Vector3(-2.66f, 3.13f, 0f), Quaternion.identity);
         var objSequencer = obj.GetComponent<Sequencer>();
 
         activeBoss = new(obj, objSequencer);
