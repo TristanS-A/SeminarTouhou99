@@ -17,6 +17,7 @@ public class TempEnemy : MonoBehaviour {
     public class BossStage {
         public int maxHealth = 100;
         public float respawnTime = 1.5f;
+        public DropTypes drops;
     }
 
     [Serializable]
@@ -36,6 +37,8 @@ public class TempEnemy : MonoBehaviour {
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
+
+    //[SerializeField] DropTypes drops = new();
     private int conIndex = 0;
 
     private void Start() 
@@ -53,7 +56,7 @@ public class TempEnemy : MonoBehaviour {
 
         IsDead = false;
 
-        // WILL NYE THE SCIENCE GUY
+        // WILL NYE THE SCIENCE GUY <-- this is fire
         sequencer = gameObject.GetComponent<Sequencer>();
         sequencer.SpawnEmmiter();
     }
@@ -65,15 +68,25 @@ public class TempEnemy : MonoBehaviour {
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
-
+        Debug.Log(" TAKE DAMADGE " + currentHealth);
         // CALLS EVENT FOR UI
         //EventSystem.EnemyHealthUpdate(currentHealth);
-
         if (currentHealth <= 0) {
+            Debug.Log("LESS THEN CURRNET HEALTH");
             if (currentStage != stages.Count - 1) {
                 // GETS RID OF THE CURRENT SEQUENCE OF ATTACKS
                 sequencer.ClearAttackList();
                 sequencer.CleanSequencer();
+
+                //SPAWN DROPS IF THERE ARE DROPS
+                var itemToDrop = stages[currentStage].drops;
+                if (itemToDrop != null)
+                {
+                    itemToDrop.SetLocation(gameObject.transform.position);
+                    DropEvent evt = new(itemToDrop);
+                    EventSystem.fireEvent(evt);
+                }
+
                 StartCoroutine(Respawn());
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
@@ -118,7 +131,6 @@ public class TempEnemy : MonoBehaviour {
         EventSystem.EnemyRespawnUpdate(currentRespawnTime);
     }
 
-    //might want to change this to be a  flag in the update loop (this seems like a lot of overhead)
     private IEnumerator Respawn() {
         isInvincible = true;
         IsDead = true;

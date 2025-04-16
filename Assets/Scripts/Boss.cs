@@ -14,6 +14,7 @@ public class Boss : TempEnemy
     }
 
     [SerializeField] List<CompletionTimeBonus> completionTimeBonusList = new();
+
     private float mTimeTracker = 0;
 
     protected override void Init()

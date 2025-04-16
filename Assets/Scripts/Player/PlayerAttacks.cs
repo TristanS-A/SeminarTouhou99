@@ -66,29 +66,29 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
-        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd){
-            //this will need to be fixed -- kinda buggy for when enemeys die :/
-            var list = GameObject.FindGameObjectsWithTag("Enemy");
+        //if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd){
+        //    //this will need to be fixed -- kinda buggy for when enemeys die :/
+        //    var list = GameObject.FindGameObjectsWithTag("Enemy");
 
-            if (list == null) {
-                return;
-            }
+        //    if (list == null) {
+        //        return;
+        //    }
 
-            float closePosition = float.PositiveInfinity;
-            Transform obj = null;
+        //    float closePosition = float.PositiveInfinity;
+        //    Transform obj = null;
 
-            foreach (var item in list) {
-                Transform test = item.transform;
+        //    foreach (var item in list) {
+        //        Transform test = item.transform;
 
-                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition 
-                    && !item.gameObject.GetComponent<BaseEnemy>().isDead) {
-                    obj = test;
-                    closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
-                }
-            }
+        //        if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition 
+        //            && !item.gameObject.GetComponent<BaseEnemy>().isDead) {
+        //            obj = test;
+        //            closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
+        //        }
+        //    }
 
-            target = obj;
-        }
+        //    target = obj;
+        //}
 
         HandleDefensiveBomb(BOMB_COST);
         HandleOffensiveBomb(BOMB_COST);
