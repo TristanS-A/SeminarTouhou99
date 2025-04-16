@@ -48,7 +48,8 @@ public class PlayerAttacks : MonoBehaviour {
 
     [Header("SFX")]
     [SerializeField] private AudioClip attackSFX;
-    [SerializeField] private AudioClip bombSFX;
+    [SerializeField] private AudioClip offensiveBombSFX;
+    [SerializeField] private AudioClip defensiveBombSFX;
 
     private List<GameObject> bullets = new();
     private bool isShooting = false;
@@ -71,7 +72,7 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
-        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd){
+        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd) {
             //this will need to be fixed -- kinda buggy for when enemeys die :/
             var list = GameObject.FindGameObjectsWithTag("Enemy");
 
@@ -85,7 +86,7 @@ public class PlayerAttacks : MonoBehaviour {
             foreach (var item in list) {
                 Transform test = item.transform;
 
-                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition 
+                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition
                     && !item.gameObject.GetComponent<BaseEnemy>().isDead) {
                     obj = test;
                     closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
@@ -130,6 +131,7 @@ public class PlayerAttacks : MonoBehaviour {
 
     private void HandleDefensiveBomb(int cost) {
         if (!isDefensiveBombDelayed) {
+            SoundManager.Instance.PlaySFXClip(defensiveBombSFX, transform, 1f);
             StartCoroutine(DelayDefensiveBomb(defensiveBombDelay, cost));
         }
     }
@@ -137,6 +139,7 @@ public class PlayerAttacks : MonoBehaviour {
     // Each bomb enables the sequencer on trigger and based on the lifetime of the attack will spawn and then disable, incrementing to the next index
     private void HandleOffensiveBomb(int cost) {
         if (!isOffensiveBombDelayed) {
+            SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
             StartCoroutine(DelayOffensiveBomb(offensiveBombDelay, cost));
         }
     }
@@ -179,7 +182,7 @@ public class PlayerAttacks : MonoBehaviour {
     private IEnumerator DelayOffensiveBomb(float delay, int cost) {
         isOffensiveBombDelayed = true;
 
-        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) { 
+        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
             offensiveBombCount -= cost;
             EventSystem.OffensiveBombAttackUI(offensiveBombCount);
             EventSystem.FireOffensiveBomb(transform.position);
@@ -216,14 +219,11 @@ public class PlayerAttacks : MonoBehaviour {
         isDefensiveBombDelayed = false;
     }
 
-    private void TranslateEvent(DropType drop, int ammount)
-    {
-        switch (drop)
-        {
+    private void TranslateEvent(DropType drop, int ammount) {
+        switch (drop) {
             //this is where the homing unlock will be (just check the damnage) - will
             case DropType.POWER:
-                if (bulletDamage < 4)
-                {
+                if (bulletDamage < 4) {
                     bulletDamage += ammount;
                 }
                 break;
@@ -237,18 +237,13 @@ public class PlayerAttacks : MonoBehaviour {
     public int GetMaxDefensiveBombs => maxDefensiveBombs;
     public int GetMaxOffensiveBombs => maxOffensiveBombs;
     public static int GetBombCost => BOMB_COST;
-    private void OnEnable()
-    {
+    private void OnEnable() {
         EventSystem.OnOffensiveBombAttack += SpawnOffensiveBomb;
         EventSystem.OnPickUpUpdate += TranslateEvent;
     }
-    
-    private void OnDisable()
-    {
+
+    private void OnDisable() {
         EventSystem.OnOffensiveBombAttack -= SpawnOffensiveBomb;
         EventSystem.OnPickUpUpdate -= TranslateEvent;
-
     }
-  
-
 }

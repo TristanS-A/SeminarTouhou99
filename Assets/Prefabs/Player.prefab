@@ -170,6 +170,7 @@ MonoBehaviour:
   focusSpeed: 1.5
   focusKey: 304
   circleChild: {fileID: 8888102887890306067}
+  focusSFX: {fileID: 8300000, guid: 163ee23318fb3264d9d96fbfc8dffbf7, type: 3}
 --- !u!114 &3719647831614739423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,8 +201,9 @@ MonoBehaviour:
   playerSequencer: {fileID: 2317277070188080296}
   m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
   m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
-  attackSFX: {fileID: 8300000, guid: a9f287e59ca0fad4683e9e78c6d6668c, type: 3}
-  bombSFX: {fileID: 0}
+  attackSFX: {fileID: 0}
+  offensiveBombSFX: {fileID: 8300000, guid: 4e73a7a0fedc50c4eabbab12bae57b18, type: 3}
+  defensiveBombSFX: {fileID: 8300000, guid: 56422db52afc9d443ab870f6e3ea26a2, type: 3}
 --- !u!114 &281478293746345220
 MonoBehaviour:
   m_ObjectHideFlags: 0

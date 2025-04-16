@@ -21,6 +21,9 @@ public class PlayerMovement : MonoBehaviour {
     private Rigidbody2D rb;
     private Vector2 input;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioClip focusSFX;
+
     void Start() {
         rb = GetComponent<Rigidbody2D>();
 
@@ -31,7 +34,6 @@ public class PlayerMovement : MonoBehaviour {
         EventSystem.fireEvent(new GameStartEvent(gameObject));
 
         PlayerInfo.PlayerTime = Time.time;
-
     }
 
     void Update() {
@@ -56,6 +58,7 @@ public class PlayerMovement : MonoBehaviour {
     private void HandleFocusTime() {
         // Handles the switch between if player is holding down the focus key and sets the isInFocusTime bool
         if (Input.GetKeyDown(focusKey)) {
+            SoundManager.Instance.PlaySFXClip(focusSFX, transform, 1f);
             isInFocusTime |= !isInFocusTime;
         }
         if (Input.GetKeyUp(focusKey) && isInFocusTime) {
@@ -67,6 +70,5 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public bool IsInFocusTime() { return isInFocusTime; }
-
     private Vector3 FloatToVec3(float x) { return new Vector3(x, x, x); }
 }
