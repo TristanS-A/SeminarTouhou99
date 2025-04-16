@@ -63,9 +63,14 @@ public class BaseEnemy : MonoBehaviour
     protected void TakeDamage(float damadge)
     {
         health -= damadge;
-        SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
+        if (health > 0) 
+        {
+            SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
+        } 
         if (health <= 0)
         {
+            SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
+
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
             dropType.SetLocation(this.transform.position);
@@ -73,7 +78,6 @@ public class BaseEnemy : MonoBehaviour
 
             //turn the sprite render off before chaning the game state
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
             Destroy(gameObject, 1f);
         }
     }

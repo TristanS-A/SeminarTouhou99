@@ -83,7 +83,7 @@ public class TempEnemy : MonoBehaviour {
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
                 SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
-                Kill();
+                StartCoroutine(DelayKillForSound(1f));
             }
         }
     }
@@ -92,7 +92,6 @@ public class TempEnemy : MonoBehaviour {
     protected virtual void Kill() {
         Debug.Log("Killed");
         IsDead = true;
-        SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
         sequencer.ClearAttackList();
         sequencer.CleanSequencer();
         EventSystem.OnEnemyDeath();
@@ -140,6 +139,11 @@ public class TempEnemy : MonoBehaviour {
         isInvincible = false;
         Revive();
         yield return null;
+    }
+
+    private IEnumerator DelayKillForSound(float delay) {
+        yield return new WaitForSeconds(delay);
+        Kill();
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

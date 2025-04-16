@@ -131,7 +131,6 @@ public class PlayerAttacks : MonoBehaviour {
 
     private void HandleDefensiveBomb(int cost) {
         if (!isDefensiveBombDelayed) {
-            Debug.Log("Ow 1");
             StartCoroutine(DelayDefensiveBomb(defensiveBombDelay, cost));
         }
     }
@@ -139,7 +138,6 @@ public class PlayerAttacks : MonoBehaviour {
     // Each bomb enables the sequencer on trigger and based on the lifetime of the attack will spawn and then disable, incrementing to the next index
     private void HandleOffensiveBomb(int cost) {
         if (!isOffensiveBombDelayed) {
-            Debug.Log("Ow 2");
             StartCoroutine(DelayOffensiveBomb(offensiveBombDelay, cost));
         }
     }
