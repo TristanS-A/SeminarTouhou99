@@ -7,8 +7,6 @@ public class BombUI : MonoBehaviour {
 
     [SerializeField] private PlayerAttacks playerAttacks;
 
-    private bool wasRemoved = false;
-
     private void Start() {
         if (playerAttacks != null) {
             UpdateDefensiveBomb(playerAttacks.GetDefensiveBombCount);
