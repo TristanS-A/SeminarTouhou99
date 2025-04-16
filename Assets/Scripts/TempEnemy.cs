@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TempEnemy : MonoBehaviour {
     private enum EnemyType
@@ -29,7 +30,7 @@ public class TempEnemy : MonoBehaviour {
     public bool IsDead { get; private set; }
 
     private int currentHealth;
-    private int currentStage = 0;
+    protected int currentStage = 0;
     private float currentRespawnTime;
     private bool isInvincible = false;
 
@@ -37,6 +38,8 @@ public class TempEnemy : MonoBehaviour {
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
+
+    protected UnityAction StageComplete;
 
     //[SerializeField] DropTypes drops = new();
     private int conIndex = 0;
@@ -86,6 +89,8 @@ public class TempEnemy : MonoBehaviour {
                     DropEvent evt = new(itemToDrop);
                     EventSystem.fireEvent(evt);
                 }
+
+                
 
                 StartCoroutine(Respawn());
             } else if (currentStage == stages.Count - 1) {
@@ -137,6 +142,7 @@ public class TempEnemy : MonoBehaviour {
         conIndex++;
         sequencer.SetSequeceList(containter[conIndex].attacks);
         sequencer.SpawnEmmiter();
+        StageComplete?.Invoke();
         EventSystem.EnemyRespawnUpdate(currentRespawnTime);
     }
 

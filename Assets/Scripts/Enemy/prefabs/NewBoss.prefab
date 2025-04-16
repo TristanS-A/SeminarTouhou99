@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stages:
-  - maxHealth: 500
+  - maxHealth: 100
     respawnTime: 4
     drops:
       dropList:
@@ -201,6 +201,10 @@ MonoBehaviour:
         ammount: 2
       - dropType: 1
         ammount: 7
+  - maxHealth: 100
+    respawnTime: 4
+    drops:
+      dropList: []
   - maxHealth: 100
     respawnTime: 25
     drops:
@@ -216,6 +220,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
     - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
     - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
+  - attacks:
+    - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
   completionTimeBonusList:
   - bonusPoints: 20
     timeToCompleteIn: 48
@@ -223,3 +229,11 @@ MonoBehaviour:
     timeToCompleteIn: 53
   - bonusPoints: 5
     timeToCompleteIn: 68
+  positions:
+    spawnPosition: {x: 0, y: 0}
+    endPosition: {x: 0, y: 0}
+    intermedatePos:
+    - {x: -5.09, y: 3.42}
+    - {x: -5.34, y: -3.58}
+    - {x: -0.02, y: -3.58}
+    - {x: -0.04, y: 3.59}
