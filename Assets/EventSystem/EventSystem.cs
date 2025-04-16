@@ -55,6 +55,9 @@ public static class EventSystem
     public static event UnityAction<bool, Vector3> OnPlayerWin;
     public static void SendPlayerWinData(bool isOwningPlayer, Vector3 winPos) => OnPlayerWin?.Invoke(isOwningPlayer, winPos);
 
+    public static event UnityAction<int, int, int> OnTransitionBG;
+    public static void TransitionBGEvent(int bgIndex, int cloudLevIndex, int cloudShadowIndex) => OnTransitionBG?.Invoke(bgIndex, cloudLevIndex, cloudShadowIndex);
+
     public static void fireEvent(EventType type)
     {
         switch (type.getEventType())

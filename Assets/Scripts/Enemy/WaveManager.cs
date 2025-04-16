@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 [Serializable]
 public class WaveContainter
@@ -81,6 +82,16 @@ public class WaveManager : MonoBehaviour
             StartCoroutine(Co_WaitForNextSpawn());
 
             waveIndex++;
+
+            //Handles starting new bg transition the enemy before the boss
+            if (wave.Count > waveIndex)
+            {
+                TempEnemy enemyData = wave[waveIndex].enemy.GetComponent<TempEnemy>();
+                if (enemyData != null && enemyData.mEnemyType == TempEnemy.EnemyType.FINAL_BOSS)
+                {
+                    EventSystem.TransitionBGEvent(1, -1, -1);
+                }
+            }
         }
         
     }

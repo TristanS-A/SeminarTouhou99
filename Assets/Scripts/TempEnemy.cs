@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class TempEnemy : MonoBehaviour {
-    private enum EnemyType
+    public enum EnemyType
     {
         ENEMY,
         MID_BOSS,
@@ -32,7 +32,7 @@ public class TempEnemy : MonoBehaviour {
     private float currentRespawnTime;
     private bool isInvincible = false;
 
-    [SerializeField] private EnemyType mEnemyType = EnemyType.ENEMY;
+    [SerializeField] public EnemyType mEnemyType = EnemyType.ENEMY;
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();

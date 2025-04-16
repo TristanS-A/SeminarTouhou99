@@ -10,13 +10,13 @@ public class BackgroundManager : MonoBehaviour
     [SerializeField] private float mCloudShadowsScrollSpeed;
     [SerializeField] private GameObject m_BGPanelPrefab;
     [SerializeField] private GameObject m_CloudPanelPrefab;
-    [SerializeField] private Sprite mBackground1;
-    [SerializeField] private Sprite mBackground2;
+    [SerializeField] private Sprite[] m_BackgroundSprites;
+    [SerializeField] private Sprite[] m_CloudLevelSprites;
+    [SerializeField] private Sprite[] m_CloudShadowSprites;
 
     [Tooltip("This builds a hashmap that uses the filenames of the 'from' bg and the 'to' bg to retreive the transition bg between the two")]
     [SerializeField] private TransitionImageData[] mTransitions;
-    [SerializeField] private Sprite mClouds;
-    [SerializeField] private Sprite mCloudShadows;
+
     private GameObject mBGPanel1;
     private GameObject mBGPanel2;
 
@@ -38,6 +38,16 @@ public class BackgroundManager : MonoBehaviour
         public Sprite from;
     }
 
+    private void OnEnable()
+    {
+        EventSystem.OnTransitionBG += HandleTransition;
+    }
+
+    private void OnDisable()
+    {
+        EventSystem.OnTransitionBG -= HandleTransition;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,7 +61,7 @@ public class BackgroundManager : MonoBehaviour
 
         BuildTransitionConnections();
 
-        StartCoroutine(Co_TriggerTransition());
+        //StartCoroutine(Co_TriggerTransition());
     }
 
     // Update is called once per frame
@@ -87,8 +97,8 @@ public class BackgroundManager : MonoBehaviour
         mBGPanel1 = Instantiate(m_BGPanelPrefab, transform);
         mBGPanel2 = Instantiate(m_BGPanelPrefab, transform);
 
-        mBGPanel1.GetComponent<SpriteRenderer>().sprite = mBackground1;
-        mBGPanel2.GetComponent<SpriteRenderer>().sprite = mBackground1;
+        mBGPanel1.GetComponent<SpriteRenderer>().sprite = m_BackgroundSprites[0];
+        mBGPanel2.GetComponent<SpriteRenderer>().sprite = m_BackgroundSprites[0];
 
         mCloudPanel1 = Instantiate(m_CloudPanelPrefab, transform);
         mCloudPanel2 = Instantiate(m_CloudPanelPrefab, transform);
@@ -96,8 +106,8 @@ public class BackgroundManager : MonoBehaviour
         SpriteRenderer cloudSR1 = mCloudPanel1.GetComponent<SpriteRenderer>();
         SpriteRenderer cloudSR2 = mCloudPanel2.GetComponent<SpriteRenderer>();
 
-        cloudSR1.sprite = mClouds;
-        cloudSR2.sprite = mClouds;
+        cloudSR1.sprite = m_CloudLevelSprites[0];
+        cloudSR2.sprite = m_CloudLevelSprites[0];
 
         mCloudShadowsPanel1 = Instantiate(m_CloudPanelPrefab, transform);
         mCloudShadowsPanel2 = Instantiate(m_CloudPanelPrefab, transform);
@@ -105,8 +115,8 @@ public class BackgroundManager : MonoBehaviour
         SpriteRenderer cloudShadowsSR1 = mCloudShadowsPanel1.GetComponent<SpriteRenderer>();
         SpriteRenderer cloudShadowsSR2 = mCloudShadowsPanel2.GetComponent<SpriteRenderer>();
 
-        cloudShadowsSR1.sprite = mCloudShadows;
-        cloudShadowsSR2.sprite = mCloudShadows;
+        cloudShadowsSR1.sprite = m_CloudShadowSprites[0];
+        cloudShadowsSR2.sprite = m_CloudShadowSprites[0];
         cloudShadowsSR1.sortingOrder = cloudSR1.sortingOrder - 1;
         cloudShadowsSR2.sortingOrder = cloudSR2.sortingOrder - 1;
 
@@ -161,8 +171,17 @@ public class BackgroundManager : MonoBehaviour
         mBGPanel1.GetComponent<SpriteRenderer>().sprite = newBackground;
     }
 
-    private IEnumerator Co_StartCloudLevelTransition(Sprite newLevelSprite)
+    private IEnumerator Co_StartCloudLevelTransition(Sprite newLevelSprite, int loops)
     {
+        //This is to give the clouds additional loops before it transitions to not
+        //have clouds fully disapear before cloud shadows
+        for (int i = 0; i < loops; i++)
+        {
+            yield return new WaitUntil(CloudLevelLooped);
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
+        }
+
         yield return new WaitUntil(CloudLevelLooped);
         mCloudPanel2.GetComponent<SpriteRenderer>().sprite = newLevelSprite;
         yield return new WaitForFixedUpdate();
@@ -191,17 +210,48 @@ public class BackgroundManager : MonoBehaviour
         mCloudShadowsPanel1.GetComponent<SpriteRenderer>().sprite = newShadowLevelSprite;
     }
 
-    private void HandleTransition(Sprite newBackground, Sprite newCloudLevel, Sprite newCloudShadowLevel)
+    private void HandleTransition(int newBackgroundIndex, int newCloudLevelIndex, int newCloudShadowLevelIndex)
     {
+        Sprite newBackground;
+        Sprite newCloudLevel;
+        Sprite newCloudShadowLevel;
+
+        if (newBackgroundIndex < 0)
+        {
+            newBackground = null;
+        }
+        else
+        {
+            newBackground = m_BackgroundSprites[newBackgroundIndex];
+        }
+
+        if (newCloudLevelIndex < 0)
+        {
+            newCloudLevel = null;
+        }
+        else
+        {
+            newCloudLevel = m_BackgroundSprites[newCloudLevelIndex];
+        }
+
+        if (newCloudShadowLevelIndex < 0)
+        {
+            newCloudShadowLevel = null;
+        }
+        else
+        {
+            newCloudShadowLevel = m_BackgroundSprites[newCloudShadowLevelIndex];
+        }
+
         Sprite transitionImage = mTransitionMap[mBGPanel1.GetComponent<SpriteRenderer>().sprite.name + newBackground.name];
         StartCoroutine(Co_StartBackgroundTransition(transitionImage, newBackground));
-        StartCoroutine(Co_StartCloudLevelTransition(newCloudLevel));
+        StartCoroutine(Co_StartCloudLevelTransition(newCloudLevel, 1));
         StartCoroutine(Co_StartCloudShadowLevelTransition(newCloudShadowLevel));
     }
 
     private IEnumerator Co_TriggerTransition()
     {
         yield return new WaitForSeconds(2);
-        HandleTransition(mBackground2, null, null);
+        HandleTransition(1, -1, -1);
     }
 }
