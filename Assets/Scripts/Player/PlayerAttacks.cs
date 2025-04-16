@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -66,28 +67,48 @@ public class PlayerAttacks : MonoBehaviour {
             StartCoroutine(ShootBullets());
         }
 
-        if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd){
-            //this will need to be fixed -- kinda buggy for when enemeys die :/
-            var list = GameObject.FindGameObjectsWithTag("Enemy");
-
-            if (list == null) {
-                return;
-            }
-
-            float closePosition = float.PositiveInfinity;
-            Transform obj = null;
-
-            foreach (var item in list) {
-                Transform test = item.transform;
-
-                if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition 
-                    && !item.gameObject.GetComponent<BaseEnemy>().isDead) {
-                    obj = test;
-                    closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
+        if (playerMovement.IsInFocusTime())
+        {
+            //Cancels target if behind player
+            if (target != null)
+            {
+                if (target.transform.position.y < transform.position.y)
+                {
+                    target = null;
                 }
             }
 
-            target = obj;
+            //Assigns target
+            if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd)
+            {
+                GameObject waveManager = GameObject.FindGameObjectWithTag("WaveManager");
+                List<Tuple<GameObject, BaseEnemy>> list = waveManager.GetComponent<WaveManager>().GetActiveList();
+
+                if (list == null)
+                {
+                    return;
+                }
+
+                float closePosition = float.PositiveInfinity;
+                Transform obj = null;
+
+                foreach (Tuple<GameObject, BaseEnemy> item in list)
+                {
+                    if (item.Item1 != null)
+                    {
+                        Transform test = item.Item1.transform;
+
+                        if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition
+                            && test.position.y > transform.position.y && !item.Item2.isDead)
+                        {
+                            obj = test;
+                            closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
+                        }
+                    }
+                }
+
+                target = obj;
+            }
         }
 
         HandleDefensiveBomb(BOMB_COST);

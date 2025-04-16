@@ -134,4 +134,8 @@ public class WaveManager : MonoBehaviour
 
     public void CleanEnemy() => activeList.Clear();
 
+    public List<Tuple<GameObject, BaseEnemy>> GetActiveList()
+    {
+        return activeList;
+    }
 }

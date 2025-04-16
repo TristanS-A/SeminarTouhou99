@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 86347500}
   m_Layer: 0
   m_Name: WaveObj
-  m_TagString: Untagged
+  m_TagString: WaveManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -614,14 +614,14 @@ MonoBehaviour:
   m_BackgroundSprites:
   - {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
   - {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
-  mTransitions:
-  - transitionImage: {fileID: 21300000, guid: 91b5f0363d59f7a45b0dbd12b10a3a5a, type: 3}
-    to: {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
-    from: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
   m_CloudLevelSprites:
   - {fileID: 21300000, guid: fcf751f037a6bf24ab8f60a5384b6bac, type: 3}
   m_CloudShadowSprites:
   - {fileID: 21300000, guid: 4cfcda93cee73c34ca80c1d855ba657a, type: 3}
+  mTransitions:
+  - transitionImage: {fileID: 21300000, guid: 91b5f0363d59f7a45b0dbd12b10a3a5a, type: 3}
+    to: {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
+    from: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
 --- !u!4 &247487442
 Transform:
   m_ObjectHideFlags: 0
