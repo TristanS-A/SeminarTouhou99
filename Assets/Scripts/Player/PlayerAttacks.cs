@@ -131,7 +131,7 @@ public class PlayerAttacks : MonoBehaviour {
 
     private void HandleDefensiveBomb(int cost) {
         if (!isDefensiveBombDelayed) {
-            SoundManager.Instance.PlaySFXClip(defensiveBombSFX, transform, 1f);
+            Debug.Log("Ow 1");
             StartCoroutine(DelayDefensiveBomb(defensiveBombDelay, cost));
         }
     }
@@ -139,7 +139,7 @@ public class PlayerAttacks : MonoBehaviour {
     // Each bomb enables the sequencer on trigger and based on the lifetime of the attack will spawn and then disable, incrementing to the next index
     private void HandleOffensiveBomb(int cost) {
         if (!isOffensiveBombDelayed) {
-            SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
+            Debug.Log("Ow 2");
             StartCoroutine(DelayOffensiveBomb(offensiveBombDelay, cost));
         }
     }
@@ -184,6 +184,7 @@ public class PlayerAttacks : MonoBehaviour {
 
         if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
             offensiveBombCount -= cost;
+            SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
             EventSystem.OffensiveBombAttackUI(offensiveBombCount);
             EventSystem.FireOffensiveBomb(transform.position);
 
@@ -201,7 +202,7 @@ public class PlayerAttacks : MonoBehaviour {
         if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
             defensiveBombCount -= cost;
             EventSystem.DefensiveBombAttack(defensiveBombCount);
-
+            SoundManager.Instance.PlaySFXClip(defensiveBombSFX, transform, 1f);
             BaseEnemy[] enemies = FindObjectsByType<BaseEnemy>(FindObjectsSortMode.None);
 
             foreach (var enemy in enemies) {
