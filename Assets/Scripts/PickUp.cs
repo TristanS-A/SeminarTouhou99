@@ -33,7 +33,7 @@ public class PickUp : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             EventSystem.OnPickUp(dropType, amount);
-            SoundManager.Instance.PlayRandomSFXClip(pickupSFX, transform, 1f);
+            SoundManager.Instance.PlayRandomSFXClip(pickupSFX, transform, 0.2f);
             Debug.Log("Picked Up " + dropType.ToString());
             Destroy(gameObject, 0.1f);
         }
