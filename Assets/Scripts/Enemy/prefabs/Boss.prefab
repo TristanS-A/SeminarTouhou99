@@ -189,6 +189,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
     - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
     - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
+  damageSound: {fileID: 0}
+  deathSound: {fileID: 0}
 --- !u!114 &203904684061855997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +209,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
+  bulletSpawnSFX: {fileID: 8300000, guid: 527e4f903f9ed724f946ba6f31ca7540, type: 3}
 --- !u!114 &6554289043577548351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,3 +236,5 @@ MonoBehaviour:
   isBoss: 1
   isAtEnd: 0
   isDead: 0
+  damageSound: {fileID: 0}
+  deathSound: {fileID: 0}

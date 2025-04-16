@@ -15,6 +15,8 @@ public class Sequencer : MonoBehaviour
     List<float> timeTillNextAttack = new();
     private Nullable<Vector2> overridenSpawnPos = null;
 
+    [SerializeField] private AudioClip bulletSpawnSFX;
+
     bool isCustomTime;
     private void Start()
     {
@@ -108,7 +110,7 @@ public class Sequencer : MonoBehaviour
         {
             obj = Instantiate(nextAttackToSpawn.GetEmitter(), spawnPos, Quaternion.identity);
         }
-
+        SoundManager.Instance.PlaySFXClip(bulletSpawnSFX, transform, 0.25f, 1.1f);
 
         activeEmmiter.Add(obj);
         //before returning we need to clean the list for dead referecnes

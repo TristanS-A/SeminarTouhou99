@@ -29,11 +29,12 @@ public class SoundManager : MonoBehaviour {
         }
     }
 
-    public void PlaySFXClip(AudioClip clip, Transform spawnPos, float volume) {
+    public void PlaySFXClip(AudioClip clip, Transform spawnPos, float volume, float pitch = 1.0f) {
         if (clip != null) {
             AudioSource audio = Instantiate(sfx, spawnPos.position, Quaternion.identity);
             audio.clip = clip;
             audio.volume = volume;
+            audio.pitch = pitch;
             audio.Play();
 
             float duration = audio.clip.length;
