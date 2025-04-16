@@ -201,7 +201,7 @@ MonoBehaviour:
   playerSequencer: {fileID: 2317277070188080296}
   m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
   m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
-  attackSFX: {fileID: 0}
+  attackSFX: {fileID: 8300000, guid: 5c746095635aa0441971a05f3e2a03e7, type: 3}
   offensiveBombSFX: {fileID: 8300000, guid: 4e73a7a0fedc50c4eabbab12bae57b18, type: 3}
   defensiveBombSFX: {fileID: 8300000, guid: 56422db52afc9d443ab870f6e3ea26a2, type: 3}
 --- !u!114 &281478293746345220
@@ -241,6 +241,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   shouldLoop: 0
   currentAttackIndex: 0
+  bulletSpawnSFX: {fileID: 0}
 --- !u!1 &4342171893642893423
 GameObject:
   m_ObjectHideFlags: 0
