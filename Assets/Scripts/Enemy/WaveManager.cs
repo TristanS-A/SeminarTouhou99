@@ -18,6 +18,7 @@ public class WaveContainter
 
 public class WaveManager : MonoBehaviour
 {
+    [Tooltip("For have all you need to do to spawn a boss is to leave the list entery blank")]
     [SerializeField] List<WaveContainter> wave = new();    
     [SerializeField] GameObject midBoss;
     [SerializeField] GameObject finalBoss;
@@ -68,8 +69,7 @@ public class WaveManager : MonoBehaviour
             //we need to see if we have a break inorder to spawn a boss/midStage
             if(enemyToSpawn.enemy == null)
             {
-                bossState = true;
-                Debug.Log("InBossMode");
+               ChangeWaveState(true);
                 return;
 
             }
@@ -117,7 +117,28 @@ public class WaveManager : MonoBehaviour
     }
     void SpawnBoss()
     {
-        
+        var obj = Instantiate(finalBoss, new Vector3(-2.66f, 3.13f, 0f), Quaternion.identity);
+        var objSequencer = obj.GetComponent<Sequencer>();
+
+        activeBoss = new(obj, objSequencer);
+        Debug.Log("Now Spawing Boss");
+
+        StartCoroutine(Co_WaitForBossToDie());
+    }
+
+    //return to regular logic
+    void BossDead()
+    {
+        activeBoss = null;
+        ChangeWaveState(false);
+        Debug.Log("BOSSDEAD");
+
+        waveIndex++;
+        StartCoroutine(Co_WaitForNextSpawn());
+    }
+    bool CheckIfActiveBossDead()
+    {
+        return activeBoss.Item1 == null ? true : false;
     }
     
     IEnumerator Co_WaitTillActivesEmpty()
@@ -125,8 +146,14 @@ public class WaveManager : MonoBehaviour
         yield return new WaitUntil(CheckActivesForEmpty);
         SpawnBoss();
     }
+    IEnumerator Co_WaitForBossToDie()
+    {
+        yield return new WaitUntil(CheckIfActiveBossDead);
+        BossDead();
+    }
     bool GetBossState() => bossState;
     Tuple<GameObject, Sequencer> GetBossObject => activeBoss;
+
     #endregion BOSS_LOGIC
     void DoTimer()
     {
@@ -155,6 +182,7 @@ public class WaveManager : MonoBehaviour
     }
     bool CheckActivesForEmpty()
     {
+        Debug.Log("ACTIIVE LIST COUNT " + activeList.Count);
         if (activeList.Count == 0)
         {
             return true;

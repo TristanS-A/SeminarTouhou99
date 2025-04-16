@@ -201,7 +201,7 @@ MonoBehaviour:
         ammount: 2
       - dropType: 1
         ammount: 7
-  - maxHealth: 2000
+  - maxHealth: 100
     respawnTime: 25
     drops:
       dropList: []
