@@ -194,7 +194,13 @@ MonoBehaviour:
   - maxHealth: 100
     respawnTime: 2
     drops:
-      dropList: []
+      dropList:
+      - dropType: 2
+        ammount: 1
+      - dropType: 1
+        ammount: 4
+      - dropType: 1
+        ammount: 4
   mEnemyType: 1
   sequencer: {fileID: 203904684061855997}
   containter: []

@@ -290,7 +290,63 @@ MonoBehaviour:
       spawnPosition: {x: -2.58, y: 2.72}
       endPosition: {x: -2.58, y: 2.72}
       intermedatePos: []
-  midBoss: {fileID: 3750078320338701201, guid: 821f42dfeef3acf42931389d2860ca02, type: 3}
+  - enemy: {fileID: 3091691249233370463, guid: a12205ff835cc444993e75cdc7707d85, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 2
+    pos:
+      spawnPosition: {x: -2.58, y: 5.5}
+      endPosition: {x: -2.58, y: -5.64}
+      intermedatePos: []
+  - enemy: {fileID: 3091691249233370463, guid: a12205ff835cc444993e75cdc7707d85, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 2
+    pos:
+      spawnPosition: {x: -2.58, y: 5.5}
+      endPosition: {x: -2.58, y: -5.64}
+      intermedatePos: []
+  - enemy: {fileID: 3091691249233370463, guid: a12205ff835cc444993e75cdc7707d85, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 2
+    pos:
+      spawnPosition: {x: -2.68, y: 5.5}
+      endPosition: {x: -2.58, y: 2.72}
+      intermedatePos: []
+  - enemy: {fileID: 3091691249233370463, guid: a12205ff835cc444993e75cdc7707d85, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 2
+    pos:
+      spawnPosition: {x: -2.68, y: 5.5}
+      endPosition: {x: -2.58, y: -5.64}
+      intermedatePos: []
+  - enemy: {fileID: 2911639964975950362, guid: ec9250652929b984ab20e633b52655a6, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 2
+    pos:
+      spawnPosition: {x: -5.59, y: 5.38}
+      endPosition: {x: -5.47, y: -5.47}
+      intermedatePos: []
+  - enemy: {fileID: 2911639964975950362, guid: ec9250652929b984ab20e633b52655a6, type: 3}
+    isCustomTime: 1
+    isCustomMoveData: 1
+    timeTillSpawn: 0
+    pos:
+      spawnPosition: {x: 0.04, y: 5.43}
+      endPosition: {x: -0.07, y: -5.4}
+      intermedatePos: []
+  - enemy: {fileID: 0}
+    isCustomTime: 1
+    isCustomMoveData: 0
+    timeTillSpawn: 0
+    pos:
+      spawnPosition: {x: -2.58, y: 2.72}
+      endPosition: {x: -2.58, y: 2.72}
+      intermedatePos: []
+  midBoss: {fileID: 3750078320338701201, guid: ea9635a1c5559a040bbb197866bddfb5, type: 3}
   finalBoss: {fileID: 3750078320338701201, guid: 821f42dfeef3acf42931389d2860ca02, type: 3}
 --- !u!4 &86347501
 Transform:

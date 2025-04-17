@@ -102,6 +102,7 @@ public class TempEnemy : MonoBehaviour {
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
                 SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
+
                 StartCoroutine(DelayKillForSound(1f));
             }
         }
@@ -114,6 +115,14 @@ public class TempEnemy : MonoBehaviour {
         sequencer.ClearAttackList();
         sequencer.CleanSequencer();
         EventSystem.OnEnemyDeath();
+
+        var itemToDrop = stages[currentStage].drops;
+        if (itemToDrop != null)
+        {
+            itemToDrop.SetLocation(gameObject.transform.position);
+            DropEvent evt = new(itemToDrop);
+            EventSystem.fireEvent(evt);
+        }
 
         if (mEnemyType == EnemyType.FINAL_BOSS)
         {
@@ -177,7 +186,7 @@ public class TempEnemy : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
         if (IsDead | isInvincible) return;
 
-        if (collision.CompareTag("Bullet")) {
+        if (collision.CompareTag("Bullet") && !IsDead) {
             Destroy(collision.gameObject);
             TakeDamage(currentStage, PlayerAttacks.GetDamageAmount());
         }
