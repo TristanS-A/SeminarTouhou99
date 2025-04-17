@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5631044655560468219}
   - component: {fileID: 2324660973447896409}
-  - component: {fileID: 5434926035680586430}
   - component: {fileID: 1109594162188747349}
-  - component: {fileID: 2422303641084215351}
+  - component: {fileID: 4707730094966678914}
+  - component: {fileID: 4244272169951376177}
   m_Layer: 0
   m_Name: Off_BombPrefab 1
   m_TagString: Untagged
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.84, y: 0.5384647, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -76,8 +76,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
-  m_Color: {r: 0.8962264, g: 0.6642777, b: 0.19023676, a: 1}
+  m_Sprite: {fileID: 1478901963, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -87,7 +87,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &5434926035680586430
+--- !u!114 &1109594162188747349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6434526298434354140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6816a01ece256143926a6506420c8d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropType: 4
+  amount: 1
+--- !u!61 &4707730094966678914
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -123,33 +137,16 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.8828125, y: 1}
+    oldSize: {x: 0.15, y: 0.16}
     newSize: {x: 0.8828125, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8828125, y: 1}
+  m_Size: {x: 0.15, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &1109594162188747349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6434526298434354140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6816a01ece256143926a6506420c8d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dropType: 4
-  amount: 1
-  pickupSFX:
-  - {fileID: 8300000, guid: 04bf646c6e8cf444897e0f18cb7afff9, type: 3}
-  - {fileID: 8300000, guid: 0979083fdf4600e47b97674794f084c6, type: 3}
---- !u!50 &2422303641084215351
+--- !u!50 &4244272169951376177
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0

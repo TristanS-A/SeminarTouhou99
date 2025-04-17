@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4984111986683965443}
   - component: {fileID: 203904684061855997}
   - component: {fileID: 6554289043577548351}
+  - component: {fileID: 8289111959394234965}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Enemy
@@ -32,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.24999999, z: 0}
-  m_LocalScale: {x: 1, y: 1.5, z: 2}
+  m_LocalScale: {x: 4, y: 4, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,11 +79,11 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -5177388603050735206, guid: 8884154dfe85442a3a3578be807dbcdf, type: 3}
-  m_Color: {r: 0.64397293, g: 0.08597367, b: 0.7924528, a: 1}
+  m_Sprite: {fileID: 321916673, guid: aec77fbae636dd04d83091c998dd74d2, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 2
+  m_DrawMode: 0
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
@@ -150,16 +151,16 @@ BoxCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0.25, y: 0.25, z: 0.25, w: 0.25}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.48, y: 0.56}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
-    drawMode: 2
+    drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.6, y: 0.6}
   m_EdgeRadius: 0
 --- !u!114 &4984111986683965443
 MonoBehaviour:
@@ -189,8 +190,6 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
     - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
     - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
-  damageSound: {fileID: 0}
-  deathSound: {fileID: 0}
 --- !u!114 &203904684061855997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,7 +208,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
-  bulletSpawnSFX: {fileID: 8300000, guid: 527e4f903f9ed724f946ba6f31ca7540, type: 3}
 --- !u!114 &6554289043577548351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,5 +234,24 @@ MonoBehaviour:
   isBoss: 1
   isAtEnd: 0
   isDead: 0
-  damageSound: {fileID: 0}
-  deathSound: {fileID: 0}
+--- !u!95 &8289111959394234965
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3750078320338701201}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cb21e3d742176594682e7cea43934772, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

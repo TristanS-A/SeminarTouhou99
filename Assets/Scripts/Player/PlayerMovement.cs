@@ -24,8 +24,13 @@ public class PlayerMovement : MonoBehaviour {
     [Header("Sounds")]
     [SerializeField] private AudioClip focusSFX;
 
+    private Animator animator;
+
     void Start() {
         rb = GetComponent<Rigidbody2D>();
+
+        //for movment animations
+        animator = GetComponent<Animator>();
 
         // Collider Visual - will automatically reset the visual to represent an accurate radius shape
         circleChild.transform.localScale = FloatToVec3(GetComponent<CircleCollider2D>().radius);
@@ -53,6 +58,22 @@ public class PlayerMovement : MonoBehaviour {
         // Switches between two movement
         currentMoveSpeed = isInFocusTime ? focusSpeed : movementSpeed;
         rb.velocity = input * currentMoveSpeed;
+
+        if (input.x < 0)
+        {
+            animator.SetBool("IsMovingLeft", true);
+            animator.SetBool("IsMovingRight", false);
+        }
+        else if (input.x > 0)
+        {
+            animator.SetBool("IsMovingLeft", false);
+            animator.SetBool("IsMovingRight", true);
+        }
+        else
+        {
+            animator.SetBool("IsMovingLeft", false);
+            animator.SetBool("IsMovingRight", false);
+        }
     }
 
     private void HandleFocusTime() {
