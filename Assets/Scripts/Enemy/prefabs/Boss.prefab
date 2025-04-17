@@ -241,7 +241,7 @@ MonoBehaviour:
   isBoss: 1
   isAtEnd: 0
   isDead: 0
-  damageSound: {fileID: 0}
+  damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
   deathSound: {fileID: 0}
 --- !u!95 &8289111959394234965
 Animator:

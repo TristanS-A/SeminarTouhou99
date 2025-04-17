@@ -131,8 +131,8 @@ MonoBehaviour:
   isBoss: 0
   isAtEnd: 0
   isDead: 0
-  damageSound: {fileID: 0}
-  deathSound: {fileID: 0}
+  damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
+  deathSound: {fileID: 8300000, guid: fd41a831b15391541808bf2c46c07f2c, type: 3}
 --- !u!60 &8080121628075327278
 PolygonCollider2D:
   m_ObjectHideFlags: 0
