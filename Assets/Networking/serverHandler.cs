@@ -109,7 +109,9 @@ public class ServerHandler : MonoBehaviour
         if (instance != null)
         {
             Destroy(this);
+            return;
         }
+
         instance = this;
 
         Valve.Sockets.Library.Initialize();
