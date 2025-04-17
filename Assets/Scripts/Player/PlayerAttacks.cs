@@ -82,11 +82,21 @@ public class PlayerAttacks : MonoBehaviour {
             }
 
             //Assigns target
-            if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd) {
+            if (target == null || (target.gameObject.GetComponent<BaseEnemy>() != null && target.gameObject.GetComponent<BaseEnemy>().isAtEnd)) {
                 GameObject waveManager = GameObject.FindGameObjectWithTag("WaveManager");
+                //if the active list is empty then do another thing
                 List<Tuple<GameObject, BaseEnemy>> list = waveManager.GetComponent<WaveManager>().GetActiveList();
 
-                if (list == null) {
+                if (list == null || list.Count == 0) {
+
+                    var newTargetObj = waveManager.GetComponent<WaveManager>().GetBossObject;
+
+                    //this indicateds boss logic
+                    if (newTargetObj != null) 
+                    {
+                        target = newTargetObj.Item1.transform;
+                    }
+
                     return;
                 }
 

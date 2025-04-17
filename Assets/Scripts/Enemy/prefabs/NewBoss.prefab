@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4006593418814495359}
   - component: {fileID: 203904684061855997}
   - component: {fileID: -2511881294761270438}
+  - component: {fileID: -212757348724009119}
   m_Layer: 0
   m_Name: NewBoss
   m_TagString: Enemy
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_Color: {r: 0.64397293, g: 0.08597367, b: 0.7924528, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 2
+  m_DrawMode: 0
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
@@ -154,7 +155,7 @@ BoxCollider2D:
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
-    drawMode: 2
+    drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
@@ -178,6 +179,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
+  bulletSpawnSFX: {fileID: 0}
 --- !u!114 &-2511881294761270438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +224,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
   - attacks:
     - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
+  damageSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: d6617ee5d52fb504a8c573a694a6ae79, type: 3}
   completionTimeBonusList:
   - bonusPoints: 20
     timeToCompleteIn: 48
@@ -237,3 +241,24 @@ MonoBehaviour:
     - {x: -5.34, y: -3.58}
     - {x: -0.02, y: -3.58}
     - {x: -0.04, y: 3.59}
+--- !u!95 &-212757348724009119
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3750078320338701201}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cb21e3d742176594682e7cea43934772, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

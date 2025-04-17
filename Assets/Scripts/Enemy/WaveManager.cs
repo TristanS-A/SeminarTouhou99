@@ -98,16 +98,6 @@ public class WaveManager : MonoBehaviour
             StartCoroutine(Co_WaitForNextSpawn());
 
             waveIndex++;
-
-            //Handles starting new bg transition the enemy before the boss
-            if (wave.Count > waveIndex)
-            {
-                TempEnemy enemyData = wave[waveIndex].enemy.GetComponent<TempEnemy>();
-                if (enemyData != null && enemyData.mEnemyType == TempEnemy.EnemyType.FINAL_BOSS)
-                {
-                    EventSystem.TransitionBGEvent(1, -1, -1);
-                }
-            }
         }
         
     }
@@ -124,6 +114,11 @@ public class WaveManager : MonoBehaviour
         }
         else
         {
+            if(!miniBossSpawned) 
+            {
+                EventSystem.TransitionBGEvent(1, -1, -1);
+            }
+
             StartCoroutine(Co_WaitTillActivesEmpty());
         }
     }
@@ -173,8 +168,8 @@ public class WaveManager : MonoBehaviour
         yield return new WaitUntil(CheckIfActiveBossDead);
         BossDead();
     }
-    bool GetBossState() => bossState;
-    Tuple<GameObject, Sequencer> GetBossObject => activeBoss;
+    public bool GetBossState() => bossState;
+    public Tuple<GameObject, Sequencer> GetBossObject => activeBoss;
 
     #endregion BOSS_LOGIC
     void DoTimer()
