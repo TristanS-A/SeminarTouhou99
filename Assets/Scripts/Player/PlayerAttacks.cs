@@ -74,7 +74,7 @@ public class PlayerAttacks : MonoBehaviour {
         }
 
         if (playerMovement.IsInFocusTime()) {
-            //Cancels target if behind player
+            //Cancels target if behind player or dies
             if (target != null) {
                 if (target.transform.position.y < transform.position.y) {
                     target = null;
@@ -82,7 +82,7 @@ public class PlayerAttacks : MonoBehaviour {
             }
 
             //Assigns target
-            if (target == null || (target.gameObject.GetComponent<BaseEnemy>() != null && target.gameObject.GetComponent<BaseEnemy>().isAtEnd)) {
+            if (target == null || (target.gameObject.GetComponent<BaseEnemy>() != null && (target.gameObject.GetComponent<BaseEnemy>().isAtEnd || target.gameObject.GetComponent<BaseEnemy>().isDead))) {
                 GameObject waveManager = GameObject.FindGameObjectWithTag("WaveManager");
                 //if the active list is empty then do another thing
                 List<Tuple<GameObject, BaseEnemy>> list = waveManager.GetComponent<WaveManager>().GetActiveList();
