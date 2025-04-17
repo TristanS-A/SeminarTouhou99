@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static SoundManager;
 
 
 [Serializable]
@@ -71,6 +72,7 @@ public class BaseEnemy : MonoBehaviour
         {
             SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
 
+            gameObject.GetComponent<Collider2D>().enabled = false;
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
             dropType.SetLocation(this.transform.position);
