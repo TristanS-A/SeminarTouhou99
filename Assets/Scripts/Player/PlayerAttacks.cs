@@ -228,9 +228,11 @@ public class PlayerAttacks : MonoBehaviour {
             foreach (var enemy in enemies) {
                 if (enemy.TryGetComponent<Sequencer>(out var enemySequencer)) {
                     enemySequencer.CleanSequencer();
-                    enemySequencer.CleanSequencer();
                 }
             }
+
+            var waveManager = FindAnyObjectByType<WaveManager>().GetBossObject;
+            waveManager?.Item2.CleanSequencer();
 
             GameObject bombVFX = Instantiate(m_DefensiveBombVFX, transform.position, Quaternion.identity);
             bombVFX.transform.parent = transform;
