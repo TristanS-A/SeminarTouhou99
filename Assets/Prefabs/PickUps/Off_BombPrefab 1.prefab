@@ -101,6 +101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropType: 4
   amount: 1
+  pickupSFX:
+  - {fileID: 8300000, guid: 04bf646c6e8cf444897e0f18cb7afff9, type: 3}
+  - {fileID: 8300000, guid: 0979083fdf4600e47b97674794f084c6, type: 3}
 --- !u!61 &4707730094966678914
 BoxCollider2D:
   m_ObjectHideFlags: 0
