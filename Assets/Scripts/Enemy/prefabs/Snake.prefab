@@ -104,6 +104,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0278eb4d092678149bc0d946c4dc2fd8, type: 2}
   shouldLoop: 0
   currentAttackIndex: 0
+  bulletSpawnSFX: {fileID: 8300000, guid: 527e4f903f9ed724f946ba6f31ca7540, type: 3}
 --- !u!114 &8745654261001504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,6 +131,8 @@ MonoBehaviour:
   isBoss: 0
   isAtEnd: 0
   isDead: 0
+  damageSound: {fileID: 0}
+  deathSound: {fileID: 0}
 --- !u!60 &8080121628075327278
 PolygonCollider2D:
   m_ObjectHideFlags: 0

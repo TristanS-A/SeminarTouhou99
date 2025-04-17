@@ -10,10 +10,7 @@ public class PlayerMovement : MonoBehaviour {
     public float focusSpeed;
     public KeyCode focusKey = KeyCode.LeftShift;
 
-    [Tooltip("I'm Jerry and I hate how it's styled")]
-    [SerializeField] private GameObject circleChild;
-
-    private SpriteRenderer circleRenderer;
+    [SerializeField] private SpriteRenderer circleRenderer;
 
     private bool isInFocusTime = false;
     private float currentMoveSpeed;
@@ -31,10 +28,6 @@ public class PlayerMovement : MonoBehaviour {
 
         //for movment animations
         animator = GetComponent<Animator>();
-
-        // Collider Visual - will automatically reset the visual to represent an accurate radius shape
-        circleChild.transform.localScale = FloatToVec3(GetComponent<CircleCollider2D>().radius);
-        circleRenderer = circleChild.GetComponent<SpriteRenderer>();
 
         EventSystem.fireEvent(new GameStartEvent(gameObject));
 
@@ -91,5 +84,4 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public bool IsInFocusTime() { return isInFocusTime; }
-    private Vector3 FloatToVec3(float x) { return new Vector3(x, x, x); }
 }

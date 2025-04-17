@@ -179,7 +179,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
-  bulletSpawnSFX: {fileID: 0}
+  bulletSpawnSFX: {fileID: 8300000, guid: 527e4f903f9ed724f946ba6f31ca7540, type: 3}
 --- !u!114 &-2511881294761270438
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -177,6 +177,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
+  bulletSpawnSFX: {fileID: 8300000, guid: 527e4f903f9ed724f946ba6f31ca7540, type: 3}
 --- !u!114 &7579323149094325666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,6 +198,8 @@ MonoBehaviour:
   mEnemyType: 1
   sequencer: {fileID: 203904684061855997}
   containter: []
+  damageSound: {fileID: 0}
+  deathSound: {fileID: 0}
   completionTimeBonusList: []
   positions:
     spawnPosition: {x: 0, y: 0}
