@@ -79,6 +79,7 @@ public class BaseEnemy : MonoBehaviour
 
             //turn the sprite render off before chaning the game state
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            isDead = true;
             Destroy(gameObject, 1f);
         }
     }
