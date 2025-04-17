@@ -28,6 +28,10 @@ public class BaseEnemy : MonoBehaviour
     public bool isDead = false;
     private float despawnTimer = 5.0f;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioClip damageSound;
+    [SerializeField] private AudioClip deathSound;
+
     void Start()
     {
         sqe = GetComponent<Sequencer>();
@@ -59,8 +63,14 @@ public class BaseEnemy : MonoBehaviour
     protected void TakeDamage(float damadge)
     {
         health -= damadge;
-        if(health <= 0)
+        if (health > 0) 
         {
+            SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
+        } 
+        if (health <= 0)
+        {
+            SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
+
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
             dropType.SetLocation(this.transform.position);
@@ -68,7 +78,7 @@ public class BaseEnemy : MonoBehaviour
 
             //turn the sprite render off before chaning the game state
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            Destroy(gameObject);
+            Destroy(gameObject, 1f);
         }
     }
     public bool ShouldDestroy()

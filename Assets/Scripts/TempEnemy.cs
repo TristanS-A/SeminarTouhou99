@@ -38,6 +38,10 @@ public class TempEnemy : MonoBehaviour {
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
     private int conIndex = 0;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioClip damageSound;
+    [SerializeField] private AudioClip deathSound;
+
     private void Start() 
     {
         Init();
@@ -65,6 +69,7 @@ public class TempEnemy : MonoBehaviour {
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
+        SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
 
         // CALLS EVENT FOR UI
         //EventSystem.EnemyHealthUpdate(currentHealth);
@@ -77,7 +82,8 @@ public class TempEnemy : MonoBehaviour {
                 StartCoroutine(Respawn());
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
-                Kill();
+                SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
+                StartCoroutine(DelayKillForSound(1f));
             }
         }
     }
@@ -133,6 +139,11 @@ public class TempEnemy : MonoBehaviour {
         isInvincible = false;
         Revive();
         yield return null;
+    }
+
+    private IEnumerator DelayKillForSound(float delay) {
+        yield return new WaitForSeconds(delay);
+        Kill();
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

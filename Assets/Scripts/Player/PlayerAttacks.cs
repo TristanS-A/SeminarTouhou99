@@ -47,6 +47,11 @@ public class PlayerAttacks : MonoBehaviour {
     [SerializeField] private GameObject m_OffensiveBombVFX;
     [SerializeField] private GameObject m_DefensiveBombVFX;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip attackSFX;
+    [SerializeField] private AudioClip offensiveBombSFX;
+    [SerializeField] private AudioClip defensiveBombSFX;
+
     private List<GameObject> bullets = new();
     private bool isShooting = false;
 
@@ -64,43 +69,35 @@ public class PlayerAttacks : MonoBehaviour {
 
     void Update() {
         if (Input.GetKeyDown(shootKey) && !isShooting) {
+            SoundManager.Instance.PlaySFXClip(attackSFX, transform, 1f);
             StartCoroutine(ShootBullets());
         }
 
-        if (playerMovement.IsInFocusTime())
-        {
+        if (playerMovement.IsInFocusTime()) {
             //Cancels target if behind player
-            if (target != null)
-            {
-                if (target.transform.position.y < transform.position.y)
-                {
+            if (target != null) {
+                if (target.transform.position.y < transform.position.y) {
                     target = null;
                 }
             }
 
             //Assigns target
-            if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd)
-            {
+            if (target == null || target.gameObject.GetComponent<BaseEnemy>().isAtEnd) {
                 GameObject waveManager = GameObject.FindGameObjectWithTag("WaveManager");
                 List<Tuple<GameObject, BaseEnemy>> list = waveManager.GetComponent<WaveManager>().GetActiveList();
 
-                if (list == null)
-                {
+                if (list == null) {
                     return;
                 }
 
                 float closePosition = float.PositiveInfinity;
                 Transform obj = null;
 
-                foreach (Tuple<GameObject, BaseEnemy> item in list)
-                {
-                    if (item.Item1 != null)
-                    {
+                foreach (Tuple<GameObject, BaseEnemy> item in list) {
+                    if (item.Item1 != null) {
                         Transform test = item.Item1.transform;
 
-                        if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition
-                            && test.position.y > transform.position.y && !item.Item2.isDead)
-                        {
+                        if (Vector2.Distance((Vector2)test.position, (Vector2)transform.position) < closePosition && test.position.y > transform.position.y && !item.Item2.isDead) {
                             obj = test;
                             closePosition = Vector2.Distance((Vector2)test.position, (Vector2)transform.position);
                         }
@@ -195,8 +192,9 @@ public class PlayerAttacks : MonoBehaviour {
     private IEnumerator DelayOffensiveBomb(float delay, int cost) {
         isOffensiveBombDelayed = true;
 
-        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) { 
+        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
             offensiveBombCount -= cost;
+            SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
             EventSystem.OffensiveBombAttackUI(offensiveBombCount);
             EventSystem.FireOffensiveBomb(transform.position);
 
@@ -214,7 +212,7 @@ public class PlayerAttacks : MonoBehaviour {
         if (Input.GetKeyDown(defensiveBombKey) && defensiveBombCount > 0) {
             defensiveBombCount -= cost;
             EventSystem.DefensiveBombAttack(defensiveBombCount);
-
+            SoundManager.Instance.PlaySFXClip(defensiveBombSFX, transform, 1f);
             BaseEnemy[] enemies = FindObjectsByType<BaseEnemy>(FindObjectsSortMode.None);
 
             foreach (var enemy in enemies) {
@@ -232,14 +230,11 @@ public class PlayerAttacks : MonoBehaviour {
         isDefensiveBombDelayed = false;
     }
 
-    private void TranslateEvent(DropType drop, int ammount)
-    {
-        switch (drop)
-        {
+    private void TranslateEvent(DropType drop, int ammount) {
+        switch (drop) {
             //this is where the homing unlock will be (just check the damnage) - will
             case DropType.POWER:
-                if (bulletDamage < 4)
-                {
+                if (bulletDamage < 4) {
                     bulletDamage += ammount;
                 }
                 break;
@@ -253,18 +248,13 @@ public class PlayerAttacks : MonoBehaviour {
     public int GetMaxDefensiveBombs => maxDefensiveBombs;
     public int GetMaxOffensiveBombs => maxOffensiveBombs;
     public static int GetBombCost => BOMB_COST;
-    private void OnEnable()
-    {
+    private void OnEnable() {
         EventSystem.OnOffensiveBombAttack += SpawnOffensiveBomb;
         EventSystem.OnPickUpUpdate += TranslateEvent;
     }
-    
-    private void OnDisable()
-    {
+
+    private void OnDisable() {
         EventSystem.OnOffensiveBombAttack -= SpawnOffensiveBomb;
         EventSystem.OnPickUpUpdate -= TranslateEvent;
-
     }
-  
-
 }
