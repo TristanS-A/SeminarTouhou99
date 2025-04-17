@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stages:
-  - maxHealth: 100
+  - maxHealth: 500
     respawnTime: 4
     drops:
       dropList:
@@ -204,11 +204,17 @@ MonoBehaviour:
         ammount: 2
       - dropType: 1
         ammount: 7
-  - maxHealth: 100
+  - maxHealth: 1200
     respawnTime: 4
     drops:
-      dropList: []
-  - maxHealth: 100
+      dropList:
+      - dropType: 2
+        ammount: 1
+      - dropType: 3
+        ammount: 1
+      - dropType: 1
+        ammount: 7
+  - maxHealth: 800
     respawnTime: 25
     drops:
       dropList: []
