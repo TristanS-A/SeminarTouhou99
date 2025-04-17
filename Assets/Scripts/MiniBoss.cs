@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Boss : TempEnemy
+public class MiniBoss : TempEnemy
 {
     [Serializable]
     private struct CompletionTimeBonus
@@ -20,7 +20,7 @@ public class Boss : TempEnemy
     Vector3 targetPosition;
     int currentPositionIndex = 0;
     GameObject player;
-    bool isMoving = false;
+    bool isMoving = true;
     protected override void Init()
     {
         base.Init();

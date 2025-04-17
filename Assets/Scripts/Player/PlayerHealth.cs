@@ -21,9 +21,24 @@ public class PlayerHealth : MonoBehaviour {
     private void Start() {
         currentHealth = maxHealth;
         EventSystem.HealthUpdate(currentHealth);
+        EventSystem.OnPickUpUpdate += TranslateDropEvent;
         isDead = false;
     }
+    private void OnDestroy()
+    {
+        EventSystem.OnPickUpUpdate -= TranslateDropEvent;
+    }
 
+    void TranslateDropEvent(DropType drop, int ammount)
+    {
+        switch(drop)
+        {
+            case DropType.LIFE:
+                Heal(ammount); 
+                break;
+        }
+
+    }
     public void TakeDamage(int damage) {
         // CHECKING IF PLAYER IS ALREADY DEAD
         if (isDead || isInvincible) return;

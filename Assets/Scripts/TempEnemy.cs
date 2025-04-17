@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TempEnemy : MonoBehaviour {
     public enum EnemyType
@@ -17,6 +18,7 @@ public class TempEnemy : MonoBehaviour {
     public class BossStage {
         public int maxHealth = 100;
         public float respawnTime = 1.5f;
+        public DropTypes drops;
     }
 
     [Serializable]
@@ -28,7 +30,7 @@ public class TempEnemy : MonoBehaviour {
     public bool IsDead { get; private set; }
 
     private int currentHealth;
-    private int currentStage = 0;
+    protected int currentStage = 0;
     private float currentRespawnTime;
     private bool isInvincible = false;
 
@@ -36,6 +38,10 @@ public class TempEnemy : MonoBehaviour {
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
+
+    protected UnityAction StageComplete;
+
+    //[SerializeField] DropTypes drops = new();
     private int conIndex = 0;
 
     [Header("Sounds")]
@@ -57,7 +63,7 @@ public class TempEnemy : MonoBehaviour {
 
         IsDead = false;
 
-        // WILL NYE THE SCIENCE GUY
+        // WILL NYE THE SCIENCE GUY <-- this is fire
         sequencer = gameObject.GetComponent<Sequencer>();
         sequencer.SpawnEmmiter();
     }
@@ -71,14 +77,27 @@ public class TempEnemy : MonoBehaviour {
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
         SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
 
+        Debug.Log(" TAKE DAMADGE " + currentHealth);
         // CALLS EVENT FOR UI
         //EventSystem.EnemyHealthUpdate(currentHealth);
-
         if (currentHealth <= 0) {
+            Debug.Log("LESS THEN CURRNET HEALTH");
             if (currentStage != stages.Count - 1) {
                 // GETS RID OF THE CURRENT SEQUENCE OF ATTACKS
                 sequencer.ClearAttackList();
                 sequencer.CleanSequencer();
+
+                //SPAWN DROPS IF THERE ARE DROPS
+                var itemToDrop = stages[currentStage].drops;
+                if (itemToDrop != null)
+                {
+                    itemToDrop.SetLocation(gameObject.transform.position);
+                    DropEvent evt = new(itemToDrop);
+                    EventSystem.fireEvent(evt);
+                }
+
+                
+
                 StartCoroutine(Respawn());
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)
@@ -107,7 +126,16 @@ public class TempEnemy : MonoBehaviour {
 
             //Finishes the level and triggers the sending of result data
             EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+
+            Destroy(this.gameObject);
         }
+
+        else if (mEnemyType == EnemyType.MID_BOSS)
+        {
+            Destroy(this.gameObject);
+        }
+        
+
     }
 
     public void Revive() {
@@ -121,10 +149,10 @@ public class TempEnemy : MonoBehaviour {
         conIndex++;
         sequencer.SetSequeceList(containter[conIndex].attacks);
         sequencer.SpawnEmmiter();
+        StageComplete?.Invoke();
         EventSystem.EnemyRespawnUpdate(currentRespawnTime);
     }
 
-    //might want to change this to be a  flag in the update loop (this seems like a lot of overhead)
     private IEnumerator Respawn() {
         isInvincible = true;
         IsDead = true;

@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 650900280563246777}
   - component: {fileID: 4006593418814495359}
   - component: {fileID: 203904684061855997}
-  - component: {fileID: -2511881294761270438}
+  - component: {fileID: 7579323149094325666}
   m_Layer: 0
-  m_Name: NewBoss
+  m_Name: MiniBoss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -174,11 +174,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attacks:
   - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
-  - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
-  - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
+  - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
   shouldLoop: 1
   currentAttackIndex: 0
---- !u!114 &-2511881294761270438
+--- !u!114 &7579323149094325666
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -187,53 +186,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 3750078320338701201}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cb5737c6502aac4eb27c8930a032474, type: 3}
+  m_Script: {fileID: 11500000, guid: 3728a1f7b8f93e94eaf70cc422774a37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   stages:
   - maxHealth: 100
-    respawnTime: 4
-    drops:
-      dropList:
-      - dropType: 3
-        ammount: 1
-      - dropType: 2
-        ammount: 2
-      - dropType: 1
-        ammount: 7
-  - maxHealth: 100
-    respawnTime: 4
+    respawnTime: 2
     drops:
       dropList: []
-  - maxHealth: 100
-    respawnTime: 25
-    drops:
-      dropList: []
-  mEnemyType: 2
+  mEnemyType: 1
   sequencer: {fileID: 203904684061855997}
-  containter:
-  - attacks:
-    - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
-    - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
-    - {fileID: 11400000, guid: 459a30a879f83ab44a59911f6a066ed6, type: 2}
-  - attacks:
-    - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
-    - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
-    - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
-  - attacks:
-    - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
-  completionTimeBonusList:
-  - bonusPoints: 20
-    timeToCompleteIn: 48
-  - bonusPoints: 10
-    timeToCompleteIn: 53
-  - bonusPoints: 5
-    timeToCompleteIn: 68
+  containter: []
+  completionTimeBonusList: []
   positions:
     spawnPosition: {x: 0, y: 0}
     endPosition: {x: 0, y: 0}
     intermedatePos:
-    - {x: -5.09, y: 3.42}
-    - {x: -5.34, y: -3.58}
-    - {x: -0.02, y: -3.58}
-    - {x: -0.04, y: 3.59}
+    - {x: 0.04, y: 2.02}
+    - {x: -5.96, y: 2.02}

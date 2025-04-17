@@ -42,6 +42,9 @@ public static class EventSystem
     public static UnityEvent<float> OnEnemyRespawnUpdate;
     public static void EnemyRespawnUpdate(float health) => OnEnemyRespawnUpdate?.Invoke(health);
 
+    public static UnityAction<bool> WaveStateChange;
+    public static void OnWaveStateChange(bool state) => WaveStateChange?.Invoke(state);
+
     //score
     public static event UnityAction<DropType, int> OnPickUpUpdate;
     public static void OnPickUp(DropType type, int ammount) => OnPickUpUpdate?.Invoke(type, ammount);
