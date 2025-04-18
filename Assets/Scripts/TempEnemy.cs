@@ -96,8 +96,6 @@ public class TempEnemy : MonoBehaviour {
                     EventSystem.fireEvent(evt);
                 }
 
-                
-
                 StartCoroutine(Respawn());
             } else if (currentStage == stages.Count - 1) {
                 // KILLS ENEMY :)

@@ -1502,6 +1502,8 @@ MonoBehaviour:
     prefab: {fileID: 6434526298434354140, guid: f51a69ad84b66e14d8419cc5cbba9cbe, type: 3}
   - type: 4
     prefab: {fileID: 6434526298434354140, guid: b7898e79160afb74194427335c0b0cfa, type: 3}
+  - type: 3
+    prefab: {fileID: 6434526298434354140, guid: f84c79cb1cff09145ae01fc216847778, type: 3}
   spawnRad: 2
 --- !u!4 &1073282802
 Transform:
