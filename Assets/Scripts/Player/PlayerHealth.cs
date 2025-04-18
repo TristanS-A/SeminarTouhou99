@@ -89,8 +89,16 @@ public class PlayerHealth : MonoBehaviour {
         Debug.Log("Player died");
 
         //Simple way of dissabling visuals for kill delay
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        Destroy(gameObject, 1f);
+        //gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        //SpriteRenderer[] sRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+
+        //foreach (SpriteRenderer sRenderer in sRenderers)
+        //{
+        //    sRenderer.enabled = false;
+        //}
+
+        //Just add a way to imediately not end the level when player dies
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
