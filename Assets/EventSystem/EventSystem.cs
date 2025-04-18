@@ -16,6 +16,9 @@ public static class EventSystem
     public static event UnityAction<int> OnHealthUpdate;
     public static void HealthUpdate(int health) => OnHealthUpdate?.Invoke(health);
 
+    public static event UnityAction OnPlayerDeath;
+    public static void PlayerDeath() => OnPlayerDeath?.Invoke();
+
     public static UnityEvent<float> OnRespawnUpdate;
     public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
 

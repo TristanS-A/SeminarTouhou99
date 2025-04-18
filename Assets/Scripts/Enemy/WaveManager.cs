@@ -39,7 +39,7 @@ public class WaveManager : MonoBehaviour
     private void OnEnable()
     {
         EventSystem.WaveStateChange += this.ChangeWaveState;
-        EventSystem.OnPlayerDie += ClearAndDisable;
+        EventSystem.OnPlayerDeath += ClearAndDisable;
     }
     void Start()
     {
@@ -249,7 +249,7 @@ public class WaveManager : MonoBehaviour
         return activeList;
     }
 
-    void ClearAndDisable(bool isOwningPlayer, Vector3 deathPos)
+    void ClearAndDisable()
     {
         Debug.Log("called");
          activeList.Clear();
@@ -264,6 +264,6 @@ public class WaveManager : MonoBehaviour
     private void OnDisable()
     {
         EventSystem.WaveStateChange -= this.ChangeWaveState;
-        EventSystem.OnPlayerDie -= ClearAndDisable;
+        EventSystem.OnPlayerDeath -= ClearAndDisable;
     }
 }
