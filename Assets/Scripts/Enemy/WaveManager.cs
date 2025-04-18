@@ -36,10 +36,14 @@ public class WaveManager : MonoBehaviour
     bool miniBossSpawned = false;
     int waveIndex = 0;
 
+    private void OnEnable()
+    {
+        EventSystem.WaveStateChange += this.ChangeWaveState;
+        EventSystem.OnPlayerDie += ClearAndDisable;
+    }
     void Start()
     {
         SpawnEnemy();
-        EventSystem.WaveStateChange += this.ChangeWaveState;
     }
 
     // Update is called once per frame
@@ -142,10 +146,11 @@ public class WaveManager : MonoBehaviour
         Debug.Log("Now Spawing Boss");
 
         StartCoroutine(Co_WaitForBossToDie());
-        if (activeBoss.Item1.GetComponent<TempEnemy>().mEnemyType != TempEnemy.EnemyType.FINAL_BOSS)
-        {
-            StartCoroutine(Co_TimeTillTimeOut());
-        }
+
+        //if (activeBoss.Item1.GetComponent<TempEnemy>().mEnemyType != TempEnemy.EnemyType.FINAL_BOSS)
+        //{
+        //    StartCoroutine(Co_TimeTillTimeOut());
+        //}
     }
 
     //return to regular logic
@@ -153,6 +158,7 @@ public class WaveManager : MonoBehaviour
     {
         if (activeBoss.Item1 != null)
         {
+            StopCoroutine(Co_TimeTillTimeOut());
             Destroy(activeBoss.Item1);
         }
 
@@ -167,7 +173,7 @@ public class WaveManager : MonoBehaviour
     }
     bool CheckIfActiveBossDead()
     {
-        return activeBoss.Item1 == null ? true : false;
+        return activeBoss.Item1 == null;
     }
     
     IEnumerator Co_WaitTillActivesEmpty()
@@ -182,6 +188,7 @@ public class WaveManager : MonoBehaviour
     }
     IEnumerator Co_TimeTillTimeOut()
     {
+        Debug.Log("STARTTING RUTINE");
         yield return new WaitForSeconds(timeOutTime);
         BossDead();
     }
@@ -240,5 +247,23 @@ public class WaveManager : MonoBehaviour
     public List<Tuple<GameObject, BaseEnemy>> GetActiveList()
     {
         return activeList;
+    }
+
+    void ClearAndDisable(bool isOwningPlayer, Vector3 deathPos)
+    {
+        Debug.Log("called");
+         activeList.Clear();
+        if(activeBoss != null && activeBoss.Item1 != null)
+        {
+            Destroy(activeBoss.Item1);
+        }
+        activeBoss = null;
+
+        gameObject.SetActive(false);
+    }
+    private void OnDisable()
+    {
+        EventSystem.WaveStateChange -= this.ChangeWaveState;
+        EventSystem.OnPlayerDie -= ClearAndDisable;
     }
 }
