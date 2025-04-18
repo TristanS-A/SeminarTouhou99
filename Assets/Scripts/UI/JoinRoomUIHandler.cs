@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -15,8 +16,11 @@ public class JoinRoomUIHandler : MonoBehaviour
     //Joinable IP storage for lobby searching scene
     private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
 
+    private Tuple<string, string> mIPInfo;
+
     private void OnEnable()
     {
+        Debug.Log("HERE");
         EventSystem.ipReceived += AddIP;
     }
 
@@ -27,6 +31,8 @@ public class JoinRoomUIHandler : MonoBehaviour
 
     private void Start()
     {
+        ClientHandler.instance.RunClientSetUp();
+
         if (ClientHandler.instance.mDebugMode)
         {
             AddIP(ClientHandler.instance.mDebugDebugIP, "Debug Room");
@@ -37,10 +43,24 @@ public class JoinRoomUIHandler : MonoBehaviour
     {
         if (!mJoinableIPs.ContainsKey(ip))
         {
+            mIPInfo = new Tuple<string, string>(ip, connectionName);
+
+            JoinIPData joinIPData = new() { name = connectionName, joinUIOBJ = null };
+            mJoinableIPs.Add(ip, joinIPData);
+        }
+    }
+
+    private void Update()
+    {
+        if (mIPInfo != null)
+        {
             GameObject newIPDisplay = Instantiate(m_IPDisplay, mResultsContent.transform);
 
+            TextMeshProUGUI joinName = newIPDisplay.GetComponentInChildren<TextMeshProUGUI>();
             Button joinB = newIPDisplay.GetComponentInChildren<Button>();
             TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
+
+            joinName.text = mIPInfo.Item2;
 
             EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -48,10 +68,12 @@ public class JoinRoomUIHandler : MonoBehaviour
             entry.callback.AddListener((data) => { ClientHandler.instance.JoinHost((BaseEventData)data); });
             trigger.triggers.Add(entry);
 
-            joinB.gameObject.AddComponent<IPStorageAttachment>().IP = ip;
+            joinB.gameObject.AddComponent<IPStorageAttachment>().IP = mIPInfo.Item1;
 
-            JoinIPData joinIPData = new() { name = connectionName, joinUIOBJ = newIPDisplay };
-            mJoinableIPs.Add(ip, joinIPData);
+            JoinIPData joinIPData = new() { name = mIPInfo.Item2, joinUIOBJ = newIPDisplay };
+            mJoinableIPs[mIPInfo.Item1] = joinIPData;
+
+            mIPInfo = null;
         }
     }
 }

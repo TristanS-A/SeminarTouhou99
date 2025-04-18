@@ -15,7 +15,6 @@ public class ClientHandler : MonoBehaviour
     //Serialized buttons and prefabs
     [SerializeField] private Button testClientButton;
     [SerializeField] private GameObject m_PlayerHologramPrefab;
-    [SerializeField] private GameObject m_IPDisplay;
 
     //Networking members (client)
     private NetworkingSockets client;
@@ -31,9 +30,6 @@ public class ClientHandler : MonoBehaviour
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
     private bool mShouldSendData = true;
-
-    //Joinable IP storage for lobby searching scene
-    private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
 
     //Gamestate storage
     private ServerHandler.GameState mGameState = ServerHandler.GameState.NONE;
@@ -155,7 +151,6 @@ public class ClientHandler : MonoBehaviour
     private void OnEnable()
     {
         EventSystem.gameStarted += HandleGameStart;
-        //EventSystem.ipReceived += AddIP;
         EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombData;
@@ -164,7 +159,6 @@ public class ClientHandler : MonoBehaviour
     private void OnDisable()
     {
         EventSystem.gameStarted -= HandleGameStart;
-        //EventSystem.ipReceived -= AddIP;
         EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
         EventSystem.OnFireOffensiveBomb -= SendBombData;
@@ -208,7 +202,7 @@ public class ClientHandler : MonoBehaviour
 
         if (testClientButton != null)
         {
-            testClientButton.onClick.AddListener(RunClientSetUp);
+            testClientButton.onClick.AddListener(SwitchToLobbyScene);
         }
 
         DebugCallback debugCallback = (DebugType type, string message) =>
@@ -219,11 +213,15 @@ public class ClientHandler : MonoBehaviour
         utils.SetDebugCallback(DebugType.Everything, debugCallback);
     }
 
-    private void RunClientSetUp()
+    private void SwitchToLobbyScene()
+    {
+        DontDestroyOnLoad(transform.gameObject);
+        SceneManager.LoadScene(1);
+    }
+
+    public void RunClientSetUp()
     {
         Debug.Log("Starting Client...");
-
-        DontDestroyOnLoad(transform.gameObject);
 
         client = new NetworkingSockets();
         clientNetworkingUtils = OnClientStatusUpdate;
@@ -234,17 +232,6 @@ public class ClientHandler : MonoBehaviour
         }
 
         mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
-
-        SceneManager.LoadScene(1);
-    }
-
-    private void AddIP(string ip, string connectionName)
-    {
-        if (!mJoinableIPs.ContainsKey(ip))
-        {
-            JoinIPData joinIPData = new() { name = connectionName, joinUIOBJ = null };
-            mJoinableIPs.Add(ip, joinIPData);
-        }
     }
 
     private void InitClientJoin(string ip)
@@ -297,47 +284,6 @@ public class ClientHandler : MonoBehaviour
         }
     }
 
-    //Handles displaying the joinable IP's on the searching for a room scene (Could maybe put this somewhere else)
-    private void DisplayJoinableIPs()
-    {
-        int ipYCord = 220;
-        if (SceneManager.GetActiveScene().buildIndex == 1)
-        {
-            var keys = mJoinableIPs.Keys;
-            for (int i = 0; i < keys.Count; i++)
-            {
-                if (mJoinableIPs[keys.ElementAt(i)].joinUIOBJ == null)
-                {
-                    Canvas canvas = FindObjectOfType<Canvas>();
-                    GameObject newIPDisplay = Instantiate(m_IPDisplay, canvas.transform);
-
-                    Button joinB = newIPDisplay.GetComponentInChildren<Button>();
-                    TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
-
-                    EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
-                    EventTrigger.Entry entry = new EventTrigger.Entry();
-                    entry.eventID = EventTriggerType.PointerDown;
-                    entry.callback.AddListener((data) => { JoinHost((BaseEventData)data); });
-                    trigger.triggers.Add(entry);
-
-                    joinB.gameObject.AddComponent<IPStorageAttachment>().IP = keys.ElementAt(i);
-
-                    mJoinableIPs[keys.ElementAt(i)] = new() { name = mJoinableIPs[keys.ElementAt(i)].name, joinUIOBJ = newIPDisplay };
-                }
-
-                GameObject displayOBJ = mJoinableIPs[keys.ElementAt(i)].joinUIOBJ;
-                TextMeshProUGUI hostName = displayOBJ.GetComponentInChildren<TextMeshProUGUI>();
-                Button joinButton = displayOBJ.GetComponentInChildren<Button>();
-                TextMeshProUGUI joinButtonTextOBJ = joinButton.GetComponentInChildren<TextMeshProUGUI>();
-
-                displayOBJ.transform.position = new Vector3(displayOBJ.transform.position.x, ipYCord, displayOBJ.transform.position.z);
-                hostName.text = mJoinableIPs[keys.ElementAt(i)].name;
-                joinButtonTextOBJ.text = "Join!";
-                ipYCord -= (int)hostName.rectTransform.rect.height;
-            }
-        }
-    }
-
     //Joining trigger on a IP display button ti join that server;
     public void JoinHost(BaseEventData eventData)
     {
@@ -369,7 +315,6 @@ public class ClientHandler : MonoBehaviour
                     break;
 
                 case ServerHandler.GameState.LOOKING_FOR_HOST:
-                    DisplayJoinableIPs();
                     break;
                 case ServerHandler.GameState.SEARCHING_FOR_PLAYERS:
                     HandleNetMessages();
