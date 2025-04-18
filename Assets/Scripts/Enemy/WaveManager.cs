@@ -23,6 +23,7 @@ public class WaveManager : MonoBehaviour
     [SerializeField] List<WaveContainter> wave = new();    
     [SerializeField] GameObject midBoss;
     [SerializeField] GameObject finalBoss;
+    [SerializeField] float timeOutTime = 30f;
 
     List<Tuple<GameObject, BaseEnemy>> activeList = new();
 
@@ -141,17 +142,28 @@ public class WaveManager : MonoBehaviour
         Debug.Log("Now Spawing Boss");
 
         StartCoroutine(Co_WaitForBossToDie());
+        if (activeBoss.Item1.GetComponent<TempEnemy>().mEnemyType != TempEnemy.EnemyType.FINAL_BOSS)
+        {
+            StartCoroutine(Co_TimeTillTimeOut());
+        }
     }
 
     //return to regular logic
     void BossDead()
     {
+        if (activeBoss.Item1 != null)
+        {
+            Destroy(activeBoss.Item1);
+        }
+
         activeBoss = null;
         ChangeWaveState(false);
         Debug.Log("BOSSDEAD");
 
         waveIndex++;
         StartCoroutine(Co_WaitForNextSpawn());
+        StopCoroutine(Co_TimeTillTimeOut());
+        
     }
     bool CheckIfActiveBossDead()
     {
@@ -166,6 +178,11 @@ public class WaveManager : MonoBehaviour
     IEnumerator Co_WaitForBossToDie()
     {
         yield return new WaitUntil(CheckIfActiveBossDead);
+        BossDead();
+    }
+    IEnumerator Co_TimeTillTimeOut()
+    {
+        yield return new WaitForSeconds(timeOutTime);
         BossDead();
     }
     public bool GetBossState() => bossState;
