@@ -47,11 +47,11 @@ public class ClientHandler : MonoBehaviour
     private byte[] messageDataBuffer = new byte[256];
 
     //Debug mode for running multiple games on a single computer (Needs manual input IP to connect)
-    [SerializeField] private bool mDebugMode = false;
-    [SerializeField] private string mDebugDebugIP;
+    [SerializeField] public bool mDebugMode = false;
+    [SerializeField] public string mDebugDebugIP;
 
     //IP Joining struct
-    private struct JoinIPData
+    public struct JoinIPData
     {
         public GameObject joinUIOBJ;
         public string name;
@@ -155,7 +155,7 @@ public class ClientHandler : MonoBehaviour
     private void OnEnable()
     {
         EventSystem.gameStarted += HandleGameStart;
-        EventSystem.ipReceived += AddIP;
+        //EventSystem.ipReceived += AddIP;
         EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombData;
@@ -164,7 +164,7 @@ public class ClientHandler : MonoBehaviour
     private void OnDisable()
     {
         EventSystem.gameStarted -= HandleGameStart;
-        EventSystem.ipReceived -= AddIP;
+        //EventSystem.ipReceived -= AddIP;
         EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
         EventSystem.OnFireOffensiveBomb -= SendBombData;
@@ -231,10 +231,6 @@ public class ClientHandler : MonoBehaviour
         if (!mDebugMode)
         {
             UDPListener.StartClient(true);
-        }
-        else
-        {
-            mJoinableIPs.Add(mDebugDebugIP, new() { name = "Debug Room", joinUIOBJ = null });
         }
 
         mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
