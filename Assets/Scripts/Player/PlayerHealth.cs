@@ -87,6 +87,9 @@ public class PlayerHealth : MonoBehaviour {
         EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_DIED);
 
         Debug.Log("Player died");
+
+        //Simple way of dissabling visuals for kill delay
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
         Destroy(gameObject, 1f);
     }
 

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1112828099582750112}
   - component: {fileID: 8862979761039350806}
   - component: {fileID: 7592557770594357841}
+  - component: {fileID: -3442163939563542892}
   m_Layer: 0
   m_Name: Circle 1
   m_TagString: Untagged
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 1479623958, guid: b95816d9eaecbbe4c854b9094c456367, type: 3}
   m_Color: {r: 0.25668207, g: 0.29546204, b: 0.7433963, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,6 +105,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3ebd0f17844756b468c72a8eff8add50, type: 2}
   shouldLoop: 0
   currentAttackIndex: 0
+  bulletSpawnSFX: {fileID: 0}
 --- !u!114 &7592557770594357841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,3 +121,24 @@ MonoBehaviour:
   playerSequencer: {fileID: 8862979761039350806}
   m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
   m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
+--- !u!95 &-3442163939563542892
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5546967965176595841}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c141bb5ae15a9be4cbe5374621f931f0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
