@@ -185,6 +185,8 @@ public class ClientHandler : MonoBehaviour
         {
             UDPListener.CloseClient();
         }
+
+        Valve.Sockets.Library.Deinitialize();
     }
 
     //Handle singleton instance no-replication and networking setup
@@ -211,6 +213,11 @@ public class ClientHandler : MonoBehaviour
         };
 
         utils.SetDebugCallback(DebugType.Everything, debugCallback);
+    }
+
+    private void OnDestroy()
+    {
+        instance = null;
     }
 
     private void SwitchToLobbyScene()

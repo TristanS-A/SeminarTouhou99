@@ -7,11 +7,20 @@ public class HealthUI : MonoBehaviour {
 
     private PlayerHealth playerHealth;
 
+    private void OnEnable()
+    {
+        EventSystem.OnHealthUpdate += UpdateUI;
+    }
+
+    private void OnDisable()
+    {
+        EventSystem.OnHealthUpdate -= UpdateUI;
+    }
+
     private void Start() {
         playerHealth = FindObjectOfType<PlayerHealth>();
 
         if (playerHealth != null) {
-            EventSystem.OnHealthUpdate += UpdateUI;
             UpdateUI(playerHealth.maxHealth);
         }
     }
@@ -29,13 +38,6 @@ public class HealthUI : MonoBehaviour {
             RectTransform rect = icon.GetComponent<RectTransform>();
 
             rect.anchoredPosition = new Vector2(i * xOffset, 0);
-        }
-    }
-
-    // OFFLOADS UI FROM EVENT
-    private void OnDestroy() {
-        if (playerHealth != null) {
-            EventSystem.OnHealthUpdate -= UpdateUI;
         }
     }
 }

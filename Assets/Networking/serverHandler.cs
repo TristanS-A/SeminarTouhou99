@@ -136,6 +136,11 @@ public class ServerHandler : MonoBehaviour
         Valve.Sockets.Library.Deinitialize();
     }
 
+    private void OnDestroy()
+    {
+        instance = null;
+    }
+
     private void HandleCloseConnection()
     {
         Debug.Log("Closing Connection");
@@ -144,6 +149,8 @@ public class ServerHandler : MonoBehaviour
             UDPListener.CloseClient();
             Debug.Log("Quit and Socket Lib Deanitialized");
         }
+
+        Valve.Sockets.Library.Deinitialize();
     }
 
     private void RunServerSetUp()
