@@ -37,4 +37,11 @@ public static class PlayerInfo
     {
         return mPlayerPoints + mPlayerTimeBonus;
     }
+
+    public static void ResetPlayerPointInfo()
+    {
+        mPlayerPoints = 0;
+        mPlayerTime = 0;
+        mPlayerTimeBonus = 0;
+    }
 }

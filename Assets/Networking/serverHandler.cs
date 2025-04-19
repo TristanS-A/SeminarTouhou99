@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Valve.Sockets;
+using static ClientHandler;
 
 public class ServerHandler : MonoBehaviour
 {
@@ -440,20 +441,20 @@ public class ServerHandler : MonoBehaviour
     {
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
+            foreach (uint playerID in mPlayerResults.Keys)
             {
-                foreach (uint playerID in mPlayerResults.Keys)
+                PlayerStoredResultData player = mPlayerResults[playerID];
+
+                ClientHandler.PlayerSendResultData playerSendResultData = new ClientHandler.PlayerSendResultData();
+                playerSendResultData.type = (int)ClientHandler.PacketType.SEND_RESULT;
+                playerSendResultData.playerID = playerID;
+                playerSendResultData.time = player.time;
+                playerSendResultData.points = player.points;
+                playerSendResultData.name = player.name;
+                playerSendResultData.score = player.score;
+
+                for (int i = 0; i < connectedClients.Count; i++)
                 {
-                    PlayerStoredResultData player = mPlayerResults[playerID];
-
-                    ClientHandler.PlayerSendResultData playerSendResultData = new ClientHandler.PlayerSendResultData();
-                    playerSendResultData.type = (int)ClientHandler.PacketType.SEND_RESULT;
-                    playerSendResultData.playerID = playerID;
-                    playerSendResultData.time = player.time;
-                    playerSendResultData.points = player.points;
-                    playerSendResultData.name = player.name;
-                    playerSendResultData.score = player.score;
-
                     IntPtr ptr = IntPtr.Zero;
                     byte[] bytes = new byte[Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData))];
 
@@ -468,9 +469,9 @@ public class ServerHandler : MonoBehaviour
                         server.SendMessageToConnection(connectedClients[i], bytes);
                         Marshal.FreeHGlobal(ptr);
                     }
-
-                    EventSystem.fireEvent(new ReceiveResultEvent(playerSendResultData));
                 }
+
+                EventSystem.fireEvent(new ReceiveResultEvent(playerSendResultData));
             }
         }
     }

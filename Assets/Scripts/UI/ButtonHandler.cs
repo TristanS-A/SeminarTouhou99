@@ -46,6 +46,9 @@ public class ButtonHandler : MonoBehaviour
         //Starts ending session flow
         EventSystem.fireEvent(new EventType(EventType.EventTypes.END_GAME_SESSION));
 
+        //Resets static values
+        PlayerInfo.ResetPlayerPointInfo();
+
         //Goes to main menu scene
         SceneManager.LoadScene(0);
     }

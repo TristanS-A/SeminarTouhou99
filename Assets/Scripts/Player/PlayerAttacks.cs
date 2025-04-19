@@ -92,7 +92,7 @@ public class PlayerAttacks : MonoBehaviour {
                     var newTargetObj = waveManager.GetComponent<WaveManager>().GetBossObject;
 
                     //this indicateds boss logic
-                    if (newTargetObj != null) 
+                    if (newTargetObj != null && newTargetObj.Item1 != null) 
                     {
                         target = newTargetObj.Item1.transform;
                     }
