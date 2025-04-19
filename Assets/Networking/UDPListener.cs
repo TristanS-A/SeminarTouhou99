@@ -53,6 +53,7 @@ public static class UDPListener
         {
             client.Close();
             client.Dispose();
+            client = null;
         }
     }
 
