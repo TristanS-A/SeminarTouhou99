@@ -19,6 +19,8 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] DropTypes dropType;
     [SerializeField] float speed = 3f;
     [SerializeField] bool isBoss = false;
+    [SerializeField] GameObject m_DeathAni;
+
     //this needs a sequencer
     Sequencer sqe;
     private Vector2 currentSelectedPositon;
@@ -80,7 +82,12 @@ public class BaseEnemy : MonoBehaviour
             //turn the sprite render off before chaning the game state
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
             isDead = true;
-            Destroy(gameObject, 1f);
+
+            GameObject deathAni = Instantiate(m_DeathAni, transform.position, Quaternion.identity);
+            deathAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
+            deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
+
+            Destroy(gameObject);
         }
     }
     public bool ShouldDestroy()

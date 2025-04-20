@@ -129,6 +129,7 @@ MonoBehaviour:
       ammount: 1
   speed: 3
   isBoss: 0
+  m_DeathAni: {fileID: 4050479818223612418, guid: 6adc0073653100c4d8ba80190af63e5b, type: 3}
   isAtEnd: 0
   isDead: 0
   damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
