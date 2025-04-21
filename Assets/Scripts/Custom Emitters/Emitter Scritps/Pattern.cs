@@ -11,13 +11,15 @@ public class Pattern : MonoBehaviour
     {
         foreach(var bullet in bullets)
         {
-            if (bullet != null)
+            if (bullet != null && bullet.gameObject.activeSelf)
             {
-                Destroy(bullet.gameObject);
+                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
+
+                //Destroy(bullet.gameObject);
             }
         }
 
-        bullets.Clear();
+        //bullets.Clear();
         
     }
     private void OnDestroy()

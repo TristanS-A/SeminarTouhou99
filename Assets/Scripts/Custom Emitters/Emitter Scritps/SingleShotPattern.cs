@@ -70,11 +70,14 @@ public class SingleShotPattern : Pattern
 
         for (int i = 0; i < ammountToSpawn; i++)
         {
-            
-            var obj = Instantiate(bullet, (Vector2)this.transform.position, Quaternion.identity);
-            
+
+           
+            var obj = ObjectPool.DequeueObject<BaseBullet>("BaseBullet");  //Instantiate(bullet, (Vector2)this.transform.position, Quaternion.identity);
+            obj.transform.position = (Vector2)transform.position;
+            obj.transform.rotation = Quaternion.identity;
             //get the compenet of type
             
+            obj.gameObject.SetActive(true);
             var comp = obj.GetComponent<BaseBullet>();
 
             if (comp == null)
@@ -98,13 +101,14 @@ public class SingleShotPattern : Pattern
 
         yield return null;
     }
-    void CleanList(List<int> indexes, List<BaseBullet>listToRemoveFrom)
+    void CleanList(List<int> indexes, List<BaseBullet> listToRemoveFrom)
     {
-        foreach (int index in indexes)
-        {
-            Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
-        }
+        //foreach (int index in indexes)
+        //{
+        //    ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
+        //    //Destroy(listToRemoveFrom[index].gameObject);
+        //    listToRemoveFrom.RemoveAt(index);
+        //}
     }
     //public void ClearBullets()
     //{

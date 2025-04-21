@@ -62,7 +62,7 @@ public class CirlcePattern : Pattern
 
         if (removalIndex.Count > 0)
         {
-            CleanList(removalIndex, bullets);
+            //CleanList(removalIndex, bullets);
         }
 
         if(bullets.Count <= 0)
@@ -84,9 +84,13 @@ public class CirlcePattern : Pattern
             float y = center.y + radius * (inverted * Mathf.Sin(i));
 
             Vector2 spawnPos = new Vector2(x, y);
-            GameObject dummy = Instantiate(bullet, spawnPos, Quaternion.identity);
+            GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
+            dummy.transform.position = spawnPos;
+            dummy.transform.rotation = Quaternion.identity;
+
             Vector2 directionVector = center - spawnPos;
 
+            dummy.SetActive(true);
 
             var bul = dummy.GetComponent<BaseBullet>();
 
@@ -109,7 +113,9 @@ public class CirlcePattern : Pattern
     {
         foreach (int index in indexes)
         {
-            Destroy(listToRemoveFrom[index].gameObject);
+            ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
+
+            //Destroy(listToRemoveFrom[index].gameObject);
             listToRemoveFrom.RemoveAt(index);
         }
     }

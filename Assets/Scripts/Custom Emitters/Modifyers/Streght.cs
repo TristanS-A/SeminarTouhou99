@@ -9,6 +9,8 @@ public class Streght : BaseBullet
     void Start()
     { 
         rb.isKinematic = true;
+        maxLifetime = lifeTime;
+        
     }
     public override void UpdatePorjectile()
     {

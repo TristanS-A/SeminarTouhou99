@@ -30,6 +30,8 @@ public class WaveManager : MonoBehaviour
     //will be null unless we are in a boss stage
     Tuple<GameObject, Sequencer> activeBoss;
 
+     public BaseBullet bultPrefab;
+
     float currentTime;
     bool shouldSpawn = true;
     bool bossState = false;
@@ -41,9 +43,17 @@ public class WaveManager : MonoBehaviour
         EventSystem.WaveStateChange += this.ChangeWaveState;
         EventSystem.OnPlayerDeath += ClearAndDisable;
     }
+    private void Awake()
+    {
+        Debug.Log("setting up pool");
+        ObjectPool.SetUpPool(bultPrefab, 300, "BaseBullet");
+
+    }
     void Start()
     {
         SpawnEnemy();
+
+      
     }
 
     // Update is called once per frame

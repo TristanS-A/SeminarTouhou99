@@ -9,6 +9,7 @@ public class BaseBullet : MonoBehaviour
     [SerializeField] public float scaler = 1.0f;
     [SerializeField] public Vector2 velocity;
     [SerializeField] protected float lifeTime;
+    protected float maxLifetime = 40f;
     protected Transform parentTrans;
     public Vector2 direction;
 
@@ -17,6 +18,7 @@ public class BaseBullet : MonoBehaviour
         rb = this.GetComponent<Rigidbody2D>();
         GetComponent<SpriteRenderer>().sortingOrder = -1;
         rb.isKinematic = true;
+        maxLifetime = lifeTime;
 
     }
     private void Update()
@@ -32,6 +34,8 @@ public class BaseBullet : MonoBehaviour
         direction.Normalize();
 
         parentTrans = parnet;
+
+        lifeTime = maxLifetime;
 
         //does this need to be done here?
         //transform.up = -direction;
