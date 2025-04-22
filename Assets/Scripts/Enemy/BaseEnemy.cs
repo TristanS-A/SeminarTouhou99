@@ -58,9 +58,7 @@ public class BaseEnemy : MonoBehaviour
             //the player will have a damage value associated with it
             TakeDamage(PlayerAttacks.bulletDamage);
 
-            //ObjectPool.EnqeueObject<BaseBullet>
-                //(collision.gameObject.GetComponent<BaseBullet>(), "BaseBullet");
-           // Destroy(collision.gameObject);
+            Destroy(collision.gameObject);
         }
     }
 
