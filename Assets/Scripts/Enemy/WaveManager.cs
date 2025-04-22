@@ -46,7 +46,7 @@ public class WaveManager : MonoBehaviour
     private void Awake()
     {
         Debug.Log("setting up pool");
-        ObjectPool.SetUpPool(bultPrefab, 300, "BaseBullet");
+        ObjectPool.SetUpPool(bultPrefab, 1000, "BaseBullet");
 
     }
     void Start()

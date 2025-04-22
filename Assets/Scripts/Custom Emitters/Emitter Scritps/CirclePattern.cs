@@ -52,8 +52,8 @@ public class CirlcePattern : Pattern
             //check bullet life
             if (bullet.getLifeTime() <= 0)
             {
-                //add it to some remove list
-                //Destroy(bullet.gameObject);
+                bullet.gameObject.SetActive(false);
+                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -85,12 +85,13 @@ public class CirlcePattern : Pattern
 
             Vector2 spawnPos = new Vector2(x, y);
             GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
+
+            dummy.SetActive(true);
+
             dummy.transform.position = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
             Vector2 directionVector = center - spawnPos;
-
-            dummy.SetActive(true);
 
             var bul = dummy.GetComponent<BaseBullet>();
 

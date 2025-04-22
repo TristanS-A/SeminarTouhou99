@@ -46,6 +46,8 @@ public class SnakePattern : Pattern
             if (bullet.getLifeTime() <= 0)
             {
                 //add it to some remove list
+                bullet.gameObject.SetActive(false);
+                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
                 //Destroy(bullet.gameObject);
                 removalIndex.Add(index);
             }
@@ -77,12 +79,15 @@ public class SnakePattern : Pattern
 
             Vector2 spawnPos = new Vector2(x, y);
             GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
+
+            dummy.SetActive(true);
+
             Vector2 directionVector = Vector2.down;
 
             dummy.transform.position = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
-            dummy.SetActive(true);
+           
             var bul = dummy.GetComponent<BaseBullet>();
 
             //if we want to modify the scaler then do so

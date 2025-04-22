@@ -13,13 +13,14 @@ public class Pattern : MonoBehaviour
         {
             if (bullet != null && bullet.gameObject.activeSelf)
             {
+                bullet.gameObject.SetActive(false);
                 ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
 
                 //Destroy(bullet.gameObject);
             }
         }
 
-        //bullets.Clear();
+        bullets.Clear();
         
     }
     private void OnDestroy()

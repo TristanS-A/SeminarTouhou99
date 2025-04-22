@@ -9,7 +9,7 @@ public class BaseBullet : MonoBehaviour
     [SerializeField] public float scaler = 1.0f;
     [SerializeField] public Vector2 velocity;
     [SerializeField] protected float lifeTime;
-    protected float maxLifetime = 40f;
+    protected float maxLifetime = 20f;
     protected Transform parentTrans;
     public Vector2 direction;
 
@@ -30,6 +30,7 @@ public class BaseBullet : MonoBehaviour
     public void initProj(Vector2 origin, Transform parnet)
     {
         //gets the inital direction 
+        rb.velocity = Vector2.zero;
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
 

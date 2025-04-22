@@ -48,6 +48,8 @@ public class StarPattern : Pattern
             {
                 //add it to some remove list
                 //Destroy(bullet.gameObject);
+                bullet.gameObject.SetActive(false);
+                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -86,11 +88,12 @@ public class StarPattern : Pattern
             GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
             Vector2 directionVector = center - spawnPos;
 
+            dummy.SetActive(true);
+
             dummy.transform.localPosition = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
-            dummy.SetActive(true);
-
+           
 
             var bul = dummy.GetComponent<BaseBullet>();
 
