@@ -83,14 +83,13 @@ public class CirlcePattern : Pattern
 
             Vector2 spawnPos = new Vector2(x, y);
             GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
-
-            dummy.SetActive(true);
-
             
             dummy.transform.position = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
             Vector2 directionVector = center - spawnPos;
+
+            dummy.SetActive(true);
 
             var bul = dummy.GetComponent<BaseBullet>();
 
@@ -117,8 +116,9 @@ public class CirlcePattern : Pattern
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
 
             //Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+            //listToRemoveFrom.RemoveAt(index);
         }
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
         indexes.Clear();
     }
     //this can be used for bombs and other things consider making this a base class for emitters

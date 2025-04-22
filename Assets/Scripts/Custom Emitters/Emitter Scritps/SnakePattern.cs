@@ -80,14 +80,13 @@ public class SnakePattern : Pattern
             Vector2 spawnPos = new Vector2(x, y);
             GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
 
-            dummy.SetActive(true);
-
             Vector2 directionVector = Vector2.down;
 
             dummy.transform.position = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
-           
+            dummy.SetActive(true);
+
             var bul = dummy.GetComponent<BaseBullet>();
 
             //if we want to modify the scaler then do so
@@ -116,8 +115,9 @@ public class SnakePattern : Pattern
             listToRemoveFrom[index].gameObject.SetActive(false);
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
             //Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+           // listToRemoveFrom.RemoveAt(index);
         }
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
         indexes.Clear();
     }
 

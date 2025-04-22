@@ -75,12 +75,14 @@ public class SingleShotPattern : Pattern
 
             var obj = ObjectPool.DequeueObject<BaseBullet>("BaseBullet"); //Instantiate(bullet, (Vector2)this.transform.position, Quaternion.identity
 
-            obj.gameObject.SetActive(true);
+            
 
             obj.transform.position = (Vector2)transform.position;
             obj.transform.rotation = Quaternion.identity;
+
+            obj.gameObject.SetActive(true);
+
             //get the compenet of type
-            
             var comp = obj.GetComponent<BaseBullet>();
 
             if (comp == null)
@@ -111,8 +113,9 @@ public class SingleShotPattern : Pattern
             listToRemoveFrom[index].gameObject.SetActive(false);
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
             //Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+            //listToRemoveFrom.RemoveAt(index);
         }
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
         indexes.Clear();
     }
 

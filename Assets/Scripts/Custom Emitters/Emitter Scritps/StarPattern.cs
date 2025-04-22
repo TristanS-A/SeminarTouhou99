@@ -86,12 +86,10 @@ public class StarPattern : Pattern
             GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
             Vector2 directionVector = center - spawnPos;
 
-            dummy.SetActive(true);
-
             dummy.transform.localPosition = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
-           
+            dummy.SetActive(true);
 
             var bul = dummy.GetComponent<BaseBullet>();
 
@@ -118,15 +116,10 @@ public class StarPattern : Pattern
         {
             
             listToRemoveFrom[index].gameObject.SetActive(false);
-
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
-
-            
-            //ObjectPool.EnqeueObject<BaseBullet>(, "BaseBullet");
-            //Destroy(listToRemoveFrom[index].gameObject);
+            //listToRemoveFrom.RemoveAt(index);
 
         }
-
         listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
         indexes.Clear();
         //listToRemoveFrom.Clear();
