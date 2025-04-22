@@ -14,7 +14,8 @@ public class Streght : BaseBullet
     }
     public override void UpdatePorjectile()
     {
-       direction = direction.normalized;
+        direction = direction.normalized;
+        //Debug.Log("DIRECTION " +  direction);
         this.transform.position += new Vector3(-direction.x * scaler, -direction.y * scaler, 0);
     }
         

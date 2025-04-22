@@ -113,10 +113,12 @@ public class SnakePattern : Pattern
     {
         foreach (int index in indexes)
         {
+            listToRemoveFrom[index].gameObject.SetActive(false);
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
             //Destroy(listToRemoveFrom[index].gameObject);
             listToRemoveFrom.RemoveAt(index);
         }
+        indexes.Clear();
     }
 
 }

@@ -51,9 +51,7 @@ public class CirlcePattern : Pattern
 
             //check bullet life
             if (bullet.getLifeTime() <= 0)
-            {
-                bullet.gameObject.SetActive(false);
-                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
+            { 
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -62,7 +60,7 @@ public class CirlcePattern : Pattern
 
         if (removalIndex.Count > 0)
         {
-            //CleanList(removalIndex, bullets);
+            CleanList(removalIndex, bullets);
         }
 
         if(bullets.Count <= 0)
@@ -88,6 +86,7 @@ public class CirlcePattern : Pattern
 
             dummy.SetActive(true);
 
+            
             dummy.transform.position = spawnPos;
             dummy.transform.rotation = Quaternion.identity;
 
@@ -114,11 +113,13 @@ public class CirlcePattern : Pattern
     {
         foreach (int index in indexes)
         {
+            listToRemoveFrom[index].gameObject.SetActive(false);
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
 
             //Destroy(listToRemoveFrom[index].gameObject);
             listToRemoveFrom.RemoveAt(index);
         }
+        indexes.Clear();
     }
     //this can be used for bombs and other things consider making this a base class for emitters
     //public void ClearBullets()

@@ -29,10 +29,13 @@ public class BaseBullet : MonoBehaviour
     //gets the inial direction and sets the correct orrienction
     public void initProj(Vector2 origin, Transform parnet)
     {
+        Debug.Log("Inited a bullet");
         //gets the inital direction 
         rb.velocity = Vector2.zero;
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
+
+        Debug.Log("Origin " + origin);
 
         parentTrans = parnet;
 

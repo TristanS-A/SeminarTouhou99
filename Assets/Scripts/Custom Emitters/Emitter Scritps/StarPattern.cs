@@ -47,9 +47,7 @@ public class StarPattern : Pattern
             if (bullet.getLifeTime() <= 0)
             {
                 //add it to some remove list
-                //Destroy(bullet.gameObject);
-                bullet.gameObject.SetActive(false);
-                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
+                //Destroy(bullet.gameObject
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -118,10 +116,23 @@ public class StarPattern : Pattern
     {
         foreach (int index in indexes)
         {
+            
+            listToRemoveFrom[index].gameObject.SetActive(false);
+
             ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
+
+            
+            //ObjectPool.EnqeueObject<BaseBullet>(, "BaseBullet");
             //Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+
         }
+
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
+        indexes.Clear();
+        //listToRemoveFrom.Clear();
+
+
+        
     }
 
 }
