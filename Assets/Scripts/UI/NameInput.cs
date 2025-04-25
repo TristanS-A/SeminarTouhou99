@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(TMP_InputField))]
 public class NameInput : MonoBehaviour
 {
     [SerializeField] private GameObject mJoinOptions;
@@ -11,7 +10,7 @@ public class NameInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        TMP_InputField nameField = GetComponent<TMP_InputField>();
+        TMP_InputField nameField = GetComponentInChildren<TMP_InputField>();
         nameField.onSubmit.AddListener(submit);
     }
 
