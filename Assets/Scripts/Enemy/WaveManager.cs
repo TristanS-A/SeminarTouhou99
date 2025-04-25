@@ -19,7 +19,7 @@ public class WaveContainter
 
 public class WaveManager : MonoBehaviour
 {
-    [Tooltip("For have all you need to do to spawn a boss is to leave the list entery blank")]
+    [Tooltip("All you need to do to spawn a boss is to leave the list entery blank")]
     [SerializeField] List<WaveContainter> wave = new();    
     [SerializeField] GameObject midBoss;
     [SerializeField] GameObject finalBoss;
@@ -30,20 +30,34 @@ public class WaveManager : MonoBehaviour
     //will be null unless we are in a boss stage
     Tuple<GameObject, Sequencer> activeBoss;
 
+     public BaseBullet bultPrefab;
+
     float currentTime;
     bool shouldSpawn = true;
     bool bossState = false;
     bool miniBossSpawned = false;
     int waveIndex = 0;
 
+    Vector3 centerPosition = new Vector3(-2.66f, 3.13f, 0f);
+
+    const int POOL_SIZE = 1000;
+
+    Coroutine timeOutTimer;
+
     private void OnEnable()
     {
         EventSystem.WaveStateChange += this.ChangeWaveState;
         EventSystem.OnPlayerDeath += ClearAndDisable;
     }
+    private void Awake()
+    {
+        Debug.Log("setting up pool");
+        ObjectPool.SetUpPool(bultPrefab, POOL_SIZE, "BaseBullet");
+
+    }
     void Start()
     {
-        SpawnEnemy();
+        SpawnEnemy();      
     }
 
     // Update is called once per frame
@@ -139,18 +153,23 @@ public class WaveManager : MonoBehaviour
         {
             toSpawn = finalBoss;
         }
-        var obj = Instantiate(toSpawn, new Vector3(-2.66f, 3.13f, 0f), Quaternion.identity);
+
+        //spawn the object and get its sequencer
+        var obj = Instantiate(toSpawn, centerPosition, Quaternion.identity);
         var objSequencer = obj.GetComponent<Sequencer>();
 
+        //add it to the active boss
         activeBoss = new(obj, objSequencer);
         Debug.Log("Now Spawing Boss");
 
+        //start the boss listener
         StartCoroutine(Co_WaitForBossToDie());
 
-        //if (activeBoss.Item1.GetComponent<TempEnemy>().mEnemyType != TempEnemy.EnemyType.FINAL_BOSS)
-        //{
-        //    StartCoroutine(Co_TimeTillTimeOut());
-        //}
+        //if we are a mini boss or anything else start a time out timer
+        if (activeBoss.Item1.GetComponent<TempEnemy>().mEnemyType != TempEnemy.EnemyType.FINAL_BOSS)
+        {
+            timeOutTimer = StartCoroutine(Co_TimeTillTimeOut());
+        }
     }
 
     //return to regular logic
@@ -168,7 +187,7 @@ public class WaveManager : MonoBehaviour
 
         waveIndex++;
         StartCoroutine(Co_WaitForNextSpawn());
-        StopCoroutine(Co_TimeTillTimeOut());
+        StopCoroutine(timeOutTimer);
         
     }
     bool CheckIfActiveBossDead()

@@ -9,6 +9,7 @@ public class BaseBullet : MonoBehaviour
     [SerializeField] public float scaler = 1.0f;
     [SerializeField] public Vector2 velocity;
     [SerializeField] protected float lifeTime;
+    protected float maxLifetime = 20f;
     protected Transform parentTrans;
     public Vector2 direction;
 
@@ -17,6 +18,7 @@ public class BaseBullet : MonoBehaviour
         rb = this.GetComponent<Rigidbody2D>();
         GetComponent<SpriteRenderer>().sortingOrder = -1;
         rb.isKinematic = true;
+        maxLifetime = lifeTime;
 
     }
     private void Update()
@@ -27,11 +29,17 @@ public class BaseBullet : MonoBehaviour
     //gets the inial direction and sets the correct orrienction
     public void initProj(Vector2 origin, Transform parnet)
     {
+        Debug.Log("Inited a bullet");
         //gets the inital direction 
+        rb.velocity = Vector2.zero;
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
 
+        Debug.Log("Origin " + origin);
+
         parentTrans = parnet;
+
+        lifeTime = maxLifetime;
 
         //does this need to be done here?
         //transform.up = -direction;

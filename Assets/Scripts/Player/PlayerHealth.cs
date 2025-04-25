@@ -105,7 +105,7 @@ public class PlayerHealth : MonoBehaviour {
         if (isDead | isInvincible) return;
 
         if (collision.CompareTag("EnemyBullet")) {
-            TakeDamage(1);
+            //TakeDamage(1);
         }
     }
 }

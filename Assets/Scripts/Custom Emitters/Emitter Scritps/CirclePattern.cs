@@ -51,9 +51,7 @@ public class CirlcePattern : Pattern
 
             //check bullet life
             if (bullet.getLifeTime() <= 0)
-            {
-                //add it to some remove list
-                //Destroy(bullet.gameObject);
+            { 
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -84,9 +82,14 @@ public class CirlcePattern : Pattern
             float y = center.y + radius * (inverted * Mathf.Sin(i));
 
             Vector2 spawnPos = new Vector2(x, y);
-            GameObject dummy = Instantiate(bullet, spawnPos, Quaternion.identity);
+            GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
+            
+            dummy.transform.position = spawnPos;
+            dummy.transform.rotation = Quaternion.identity;
+
             Vector2 directionVector = center - spawnPos;
 
+            dummy.SetActive(true);
 
             var bul = dummy.GetComponent<BaseBullet>();
 
@@ -109,9 +112,14 @@ public class CirlcePattern : Pattern
     {
         foreach (int index in indexes)
         {
-            Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+            listToRemoveFrom[index].gameObject.SetActive(false);
+            ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
+
+            //Destroy(listToRemoveFrom[index].gameObject);
+            //listToRemoveFrom.RemoveAt(index);
         }
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
+        indexes.Clear();
     }
     //this can be used for bombs and other things consider making this a base class for emitters
     //public void ClearBullets()

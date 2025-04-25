@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,7 +47,7 @@ public class StarPattern : Pattern
             if (bullet.getLifeTime() <= 0)
             {
                 //add it to some remove list
-                //Destroy(bullet.gameObject);
+                //Destroy(bullet.gameObject
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -82,9 +83,13 @@ public class StarPattern : Pattern
             float y = center.y + radius * (k - 1) * Mathf.Sin(i) - radius * Mathf.Sin((k - 1) * i);
 
             Vector2 spawnPos = new Vector2(x, y);
-            GameObject dummy = Instantiate(bullet, spawnPos, Quaternion.identity);
+            GameObject dummy = ObjectPool.DequeueObject<BaseBullet>("BaseBullet").gameObject; //Instantiate(bullet, spawnPos, Quaternion.identity);
             Vector2 directionVector = center - spawnPos;
 
+            dummy.transform.localPosition = spawnPos;
+            dummy.transform.rotation = Quaternion.identity;
+
+            dummy.SetActive(true);
 
             var bul = dummy.GetComponent<BaseBullet>();
 
@@ -109,9 +114,18 @@ public class StarPattern : Pattern
     {
         foreach (int index in indexes)
         {
-            Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+            
+            listToRemoveFrom[index].gameObject.SetActive(false);
+            ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
+            //listToRemoveFrom.RemoveAt(index);
+
         }
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
+        indexes.Clear();
+        //listToRemoveFrom.Clear();
+
+
+        
     }
 
 }

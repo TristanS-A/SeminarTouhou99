@@ -37,6 +37,8 @@ public class SingleShotPattern : Pattern
             {
                 //add it to some remove list
                 //Destroy(bullet.gameObject);
+                bullet.gameObject.SetActive(false);
+                ObjectPool.EnqeueObject<BaseBullet>(bullet, "BaseBullet");
                 removalIndex.Add(index);
             }
             //keep track of index for removal
@@ -70,11 +72,17 @@ public class SingleShotPattern : Pattern
 
         for (int i = 0; i < ammountToSpawn; i++)
         {
+
+            var obj = ObjectPool.DequeueObject<BaseBullet>("BaseBullet"); //Instantiate(bullet, (Vector2)this.transform.position, Quaternion.identity
+
             
-            var obj = Instantiate(bullet, (Vector2)this.transform.position, Quaternion.identity);
-            
+
+            obj.transform.position = (Vector2)transform.position;
+            obj.transform.rotation = Quaternion.identity;
+
+            obj.gameObject.SetActive(true);
+
             //get the compenet of type
-            
             var comp = obj.GetComponent<BaseBullet>();
 
             if (comp == null)
@@ -98,14 +106,19 @@ public class SingleShotPattern : Pattern
 
         yield return null;
     }
-    void CleanList(List<int> indexes, List<BaseBullet>listToRemoveFrom)
+    void CleanList(List<int> indexes, List<BaseBullet> listToRemoveFrom)
     {
         foreach (int index in indexes)
         {
-            Destroy(listToRemoveFrom[index].gameObject);
-            listToRemoveFrom.RemoveAt(index);
+            listToRemoveFrom[index].gameObject.SetActive(false);
+            ObjectPool.EnqeueObject<BaseBullet>(listToRemoveFrom[index], "BaseBullet");
+            //Destroy(listToRemoveFrom[index].gameObject);
+            //listToRemoveFrom.RemoveAt(index);
         }
+        listToRemoveFrom.RemoveAll(x => x.gameObject.activeSelf == false);
+        indexes.Clear();
     }
+
     //public void ClearBullets()
     //{
     //    bullets.Clear();

@@ -187,6 +187,7 @@ public class Sequencer : MonoBehaviour
 
     public void CleanSequencer()
     {
+        Debug.Log("Destrying all active emmiters");
         foreach (var emitter in activeEmmiter)
         {
             Destroy(emitter);
@@ -194,6 +195,7 @@ public class Sequencer : MonoBehaviour
     }
     public void ClearAttackList()
     {
+        Debug.Log("Clearing attackList");
         attacks.Clear();
     }
 

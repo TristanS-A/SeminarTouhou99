@@ -57,7 +57,7 @@ public class BaseEnemy : MonoBehaviour
         {
             //the player will have a damage value associated with it
             TakeDamage(PlayerAttacks.bulletDamage);
-            
+
             Destroy(collision.gameObject);
         }
     }
@@ -87,6 +87,7 @@ public class BaseEnemy : MonoBehaviour
             deathAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
             deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
 
+            Debug.Log("Killing Enemy from Base enemey");
             Destroy(gameObject);
         }
     }
@@ -152,14 +153,13 @@ public class BaseEnemy : MonoBehaviour
         return posData;
     }
 
-
-    //when we destroy the object make sure to clear the sequencer so to that the attacks clear
     private void OnDestroy()
     {
-        if(sqe != null)
-        {
-            sqe.ClearAttackList();
-            sqe.CleanSequencer();
-        }
+        //sequener should be clearing its own attacks
+        //if(sqe != null)
+        //{
+        //    sqe.ClearAttackList();
+        //    sqe.CleanSequencer();
+        //}
     }
 }

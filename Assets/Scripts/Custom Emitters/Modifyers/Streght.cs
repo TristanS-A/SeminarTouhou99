@@ -9,9 +9,13 @@ public class Streght : BaseBullet
     void Start()
     { 
         rb.isKinematic = true;
+        maxLifetime = lifeTime;
+        
     }
     public override void UpdatePorjectile()
     {
+        direction = direction.normalized;
+        //Debug.Log("DIRECTION " +  direction);
         this.transform.position += new Vector3(-direction.x * scaler, -direction.y * scaler, 0);
     }
         
