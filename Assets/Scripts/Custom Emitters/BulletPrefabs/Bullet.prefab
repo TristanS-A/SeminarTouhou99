@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -8204144072122718493}
   - component: {fileID: 9161421241968994894}
   - component: {fileID: 2863559415454724865}
+  - component: {fileID: 4005371001153493744}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: EnemyBullet
@@ -175,7 +176,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4285272338807687441}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 5e60e3f06666c914eaf671ad3592c22b, type: 2}
   m_CullingMode: 0
@@ -188,3 +189,53 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4005371001153493744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4285272338807687441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce2c8739c74051498f7144816231d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0.017128835
+      outSlope: 0.017128835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.62069607
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 1
+    m_RotationOrder: 4
+  sprites:
+  - {fileID: -1942255144, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
+  - {fileID: -128581190, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
+  changeTime: 1
+  spriteRenderer: {fileID: 4799933834365827879}
