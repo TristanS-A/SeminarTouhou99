@@ -39,9 +39,15 @@ public static class ObjectPool
     }
     public static void SetUpPool<T>(T pooledSizePrefab, int ammount, string dicEntry) where T : Component
     {
+        if(poolDic.ContainsKey(dicEntry)) {
+            Debug.LogWarning("dict alray has key");
+            ClearPool();
+        }
+
         poolDic.Add(dicEntry, new Queue<Component>());
         poolLookUp.Add(dicEntry, pooledSizePrefab);
 
+       
         for (int i = 0; i < ammount; i++)
         {
             T pooledInstance = Object.Instantiate(pooledSizePrefab);
@@ -49,5 +55,11 @@ public static class ObjectPool
             pooledInstance.transform.position = Vector3.zero;
             poolDic[dicEntry].Enqueue(pooledInstance);
         }
+    }
+    
+    public static void ClearPool() 
+    {
+        poolLookUp.Clear();
+        poolDic.Clear();
     }
 }
