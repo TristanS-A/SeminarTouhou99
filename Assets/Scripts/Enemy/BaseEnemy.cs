@@ -20,6 +20,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] float speed = 3f;
     [SerializeField] bool isBoss = false;
     [SerializeField] GameObject m_DeathAni;
+    [SerializeField] private float mDeathAniScale = 0;
 
     //this needs a sequencer
     Sequencer sqe;
@@ -84,7 +85,16 @@ public class BaseEnemy : MonoBehaviour
             isDead = true;
 
             GameObject deathAni = Instantiate(m_DeathAni, transform.position, Quaternion.identity);
-            deathAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
+
+            if (mDeathAniScale == 0)
+            {
+                deathAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
+            }
+            else
+            {
+                deathAni.transform.localScale = new Vector3(mDeathAniScale, mDeathAniScale, mDeathAniScale);
+            }
+
             deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
 
             Debug.Log("Killing Enemy from Base enemey");

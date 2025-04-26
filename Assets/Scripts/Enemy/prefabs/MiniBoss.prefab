@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.24999999, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 2}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -205,6 +205,8 @@ MonoBehaviour:
   mEnemyType: 1
   sequencer: {fileID: 203904684061855997}
   containter: []
+  m_DeathAni: {fileID: 4210645700210858143, guid: 6adc0073653100c4d8ba80190af63e5b, type: 3}
+  mDeathAniScale: 3
   damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
   deathSound: {fileID: 8300000, guid: fd41a831b15391541808bf2c46c07f2c, type: 3}
   completionTimeBonusList: []

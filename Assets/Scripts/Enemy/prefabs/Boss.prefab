@@ -194,6 +194,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8a59e6cf1ac50284ebe8a25bc46ddb84, type: 2}
     - {fileID: 11400000, guid: 221ee71c47e265e4599f8cd21ce75eba, type: 2}
     - {fileID: 11400000, guid: 2389776872780994a8b05981e8d85a7e, type: 2}
+  m_DeathAni: {fileID: 0}
+  mDeathAniScale: 0
   damageSound: {fileID: 0}
   deathSound: {fileID: 0}
 --- !u!114 &203904684061855997
@@ -239,6 +241,8 @@ MonoBehaviour:
       ammount: 20
   speed: 3
   isBoss: 1
+  m_DeathAni: {fileID: 0}
+  mDeathAniScale: 4
   isAtEnd: 0
   isDead: 0
   damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}

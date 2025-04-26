@@ -36,6 +36,8 @@ public class TempEnemy : MonoBehaviour {
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
+    [SerializeField] private GameObject m_DeathAni;
+    [SerializeField] private float mDeathAniScale = 0;
 
     protected UnityAction StageComplete;
 
@@ -119,6 +121,19 @@ public class TempEnemy : MonoBehaviour {
             DropEvent evt = new(itemToDrop);
             EventSystem.fireEvent(evt);
         }
+
+        GameObject deathAni = Instantiate(m_DeathAni, transform.position, Quaternion.identity);
+
+        if (mDeathAniScale == 0)
+        {
+            deathAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
+        }
+        else
+        {
+            deathAni.transform.localScale = new Vector3(mDeathAniScale, mDeathAniScale, mDeathAniScale);
+        }
+
+        deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
 
         if (mEnemyType == EnemyType.FINAL_BOSS)
         {
