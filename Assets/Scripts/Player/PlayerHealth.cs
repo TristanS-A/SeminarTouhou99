@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour {
     [SerializeField] private GameObject m_GraveStone;
@@ -24,21 +23,18 @@ public class PlayerHealth : MonoBehaviour {
         EventSystem.OnPickUpUpdate += TranslateDropEvent;
         isDead = false;
     }
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         EventSystem.OnPickUpUpdate -= TranslateDropEvent;
     }
 
-    void TranslateDropEvent(DropType drop, int ammount)
-    {
-        switch(drop)
-        {
+    void TranslateDropEvent(DropType drop, int ammount) {
+        switch (drop) {
             case DropType.LIFE:
-                Heal(ammount); 
+                Heal(ammount);
                 break;
         }
-
     }
+
     public void TakeDamage(int damage) {
         // CHECKING IF PLAYER IS ALREADY DEAD
         if (isDead || isInvincible) return;
@@ -105,7 +101,7 @@ public class PlayerHealth : MonoBehaviour {
         if (isDead | isInvincible) return;
 
         if (collision.CompareTag("EnemyBullet")) {
-            //TakeDamage(1);
+            TakeDamage(1);
         }
     }
 }
