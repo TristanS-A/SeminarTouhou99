@@ -285,7 +285,7 @@ MonoBehaviour:
   - enemy: {fileID: 0}
     isCustomTime: 1
     isCustomMoveData: 1
-    timeTillSpawn: 2
+    timeTillSpawn: 3
     pos:
       spawnPosition: {x: -2.58, y: 2.72}
       endPosition: {x: -2.58, y: 2.72}
@@ -341,7 +341,7 @@ MonoBehaviour:
   - enemy: {fileID: 0}
     isCustomTime: 1
     isCustomMoveData: 0
-    timeTillSpawn: 0
+    timeTillSpawn: 1
     pos:
       spawnPosition: {x: -2.58, y: 2.72}
       endPosition: {x: -2.58, y: 2.72}
@@ -807,6 +807,7 @@ MonoBehaviour:
   m_CloudPanelPrefab: {fileID: 7620956154152908413, guid: e698821230c225d4fa392098ca3ebc2b, type: 3}
   m_BackgroundSprites:
   - {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
+  - {fileID: 21300000, guid: f0e3df65ccf5df144971f78abab6a452, type: 3}
   - {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
   m_CloudLevelSprites:
   - {fileID: 21300000, guid: fcf751f037a6bf24ab8f60a5384b6bac, type: 3}
@@ -816,6 +817,12 @@ MonoBehaviour:
   - transitionImage: {fileID: 21300000, guid: 91b5f0363d59f7a45b0dbd12b10a3a5a, type: 3}
     to: {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
     from: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
+  - transitionImage: {fileID: 21300000, guid: 991b36e48a993a64581939fc46037d50, type: 3}
+    to: {fileID: 21300000, guid: f0e3df65ccf5df144971f78abab6a452, type: 3}
+    from: {fileID: 21300000, guid: a345f193f3f09e947a0b5ade98f4cd3d, type: 3}
+  - transitionImage: {fileID: 21300000, guid: ac7542ac2c1779743a1f04dd11a5a930, type: 3}
+    to: {fileID: 21300000, guid: 920de6c2909a16145a100134073e0478, type: 3}
+    from: {fileID: 21300000, guid: f0e3df65ccf5df144971f78abab6a452, type: 3}
 --- !u!4 &247487442
 Transform:
   m_ObjectHideFlags: 0

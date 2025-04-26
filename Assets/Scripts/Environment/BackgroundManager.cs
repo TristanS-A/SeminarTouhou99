@@ -231,7 +231,7 @@ public class BackgroundManager : MonoBehaviour
         }
         else
         {
-            newCloudLevel = m_BackgroundSprites[newCloudLevelIndex];
+            newCloudLevel = m_CloudLevelSprites[newCloudLevelIndex];
         }
 
         if (newCloudShadowLevelIndex < 0)
@@ -240,7 +240,7 @@ public class BackgroundManager : MonoBehaviour
         }
         else
         {
-            newCloudShadowLevel = m_BackgroundSprites[newCloudShadowLevelIndex];
+            newCloudShadowLevel = m_CloudShadowSprites[newCloudShadowLevelIndex];
         }
 
         Sprite transitionImage = mTransitionMap[mBGPanel1.GetComponent<SpriteRenderer>().sprite.name + newBackground.name];

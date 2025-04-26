@@ -87,8 +87,17 @@ public class WaveManager : MonoBehaviour
                 return;
             }
 
+            if (enemyToSpawn.isCustomTime)
+            {
+                currentTime = enemyToSpawn.timeTillSpawn;
+            }
+            else
+            {
+                currentTime = 0;
+            }
+
             //we need to see if we have a break inorder to spawn a boss/midStage
-            if(enemyToSpawn.enemy == null)
+            if (enemyToSpawn.enemy == null)
             {
                ChangeWaveState(true);
                 return;
@@ -103,15 +112,19 @@ public class WaveManager : MonoBehaviour
             //add it to the active list
             activeList.Add(new(obj, mov));
 
-            Debug.Log("spawned enemy");
-
-            if(enemyToSpawn.isCustomTime)
+            if (wave.Count > waveIndex + 1)
             {
-                currentTime = enemyToSpawn.timeTillSpawn;
-            }
-            else
-            {
-                currentTime = 0;
+                if (wave[waveIndex + 1].enemy == null)
+                {
+                    if (!miniBossSpawned)
+                    {
+                        EventSystem.TransitionBGEvent(1, 0, 0);
+                    }
+                    else
+                    {
+                        EventSystem.TransitionBGEvent(2, -1, -1);
+                    }
+                }
             }
 
             StartCoroutine(Co_WaitForNextSpawn());
@@ -133,11 +146,6 @@ public class WaveManager : MonoBehaviour
         }
         else
         {
-            if(!miniBossSpawned) 
-            {
-                EventSystem.TransitionBGEvent(1, -1, -1);
-            }
-
             StartCoroutine(Co_WaitTillActivesEmpty());
         }
     }
@@ -197,6 +205,7 @@ public class WaveManager : MonoBehaviour
     
     IEnumerator Co_WaitTillActivesEmpty()
     {
+        yield return new WaitUntil(ReadyToSpawnNextEnemy);
         yield return new WaitUntil(CheckActivesForEmpty);
         SpawnBoss();
     }
