@@ -38,6 +38,7 @@ public class TempEnemy : MonoBehaviour {
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
     [SerializeField] private GameObject m_DeathAni;
     [SerializeField] private float mDeathAniScale = 0;
+    [SerializeField] private Sprite mDeathAniSprite;
 
     protected UnityAction StageComplete;
 
@@ -101,7 +102,7 @@ public class TempEnemy : MonoBehaviour {
                 // KILLS ENEMY :)
                 SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
 
-                StartCoroutine(DelayKillForSound(1f));
+                Kill();
             }
         }
     }
@@ -133,29 +134,53 @@ public class TempEnemy : MonoBehaviour {
             deathAni.transform.localScale = new Vector3(mDeathAniScale, mDeathAniScale, mDeathAniScale);
         }
 
+        if (mDeathAniSprite != null)
+        {
+            SpriteRenderer[] sRenderers = deathAni.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sRenderer in sRenderers)
+            {
+                sRenderer.sprite = mDeathAniSprite;
+            }
+        }
+
         deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
 
         if (mEnemyType == EnemyType.FINAL_BOSS)
         {
-            //Lazy
-            GameObject playerOBJ = GameObject.FindGameObjectWithTag("Player");
+            Destroy(sequencer);
 
-            //Handles sending win data event for other handling of a player win (from client)
-            //The z = 2 makes the grave show up in front the bullets
-            EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, -2));
+            Destroy(GetComponentInChildren<BoxCollider2D>());
 
-            //Finishes the level and triggers the sending of result data
-            EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+            SpriteRenderer[] sRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sRenderer in sRenderers)
+            {
+                sRenderer.enabled = false;
+            }
 
-            Destroy(this.gameObject);
+            StartCoroutine(Co_DelaySendData());
         }
 
         else if (mEnemyType == EnemyType.MID_BOSS)
         {
             Destroy(this.gameObject);
         }
-        
+    }
 
+    private IEnumerator Co_DelaySendData()
+    {
+        yield return new WaitForSeconds(2.0f);
+
+        //Lazy
+        GameObject playerOBJ = GameObject.FindGameObjectWithTag("Player");
+
+        //Handles sending win data event for other handling of a player win (from client)
+        //The z = 2 makes the grave show up in front the bullets
+        EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, -2));
+
+        //Finishes the level and triggers the sending of result data
+        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+
+        Destroy(this.gameObject);
     }
 
     public void Revive() {

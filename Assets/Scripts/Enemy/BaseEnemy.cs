@@ -21,6 +21,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] bool isBoss = false;
     [SerializeField] GameObject m_DeathAni;
     [SerializeField] private float mDeathAniScale = 0;
+    [SerializeField] private Sprite mDeathAniSprite;
 
     //this needs a sequencer
     Sequencer sqe;
@@ -93,6 +94,11 @@ public class BaseEnemy : MonoBehaviour
             else
             {
                 deathAni.transform.localScale = new Vector3(mDeathAniScale, mDeathAniScale, mDeathAniScale);
+            }
+
+            if (mDeathAniSprite != null)
+            {
+                deathAni.GetComponent<SpriteRenderer>().sprite = mDeathAniSprite;
             }
 
             deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
