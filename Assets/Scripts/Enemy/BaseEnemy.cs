@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,6 +37,9 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] private AudioClip damageSound;
     [SerializeField] private AudioClip deathSound;
 
+    //Bool to not play multiple bullet sfx sounds at once (this would make audio sound bad)
+    private bool mPlayDamageSFX = true;
+
     void Start()
     {
         sqe = GetComponent<Sequencer>();
@@ -66,16 +70,20 @@ public class BaseEnemy : MonoBehaviour
 
     protected void TakeDamage(float damadge)
     {
+        if (isDead) { return; }
+
         health -= damadge;
-        if (health > 0) 
+        if (health > 0 && mPlayDamageSFX) 
         {
             SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
+            mPlayDamageSFX = false;
+            StartCoroutine(Co_ResetPlayDamageSFX());
         } 
         if (health <= 0)
         {
             SoundManager.Instance.PlaySFXClip(deathSound, transform, 1f);
+            Destroy(gameObject.GetComponent<BoxCollider2D>());
 
-            gameObject.GetComponent<Collider2D>().enabled = false;
             //trigger drop event
             DropEvent evt = new DropEvent(dropType);
             dropType.SetLocation(this.transform.position);
@@ -107,6 +115,13 @@ public class BaseEnemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private IEnumerator Co_ResetPlayDamageSFX()
+    {
+        yield return new WaitForSeconds(0.05f);
+        mPlayDamageSFX = true;
+    }
+
     public bool ShouldDestroy()
     {
         if (isAtEnd && sqe.GetIfAtEnd())

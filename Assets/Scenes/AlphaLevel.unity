@@ -341,7 +341,7 @@ MonoBehaviour:
   - enemy: {fileID: 0}
     isCustomTime: 1
     isCustomMoveData: 0
-    timeTillSpawn: 1
+    timeTillSpawn: 8
     pos:
       spawnPosition: {x: -2.58, y: 2.72}
       endPosition: {x: -2.58, y: 2.72}

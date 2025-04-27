@@ -30,6 +30,11 @@ public class ResultsDisplay : MonoBehaviour
         EventSystem.onReceiveResult -= InsertResult;
     }
 
+    private void Start()
+    {
+        SoundManager.Instance.PlayMusic(2);
+    }
+
     private void InsertResult(ClientHandler.PlayerSendResultData result)
     {
         if (!mStoredIDs.Contains(result.playerID))

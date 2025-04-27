@@ -49,6 +49,9 @@ public class TempEnemy : MonoBehaviour {
     [SerializeField] private AudioClip damageSound;
     [SerializeField] private AudioClip deathSound;
 
+    //Bool to not play multiple bullet sfx sounds at once (this would make audio sound bad)
+    private bool mPlayDamageSFX = true;
+
     private void Start() 
     {
         Init();
@@ -76,7 +79,13 @@ public class TempEnemy : MonoBehaviour {
         // DEALS DAMAGE & KEEPS IN APPROPIATE RANGE
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, stages[stage].maxHealth);
-        SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
+
+        if (mPlayDamageSFX)
+        { 
+            SoundManager.Instance.PlaySFXClip(damageSound, transform, 1f);
+            mPlayDamageSFX = false;
+            StartCoroutine(Co_ResetPlayDamageSFX());
+        }
 
         Debug.Log(" TAKE DAMADGE " + currentHealth);
         // CALLS EVENT FOR UI
@@ -105,6 +114,12 @@ public class TempEnemy : MonoBehaviour {
                 Kill();
             }
         }
+    }
+
+    private IEnumerator Co_ResetPlayDamageSFX()
+    {
+        yield return new WaitForSeconds(0.05f);
+        mPlayDamageSFX = true;
     }
 
     //I think this naming is wrong?
