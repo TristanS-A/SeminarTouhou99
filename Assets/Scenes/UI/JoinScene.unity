@@ -2889,6 +2889,10 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 527505817}
+    - target: {fileID: 2393543548274831535, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3356615756152944620, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
       propertyPath: m_Value
       value: 0.6312265
@@ -2989,6 +2993,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8454486030654273907, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: mainScreenPanel
+      value: 
+      objectReference: {fileID: 1724115638}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

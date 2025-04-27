@@ -16,7 +16,7 @@ public class OptionsMenu : MonoBehaviour {
     [Header("Temp Fix")]
     [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private GameObject optionPanel;
-    [SerializeField] private Button lobbyButton, optionButton;
+    [SerializeField] private Button lobbyButton, optionButton, creditsButton;
 
     private void Awake() {
         SwitchPanelByIndex(currentIndex);
@@ -51,6 +51,7 @@ public class OptionsMenu : MonoBehaviour {
         lobbyPanel.SetActive(true);
         optionButton.gameObject.SetActive(true);
         lobbyButton.gameObject.SetActive(false);
+        creditsButton.gameObject.SetActive(true);
     }
 
     public void HideLobbyPanel() {
@@ -58,5 +59,6 @@ public class OptionsMenu : MonoBehaviour {
         optionPanel.SetActive(true);
         optionButton.gameObject.SetActive(false);
         lobbyButton.gameObject.SetActive(true);
+        creditsButton.gameObject.SetActive(false);
     }
 }
