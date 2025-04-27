@@ -61,6 +61,9 @@ public class BackgroundManager : MonoBehaviour
 
         BuildTransitionConnections();
 
+        //Starts level music
+        SoundManager.Instance.PlayMusic(1);
+
         //StartCoroutine(Co_TriggerTransition());
     }
 

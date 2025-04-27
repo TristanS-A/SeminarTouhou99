@@ -1660,6 +1660,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 649980469925669577, guid: 70d271bcd787a244aafff9471976b659, type: 3}
+      propertyPath: mMusicPlayer
+      value: 
+      objectReference: {fileID: 123029616}
+    - target: {fileID: 649980469925669577, guid: 70d271bcd787a244aafff9471976b659, type: 3}
+      propertyPath: mMusics.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 649980469925669577, guid: 70d271bcd787a244aafff9471976b659, type: 3}
+      propertyPath: mMusics.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: f09208eaea666d5429e6237d368203f5, type: 3}
+    - target: {fileID: 649980469925669577, guid: 70d271bcd787a244aafff9471976b659, type: 3}
+      propertyPath: mMusics.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 5f42867fd0320874db1034c98d287510, type: 3}
+    - target: {fileID: 649980469925669577, guid: 70d271bcd787a244aafff9471976b659, type: 3}
+      propertyPath: mMusics.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 942aba8347201b64980c238e8780127a, type: 3}
     - target: {fileID: 1900661557311608340, guid: 70d271bcd787a244aafff9471976b659, type: 3}
       propertyPath: m_Name
       value: SoundManager
@@ -2869,6 +2889,10 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 527505817}
+    - target: {fileID: 3356615756152944620, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_Value
+      value: 0.6312265
+      objectReference: {fileID: 0}
     - target: {fileID: 3356615756152944620, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

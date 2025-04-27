@@ -128,6 +128,8 @@ public class ServerHandler : MonoBehaviour
         };
 
         utils.SetDebugCallback(DebugType.Everything, debugCallback);
+
+        SoundManager.Instance.PlayMusic(0);
     }
 
     //Handles closing of netorking lib and connections

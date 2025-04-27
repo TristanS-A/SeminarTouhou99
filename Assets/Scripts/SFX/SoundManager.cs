@@ -17,6 +17,8 @@ public class SoundManager : MonoBehaviour {
     }
     private static SoundManager singleton;
     [SerializeField] private AudioSource sfx;
+    [SerializeField] private AudioSource mMusicPlayer;
+    [SerializeField] private List<AudioClip> mMusics = new();
 
     private void Awake() {
         if (Instance != null) {
@@ -26,6 +28,7 @@ public class SoundManager : MonoBehaviour {
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(mMusicPlayer);
     }
 
     private void OnDestroy() {
@@ -61,5 +64,12 @@ public class SoundManager : MonoBehaviour {
 
             Destroy(audio.gameObject, duration);
         }
+    }
+
+    public void PlayMusic(int musicIndex)
+    {
+        mMusicPlayer.Stop();
+        mMusicPlayer.clip = mMusics[musicIndex];
+        mMusicPlayer.Play();
     }
 }
