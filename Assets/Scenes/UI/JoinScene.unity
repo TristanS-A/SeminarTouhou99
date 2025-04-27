@@ -1568,6 +1568,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a13fe79b6333f34686b1fa28d3ef017, type: 3}
+--- !u!114 &957653860 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6368599006971834627, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+  m_PrefabInstance: {fileID: 6568874285075721715}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &999194203
 GameObject:
   m_ObjectHideFlags: 0
@@ -2696,6 +2707,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mWiggleStrength: 2
   mWiggleSpeed: 3
+--- !u!114 &1896190699 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3356615756152944620, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+  m_PrefabInstance: {fileID: 6568874285075721715}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1938901412 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 327856027832461778, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+  m_PrefabInstance: {fileID: 6568874285075721715}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2063003491
 GameObject:
   m_ObjectHideFlags: 0
@@ -2889,6 +2922,10 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 527505817}
+    - target: {fileID: 560726824152058780, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2393543548274831535, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2905,6 +2942,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: SettingsUI
       objectReference: {fileID: 0}
+    - target: {fileID: 4058013355298102776, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4093450929911932690, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_SFX
+      value: 
+      objectReference: {fileID: 1938901412}
+    - target: {fileID: 4093450929911932690, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_Music
+      value: 
+      objectReference: {fileID: 1896190699}
+    - target: {fileID: 4093450929911932690, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
+      propertyPath: m_Master
+      value: 
+      objectReference: {fileID: 957653860}
     - target: {fileID: 4093450929911932690, guid: 7a6b4a4d0d9e57c4bad0c5c42c60e75f, type: 3}
       propertyPath: lobbyPanel
       value: 

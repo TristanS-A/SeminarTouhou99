@@ -20,10 +20,16 @@ public class PlayerHealth : MonoBehaviour {
     private void Start() {
         currentHealth = maxHealth;
         EventSystem.HealthUpdate(currentHealth);
-        EventSystem.OnPickUpUpdate += TranslateDropEvent;
         isDead = false;
     }
-    private void OnDestroy() {
+
+    private void OnEnable()
+    {
+        EventSystem.OnPickUpUpdate += TranslateDropEvent;
+    }
+
+    private void OnDisable()
+    {
         EventSystem.OnPickUpUpdate -= TranslateDropEvent;
     }
 
@@ -80,20 +86,25 @@ public class PlayerHealth : MonoBehaviour {
         //Fires event to handle other on player death stuff
         EventSystem.PlayerDeath();
         EventSystem.SendPlayerDeathData(true, new Vector3(transform.position.x, transform.position.y, 1));
-        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_DIED);
 
         Debug.Log("Player died");
 
         //Simple way of dissabling visuals for kill delay
-        //gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        //SpriteRenderer[] sRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        SpriteRenderer[] sRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
 
-        //foreach (SpriteRenderer sRenderer in sRenderers)
-        //{
-        //    sRenderer.enabled = false;
-        //}
+        foreach (SpriteRenderer sRenderer in sRenderers)
+        {
+            sRenderer.enabled = false;
+        }
 
-        //Just add a way to imediately not end the level when player dies
+        StartCoroutine(Co_DelayDeath());
+    }
+
+    private IEnumerator Co_DelayDeath()
+    {
+        yield return new WaitForSeconds(2.0f);
+        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_DIED);
         Destroy(gameObject);
     }
 

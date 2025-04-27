@@ -17,9 +17,17 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private GameObject optionPanel;
     [SerializeField] private Button lobbyButton, optionButton, creditsButton;
+    [SerializeField] private Slider m_Master, m_SFX, m_Music;
 
     private void Awake() {
         SwitchPanelByIndex(currentIndex);
+    }
+
+    private void Start()
+    {
+        m_Master.onValueChanged.AddListener(SoundMixerManager.Instance.SetMasterVolume);
+        m_SFX.onValueChanged.AddListener(SoundMixerManager.Instance.SetSoundEffectsVolume);
+        m_Music.onValueChanged.AddListener(SoundMixerManager.Instance.SetMusicVolume);
     }
 
     private void ActivatePanel(GameObject panelToActivate, Func<GameObject> GetStartElement) {
