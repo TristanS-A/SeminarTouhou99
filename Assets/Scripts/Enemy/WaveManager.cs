@@ -23,7 +23,7 @@ public class WaveManager : MonoBehaviour
     [SerializeField] List<WaveContainter> wave = new();    
     [SerializeField] GameObject midBoss;
     [SerializeField] GameObject finalBoss;
-    [SerializeField] float timeOutTime = 30f;
+    [SerializeField] float timeOutTime = 60f;
 
     List<Tuple<GameObject, BaseEnemy>> activeList = new();
 
