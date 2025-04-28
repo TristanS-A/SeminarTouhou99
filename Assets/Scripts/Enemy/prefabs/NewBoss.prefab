@@ -235,7 +235,7 @@ MonoBehaviour:
   mDeathAniScale: 3
   mDeathAniSprite: {fileID: -872522969, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
   damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
-  deathSound: {fileID: 8300000, guid: d6617ee5d52fb504a8c573a694a6ae79, type: 3}
+  deathSound: {fileID: 8300000, guid: a9cb83eae1a701d478dc642581a79a07, type: 3}
   completionTimeBonusList:
   - bonusPoints: 20
     timeToCompleteIn: 48
@@ -251,6 +251,9 @@ MonoBehaviour:
     - {x: -5.34, y: -3.58}
     - {x: -0.02, y: -3.58}
     - {x: -0.04, y: 3.59}
+  mIntroAniSprite: {fileID: 1799742358, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
+  mIntroAniScale: 5.5
+  m_BossSpawnSFX: {fileID: 8300000, guid: 4ebc0b76767affd458832322f669363d, type: 3}
 --- !u!95 &-212757348724009119
 Animator:
   serializedVersion: 5

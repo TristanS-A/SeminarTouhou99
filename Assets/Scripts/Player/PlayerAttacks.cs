@@ -65,6 +65,8 @@ public class PlayerAttacks : MonoBehaviour {
         offensiveBombCount = maxOffensiveBombs;
         EventSystem.DefensiveBombAttack(defensiveBombCount);
         EventSystem.OffensiveBombAttackUI(offensiveBombCount);
+
+        bulletDamage = 1;
     }
 
     void Update() {

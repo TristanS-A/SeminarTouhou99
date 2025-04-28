@@ -36,9 +36,13 @@ public class TempEnemy : MonoBehaviour {
 
     [SerializeField] private Sequencer sequencer;
     [SerializeField] List<SequeceContainer> containter = new List<SequeceContainer>();
-    [SerializeField] private GameObject m_DeathAni;
+    [SerializeField] protected GameObject m_DeathAni;
     [SerializeField] private float mDeathAniScale = 0;
     [SerializeField] private Sprite mDeathAniSprite;
+
+    [SerializeField] private Sprite mIntroAniSprite;
+    [SerializeField] private float mIntroAniScale;
+    [SerializeField] private AudioClip m_BossSpawnSFX;
 
     protected UnityAction StageComplete;
 
@@ -70,6 +74,28 @@ public class TempEnemy : MonoBehaviour {
         // WILL NYE THE SCIENCE GUY <-- this is fire
         sequencer = gameObject.GetComponent<Sequencer>();
         sequencer.SpawnEmmiter();
+
+        GameObject introAni = Instantiate(m_DeathAni, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1), Quaternion.identity);
+
+        if (mIntroAniScale == 0)
+        {
+            introAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
+        }
+        else
+        {
+            introAni.transform.localScale = new Vector3(mIntroAniScale, mIntroAniScale, mIntroAniScale);
+        }
+
+        if (mIntroAniSprite != null)
+        {
+            SpriteRenderer[] sRenderers = introAni.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sRenderer in sRenderers)
+            {
+                sRenderer.sprite = mIntroAniSprite;
+            }
+        }
+
+        SoundManager.Instance.PlaySFXClip(m_BossSpawnSFX, transform, 1f);
     }
 
     public void TakeDamage(int stage, int damage) {
