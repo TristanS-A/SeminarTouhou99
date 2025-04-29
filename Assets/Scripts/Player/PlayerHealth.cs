@@ -17,10 +17,6 @@ public class PlayerHealth : MonoBehaviour {
     [SerializeField] private AudioClip healSound;
     [SerializeField] private AudioClip deathSound;
 
-    [SerializeField] GameObject m_DeathAni;
-    [SerializeField] private float mDeathAniScale = 0;
-    [SerializeField] private Sprite mDeathAniSprite;
-
     private void Start() {
         currentHealth = maxHealth;
         EventSystem.HealthUpdate(currentHealth);
@@ -103,28 +99,6 @@ public class PlayerHealth : MonoBehaviour {
         }
 
         EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_DIED);
-
-        GameObject deathAni = Instantiate(m_DeathAni, transform.position, Quaternion.identity);
-
-        if (mDeathAniScale == 0)
-        {
-            deathAni.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x, transform.localScale.x);
-        }
-        else
-        {
-            deathAni.transform.localScale = new Vector3(mDeathAniScale, mDeathAniScale, mDeathAniScale);
-        }
-
-        if (mDeathAniSprite != null)
-        {
-            sRenderers = deathAni.GetComponentsInChildren<SpriteRenderer>();
-            foreach (SpriteRenderer sRenderer in sRenderers)
-            {
-                sRenderer.sprite = mDeathAniSprite;
-            }
-        }
-
-        deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
 
         Destroy(gameObject);
     }

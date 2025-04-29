@@ -1148,6 +1148,9 @@ MonoBehaviour:
   m_SpriteMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   m_HoloMat: {fileID: 2100000, guid: 3433602beaa39a24991e0ad0c5d50d97, type: 2}
   m_Confetti: {fileID: 6087239232231171050, guid: 18441fff972bbd54ea0cd9ac7bb1c5bf, type: 3}
+  m_DeathAni: {fileID: 4210645700210858143, guid: 6adc0073653100c4d8ba80190af63e5b, type: 3}
+  mDeathAniScale: 1
+  mDeathAniSprite: {fileID: 1855582269, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
 --- !u!1 &657400113
 GameObject:
   m_ObjectHideFlags: 0
@@ -1805,6 +1808,9 @@ MonoBehaviour:
   m_SpriteMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   m_HoloMat: {fileID: 2100000, guid: 3433602beaa39a24991e0ad0c5d50d97, type: 2}
   m_Confetti: {fileID: 6087239232231171050, guid: 18441fff972bbd54ea0cd9ac7bb1c5bf, type: 3}
+  m_DeathAni: {fileID: 4210645700210858143, guid: 6adc0073653100c4d8ba80190af63e5b, type: 3}
+  mDeathAniScale: 1
+  mDeathAniSprite: {fileID: 1855582269, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
 --- !u!1 &1428829985
 GameObject:
   m_ObjectHideFlags: 0

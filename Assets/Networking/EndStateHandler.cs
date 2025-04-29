@@ -10,6 +10,10 @@ public class EndStateHandler : MonoBehaviour
 
     [SerializeField] private GameObject m_Confetti;
 
+    [SerializeField] GameObject m_DeathAni;
+    [SerializeField] private float mDeathAniScale = 1;
+    [SerializeField] private Sprite mDeathAniSprite;
+
     private void OnEnable()
     {
         EventSystem.OnPlayerDie += HandlePlayerDies;
@@ -36,6 +40,27 @@ public class EndStateHandler : MonoBehaviour
 
         GameObject grave = Instantiate(m_GraveStone, deathPos, Quaternion.identity);
         grave.GetComponentInChildren<Renderer>().material = graveMat;
+
+        GameObject deathAni = Instantiate(m_DeathAni, deathPos, Quaternion.identity);
+
+        deathAni.transform.localScale = new Vector3(mDeathAniScale, mDeathAniScale, mDeathAniScale);
+
+        if (mDeathAniSprite != null)
+        {
+            SpriteRenderer[] sRenderers = deathAni.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sRenderer in sRenderers)
+            {
+                sRenderer.sprite = mDeathAniSprite;
+            }
+        }
+
+        deathAni.transform.eulerAngles = new Vector3(0, 0, UnityEngine.Random.Range(0, 180));
+
+        Renderer[] sMaterials = deathAni.GetComponentsInChildren<Renderer>();
+        foreach (Renderer sMaterial in sMaterials)
+        {
+            sMaterial.material = graveMat;
+        }
     }
 
     public void HandlePlayerWins(bool isOwningPlayer, Vector3 winPos)
