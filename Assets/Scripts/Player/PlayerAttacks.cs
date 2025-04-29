@@ -59,7 +59,6 @@ public class PlayerAttacks : MonoBehaviour {
 
     private void Start() {
         playerMovement = GetComponent<PlayerMovement>();
-        target = GameObject.FindGameObjectWithTag("Enemy").transform;
 
         defensiveBombCount = maxDefensiveBombs;
         offensiveBombCount = maxOffensiveBombs;
