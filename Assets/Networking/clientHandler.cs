@@ -380,7 +380,7 @@ public class ClientHandler : MonoBehaviour
                         switch ((EventType.EventTypes)gameStateData.gameState)
                         {
                             case EventType.EventTypes.START_GAME:
-                                SceneManager.LoadScene(3);
+                                Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 3;
                                 break;
                             case EventType.EventTypes.GAME_FINISHED:
                                 SceneManager.LoadScene(4);

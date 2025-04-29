@@ -16,6 +16,8 @@ public class ButtonHandler : MonoBehaviour
     [SerializeField] private Button mButton;
     [SerializeField] private bool mOnlyServerButton;
 
+    [SerializeField] private GameObject m_SceneTransition;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,8 +39,7 @@ public class ButtonHandler : MonoBehaviour
 
     private void StartGame()
     {
-        //Goes to game scene
-        SceneManager.LoadScene(3);
+        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 3;
     }
 
     private void GoToMainMenu()
