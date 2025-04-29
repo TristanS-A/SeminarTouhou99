@@ -2694,6 +2694,7 @@ MonoBehaviour:
   mButtonType: 1
   mButton: {fileID: 1507789053}
   mOnlyServerButton: 0
+  m_SceneTransition: {fileID: 710756667194598483, guid: dc4ebcf92cacdd249a822c81cdfdea66, type: 3}
 --- !u!114 &1507789053
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -51,6 +51,6 @@ public class ButtonHandler : MonoBehaviour
         PlayerInfo.ResetPlayerPointInfo();
 
         //Goes to main menu scene
-        SceneManager.LoadScene(0);
+        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 0;
     }
 }
