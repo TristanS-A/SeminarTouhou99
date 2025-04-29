@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5546967965176595841}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.72, y: -5.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -121,6 +121,7 @@ MonoBehaviour:
   playerSequencer: {fileID: 8862979761039350806}
   m_OffensiveBombVFX: {fileID: 414716150398247239, guid: 00861e6379043914b92a0d8dbf26aa24, type: 3}
   m_DefensiveBombVFX: {fileID: 3398896794433718801, guid: 69774f5c73eb78c4db3c615ab22ba785, type: 3}
+  offensiveBombSFX: {fileID: 8300000, guid: 4e73a7a0fedc50c4eabbab12bae57b18, type: 3}
 --- !u!95 &-3442163939563542892
 Animator:
   serializedVersion: 5

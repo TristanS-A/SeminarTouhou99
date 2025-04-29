@@ -204,7 +204,7 @@ public class TempEnemy : MonoBehaviour {
 
             //Handles sending win data event for other handling of a player win (from client)
             //The z = 2 makes the grave show up in front the bullets
-            EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, -2));
+            EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, playerOBJ.transform.position.z));
 
             //Finishes the level and triggers the sending of result data
             EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);

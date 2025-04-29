@@ -8,6 +8,7 @@ public class HologramPlayer : MonoBehaviour
     [SerializeField] private Sequencer playerSequencer;
     [SerializeField] private GameObject m_OffensiveBombVFX;
     [SerializeField] private GameObject m_DefensiveBombVFX;
+    [SerializeField] private AudioClip offensiveBombSFX;
     private int attackIndex = 0;
 
     public void SpawnOffensiveBomb(Vector2 pos)
@@ -19,8 +20,8 @@ public class HologramPlayer : MonoBehaviour
         GameObject bombVFX = Instantiate(m_OffensiveBombVFX, pos, Quaternion.identity);
         bombVFX.GetComponent<VisualEffect>().SetBool("ShouldBeHologram", true);
 
+        SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
         StartCoroutine(TurnOffSequencer(playerSequencer.GetAttacks[attackIndex].GetCustomLifeTime()));
-        Debug.Log("HERE");
     }
 
     // Waits for the lifetime of the AttackData, disables the sequencer, cleans and increments to next index

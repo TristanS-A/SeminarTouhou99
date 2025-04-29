@@ -80,6 +80,8 @@ public class ServerHandler : MonoBehaviour
     //Debug mode for running multiple games on a single computer
     [SerializeField] private bool mDebugMode = false;
 
+    [SerializeField] private GameObject m_SceneTransition;
+
     public enum GameState
     {
         NONE,
@@ -264,7 +266,7 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleGameFinish()
     {
-        SceneManager.LoadScene(4);
+        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 4;
         mGameState = GameState.RESULTS_SCREEN;
 
         if (server != null)
