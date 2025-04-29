@@ -149,7 +149,8 @@ public class TempEnemy : MonoBehaviour {
     }
 
     //I think this naming is wrong?
-    protected virtual void Kill() {
+    protected virtual void Kill()
+    {
         Debug.Log("Killed");
         IsDead = true;
         sequencer.ClearAttackList();
@@ -198,30 +199,23 @@ public class TempEnemy : MonoBehaviour {
                 sRenderer.enabled = false;
             }
 
-            StartCoroutine(Co_DelaySendData());
+            //Lazy
+            GameObject playerOBJ = GameObject.FindGameObjectWithTag("Player");
+
+            //Handles sending win data event for other handling of a player win (from client)
+            //The z = 2 makes the grave show up in front the bullets
+            EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, -2));
+
+            //Finishes the level and triggers the sending of result data
+            EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
+
+            Destroy(this.gameObject);
         }
 
         else if (mEnemyType == EnemyType.MID_BOSS)
         {
             Destroy(this.gameObject);
         }
-    }
-
-    private IEnumerator Co_DelaySendData()
-    {
-        yield return new WaitForSeconds(2.0f);
-
-        //Lazy
-        GameObject playerOBJ = GameObject.FindGameObjectWithTag("Player");
-
-        //Handles sending win data event for other handling of a player win (from client)
-        //The z = 2 makes the grave show up in front the bullets
-        EventSystem.SendPlayerWinData(true, new Vector3(playerOBJ.transform.position.x, playerOBJ.transform.position.y, -2));
-
-        //Finishes the level and triggers the sending of result data
-        EventSystem.SendPlayerResultData(ServerHandler.ResultContext.PLAYER_WON);
-
-        Destroy(this.gameObject);
     }
 
     public void Revive() {
