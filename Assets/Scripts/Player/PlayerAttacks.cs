@@ -31,7 +31,7 @@ public class PlayerAttacks : MonoBehaviour {
 
     [Header("Offensive Bomb")]
     [SerializeField] private int maxOffensiveBombs = 3;
-    [SerializeField] private float offensiveBombDelay = 1;
+    [SerializeField] private float offensiveBombDelay = 5.0f;
     private int offensiveBombCount;
     private int attackIndex = 0;
     private bool isOffensiveBombDelayed = false;
@@ -161,7 +161,19 @@ public class PlayerAttacks : MonoBehaviour {
     // Each bomb enables the sequencer on trigger and based on the lifetime of the attack will spawn and then disable, incrementing to the next index
     private void HandleOffensiveBomb(int cost) {
         if (!isOffensiveBombDelayed) {
-            StartCoroutine(DelayOffensiveBomb(offensiveBombDelay, cost));
+            if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0)
+            {
+                isOffensiveBombDelayed = true;
+                offensiveBombCount -= cost;
+                SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
+                EventSystem.OffensiveBombAttackUI(offensiveBombCount);
+                EventSystem.FireOffensiveBomb(transform.position);
+
+                GameObject bombVFX = Instantiate(m_OffensiveBombVFX, transform.position, Quaternion.identity);
+                bombVFX.transform.parent = transform;
+
+                StartCoroutine(DelayOffensiveBomb(offensiveBombDelay, cost));
+            }
         }
     }
 
@@ -201,19 +213,7 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     private IEnumerator DelayOffensiveBomb(float delay, int cost) {
-        isOffensiveBombDelayed = true;
-
-        if (Input.GetKeyDown(offensiveBombKey) && offensiveBombCount > 0) {
-            offensiveBombCount -= cost;
-            SoundManager.Instance.PlaySFXClip(offensiveBombSFX, transform, 1f);
-            EventSystem.OffensiveBombAttackUI(offensiveBombCount);
-            EventSystem.FireOffensiveBomb(transform.position);
-
-            GameObject bombVFX = Instantiate(m_OffensiveBombVFX, transform.position, Quaternion.identity);
-            bombVFX.transform.parent = transform;
-
-            yield return new WaitForSeconds(delay);
-        }
+        yield return new WaitForSeconds(delay);
         isOffensiveBombDelayed = false;
     }
 

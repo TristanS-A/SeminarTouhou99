@@ -48,6 +48,9 @@ public static class EventSystem
     public static UnityAction<bool> WaveStateChange;
     public static void OnWaveStateChange(bool state) => WaveStateChange?.Invoke(state);
 
+    public static UnityAction OnSendGameStart;
+    public static void SendGameStartState() => OnSendGameStart?.Invoke();
+
     //score
     public static event UnityAction<DropType, int> OnPickUpUpdate;
     public static void OnPickUp(DropType type, int ammount) => OnPickUpUpdate?.Invoke(type, ammount);

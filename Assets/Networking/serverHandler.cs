@@ -98,6 +98,7 @@ public class ServerHandler : MonoBehaviour
         EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombDataFromServer;
+        EventSystem.OnSendGameStart += HandleBroadcastGameStart;
     }
 
     private void OnDisable()
@@ -105,7 +106,7 @@ public class ServerHandler : MonoBehaviour
         EventSystem.gameStarted -= HandleGameStart;
         EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
-        EventSystem.OnFireOffensiveBomb -= SendBombDataFromServer;
+        EventSystem.OnSendGameStart -= HandleBroadcastGameStart;
     }
 
     //Handle singleton instance no-replication and networking setup
@@ -226,6 +227,28 @@ public class ServerHandler : MonoBehaviour
         }
     }
 
+    private void HandleBroadcastGameStart()
+    {
+        for (int i = 0; i < connectedClients.Count; i++)
+        {
+            ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
+            gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
+            gameState.gameState = (int)EventType.EventTypes.START_GAME;
+
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
+            GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
+            try
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            }
+            finally
+            {
+                server.SendMessageToConnection(connectedClients[i], bytes);
+                pinStructure.Free();
+            }
+        }
+    }
+
     private void HandleGameStart(GameObject player)
     {
         mGameState = GameState.GAME_STARTED;
@@ -239,22 +262,6 @@ public class ServerHandler : MonoBehaviour
                 pD.init();
                 pD.playerOBJ = Instantiate(m_PlayerHologramPrefab);
                 mPlayers[keys.ElementAt(i)] = pD;
-
-                ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
-                gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
-                gameState.gameState = (int)EventType.EventTypes.START_GAME;
-
-                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
-                GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
-                try
-                {
-                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                }
-                finally
-                {
-                    server.SendMessageToConnection(connectedClients[i], bytes);
-                    pinStructure.Free();
-                }
             }
 
             PlayerGameData ownPlayer = new();

@@ -39,6 +39,7 @@ public class ButtonHandler : MonoBehaviour
 
     private void StartGame()
     {
+        EventSystem.SendGameStartState();
         Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 3;
     }
 

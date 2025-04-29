@@ -193,9 +193,9 @@ MonoBehaviour:
   target: {fileID: 0}
   rotateSpeed: 2
   maxDefensiveBombs: 3
-  defensiveBombDelay: 0.5
+  defensiveBombDelay: 2
   maxOffensiveBombs: 3
-  offensiveBombDelay: 0.5
+  offensiveBombDelay: 5
   bulletPrefab: {fileID: 435637448550865365, guid: 107be95e213d16c4ebeec299d20dea14, type: 3}
   screenObject: {fileID: 0}
   leftBulletSpawn: {fileID: 1855053670055241955}
@@ -225,9 +225,6 @@ MonoBehaviour:
   damageSound: {fileID: 8300000, guid: 170ea2b76a1c0e0429e61193a93e4d6b, type: 3}
   healSound: {fileID: 8300000, guid: 4f16e31b3d3367249b4f3c54be364258, type: 3}
   deathSound: {fileID: 8300000, guid: fd41a831b15391541808bf2c46c07f2c, type: 3}
-  m_DeathAni: {fileID: 4210645700210858143, guid: 6adc0073653100c4d8ba80190af63e5b, type: 3}
-  mDeathAniScale: 1
-  mDeathAniSprite: {fileID: 1855582269, guid: 63ddf80525d548145a7df0467968aee4, type: 3}
 --- !u!114 &2317277070188080296
 MonoBehaviour:
   m_ObjectHideFlags: 0
