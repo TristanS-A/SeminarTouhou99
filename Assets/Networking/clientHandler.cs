@@ -46,6 +46,8 @@ public class ClientHandler : MonoBehaviour
     [SerializeField] public bool mDebugMode = false;
     [SerializeField] public string mDebugDebugIP;
 
+    [SerializeField] private GameObject m_SceneTransition;
+
     //IP Joining struct
     public struct JoinIPData
     {

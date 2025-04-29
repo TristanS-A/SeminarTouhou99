@@ -1777,6 +1777,7 @@ MonoBehaviour:
   m_PlayerHologramPrefab: {fileID: 5546967965176595841, guid: d15afabaffcbb084285a676ebbcbdcc9, type: 3}
   mDebugMode: 1
   mDebugDebugIP: 100.69.39.116
+  m_SceneTransition: {fileID: 710756667194598483, guid: dc4ebcf92cacdd249a822c81cdfdea66, type: 3}
 --- !u!4 &1410010107
 Transform:
   m_ObjectHideFlags: 0
