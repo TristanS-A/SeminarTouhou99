@@ -81,6 +81,7 @@ public class ServerHandler : MonoBehaviour
     [SerializeField] private bool mDebugMode = false;
 
     [SerializeField] private GameObject m_SceneTransition;
+    private bool mGameDone = false;
 
     public enum GameState
     {
@@ -646,7 +647,7 @@ public class ServerHandler : MonoBehaviour
             prevData.playerOBJ = null;
             mPlayers[playerReceivedResult.playerID] = prevData;
 
-            StartCoroutine(Co_DelayEndGameCheck(2.0f));
+            HandleGameEndCheck();
         }
         finally
         {
@@ -708,8 +709,20 @@ public class ServerHandler : MonoBehaviour
 
         SendPlayerFinishToAllOtherClients(serverPlayerID, resContext);
 
-        //Gives a bit of time before the scene transition happens
-        StartCoroutine(Co_DelayEndGameCheck(2.0f));
+        HandleGameEndCheck();
+    }
+
+    private void HandleGameEndCheck()
+    {
+        bool gameCheckDone = CheckIfGameFinished();
+
+        if (!mGameDone)
+        {
+            //Gives a bit of time before the scene transition happens
+            StartCoroutine(Co_DelayEndGameCheck(2.0f, gameCheckDone));
+        }
+
+        gameCheckDone = mGameDone;
     }
 
     //This function will be called when a client player dies/finished (and also disconnects probobly)
@@ -719,12 +732,12 @@ public class ServerHandler : MonoBehaviour
         return mPlayers.Count == mPlayerResults.Count;
     }
 
-    private IEnumerator Co_DelayEndGameCheck(float delay)
+    private IEnumerator Co_DelayEndGameCheck(float delay, bool gameFinishedCheck)
     {
         yield return new WaitForSeconds(delay);
 
         //Check if game is finished (all players are done playing)
-        if (CheckIfGameFinished())
+        if (gameFinishedCheck)
         {
             HandleGameFinish();
         }
