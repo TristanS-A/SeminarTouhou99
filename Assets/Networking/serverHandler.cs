@@ -621,7 +621,6 @@ public class ServerHandler : MonoBehaviour
 
             PlayerGameData prevData = mPlayers[playerReceivedResult.playerID];
 
-            float finishScheckDelayTime = 0;
             switch (playerReceivedResult.resultContext)
             {
                 case ResultContext.PLAYER_WON:
@@ -633,7 +632,6 @@ public class ServerHandler : MonoBehaviour
                     //Handles sending death data event for other handling of a player death (from client)
                     //The z = 1 makes the grave show up behind the bullets
                     EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, prevData.playerOBJ.transform.position.z));
-                    finishScheckDelayTime = 2;
                     break;
                 case ResultContext.PLAYER_DISCONNECTED:
                     break;
@@ -646,7 +644,7 @@ public class ServerHandler : MonoBehaviour
             prevData.playerOBJ = null;
             mPlayers[playerReceivedResult.playerID] = prevData;
 
-            StartCoroutine(Co_DelayEndGameCheck(finishScheckDelayTime));
+            StartCoroutine(Co_DelayEndGameCheck(2.0f));
         }
         finally
         {
