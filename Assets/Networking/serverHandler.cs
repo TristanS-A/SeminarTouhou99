@@ -1,5 +1,6 @@
 using AOT;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -625,12 +626,12 @@ public class ServerHandler : MonoBehaviour
                 case ResultContext.PLAYER_WON:
                     //Handles sending win data event for other handling of a player win (from client)
                     //The z = 2 makes the grave show up in front the bullets
-                    EventSystem.SendPlayerWinData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, -2));
+                    EventSystem.SendPlayerWinData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, prevData.playerOBJ.transform.position.z));
                     break;
                 case ResultContext.PLAYER_DIED:
                     //Handles sending death data event for other handling of a player death (from client)
                     //The z = 1 makes the grave show up behind the bullets
-                    EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, 1));
+                    EventSystem.SendPlayerDeathData(false, new Vector3(prevData.playerOBJ.transform.position.x, prevData.playerOBJ.transform.position.y, prevData.playerOBJ.transform.position.z));
                     break;
                 case ResultContext.PLAYER_DISCONNECTED:
                     break;
@@ -709,11 +710,8 @@ public class ServerHandler : MonoBehaviour
 
         SendPlayerFinishToAllOtherClients(serverPlayerID, resContext);
 
-        //Check if game is finished (all players are done playing)
-        if (CheckIfGameFinished())
-        {
-            HandleGameFinish();
-        }
+        //Gives a bit of time before the scene transition happens
+        StartCoroutine(Co_DelayEndGameCheck(2.0f));
     }
 
     //This function will be called when a client player dies/finished (and also disconnects probobly)
@@ -721,6 +719,17 @@ public class ServerHandler : MonoBehaviour
     {
         //Game will finish when all results are in (Add safety exception in case not but level is done maybe)
         return mPlayers.Count == mPlayerResults.Count;
+    }
+
+    private IEnumerator Co_DelayEndGameCheck(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        //Check if game is finished (all players are done playing)
+        if (CheckIfGameFinished())
+        {
+            HandleGameFinish();
+        }
     }
 
     private void SendPlayerFinishToAllOtherClients(uint clientThatDied, ServerHandler.ResultContext finishReason)
