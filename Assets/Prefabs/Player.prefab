@@ -222,7 +222,7 @@ MonoBehaviour:
   m_GraveMat: {fileID: 2100000, guid: dfa491b2a80eb6e49a42d69638cd3fdb, type: 2}
   maxHealth: 3
   invinciblityTime: 1
-  damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
+  damageSound: {fileID: 8300000, guid: 170ea2b76a1c0e0429e61193a93e4d6b, type: 3}
   healSound: {fileID: 8300000, guid: 4f16e31b3d3367249b4f3c54be364258, type: 3}
   deathSound: {fileID: 8300000, guid: fd41a831b15391541808bf2c46c07f2c, type: 3}
 --- !u!114 &2317277070188080296

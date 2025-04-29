@@ -213,7 +213,11 @@ MonoBehaviour:
   m_BossSpawnSFX: {fileID: 8300000, guid: aba522a713b348c48befa723c39efef3, type: 3}
   damageSound: {fileID: 8300000, guid: f96a18a687734544492d8c294d62a298, type: 3}
   deathSound: {fileID: 8300000, guid: fd41a831b15391541808bf2c46c07f2c, type: 3}
-  completionTimeBonusList: []
+  completionTimeBonusList:
+  - bonusPoints: 20
+    timeToCompleteIn: 25
+  - bonusPoints: 5
+    timeToCompleteIn: 30
   positions:
     spawnPosition: {x: 0, y: 0}
     endPosition: {x: 0, y: 0}
