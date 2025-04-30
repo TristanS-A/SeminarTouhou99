@@ -183,7 +183,7 @@ public class WaveManager : MonoBehaviour
     //return to regular logic
     void BossDead()
     {
-        if (activeBoss.Item1 != null)
+        if (activeBoss == null || activeBoss.Item1 != null)
         {
             StopCoroutine(Co_TimeTillTimeOut());
             Destroy(activeBoss.Item1);
