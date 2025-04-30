@@ -200,7 +200,7 @@ public class WaveManager : MonoBehaviour
     }
     bool CheckIfActiveBossDead()
     {
-        return activeBoss.Item1 == null;
+        return (activeBoss == null || activeBoss.Item1 == null);
     }
     
     IEnumerator Co_WaitTillActivesEmpty()
