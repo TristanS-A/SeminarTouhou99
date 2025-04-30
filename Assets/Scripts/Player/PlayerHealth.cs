@@ -33,10 +33,10 @@ public class PlayerHealth : MonoBehaviour {
         EventSystem.OnPickUpUpdate -= TranslateDropEvent;
     }
 
-    void TranslateDropEvent(DropType drop, int ammount) {
+    void TranslateDropEvent(DropType drop, float ammount) {
         switch (drop) {
             case DropType.LIFE:
-                Heal(ammount);
+                Heal((int)ammount);
                 break;
         }
     }

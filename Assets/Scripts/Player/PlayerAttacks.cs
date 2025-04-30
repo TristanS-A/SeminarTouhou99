@@ -14,9 +14,10 @@ public class PlayerAttacks : MonoBehaviour {
     [Range(1, 8)]
     public float bulletSpeed = 4.5f;
     public float bulletDelay = 0.1f;
+    public float homingUnlockAmmount = 4;
 
     //talk about chaning this to a float for more control ;)
-    public static int bulletDamage = 1;
+    public static float bulletDamage = 1;
 
     [Header("Homing Missle")]
     [SerializeField] private Transform target;
@@ -131,7 +132,7 @@ public class PlayerAttacks : MonoBehaviour {
             if (bullets[i] != null) {
                 bullets[i].transform.position += bulletSpeed * Time.deltaTime * Vector3.up;
 
-                if (playerMovement.IsInFocusTime() && target != null) {
+                if ((playerMovement.IsInFocusTime() && bulletDamage >= homingUnlockAmmount)&& target != null) {
                     GameObject bullet = bullets[i];
                     Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
 
@@ -202,7 +203,7 @@ public class PlayerAttacks : MonoBehaviour {
         isShooting = false;
     }
 
-    public static int GetDamageAmount() { return bulletDamage; }
+    public static float GetDamageAmount() { return bulletDamage; }
 
     // Waits for the lifetime of the AttackData, disables the sequencer, cleans and increments to next index
     private IEnumerator TurnOffSequencer(float lifetime) {
@@ -243,7 +244,7 @@ public class PlayerAttacks : MonoBehaviour {
         isDefensiveBombDelayed = false;
     }
 
-    private void TranslateEvent(DropType drop, int ammount) {
+    private void TranslateEvent(DropType drop, float ammount) {
         switch (drop) {
             //this is where the homing unlock will be (just check the damnage) - will
             case DropType.POWER:

@@ -14,7 +14,7 @@ public class BombUI : MonoBehaviour {
         }
        
     }
-    private void TranslateEvent(DropType type, int ammount)
+    private void TranslateEvent(DropType type, float ammount)
     {
         switch (type)
         {
@@ -22,7 +22,7 @@ public class BombUI : MonoBehaviour {
                 //only if we have room to add
                 if (playerAttacks.GetOffensiveBombCount < playerAttacks.GetMaxDefensiveBombs)
                 {
-                    playerAttacks.SetOffensiveBombCount(playerAttacks.GetOffensiveBombCount + ammount);
+                    playerAttacks.SetOffensiveBombCount(playerAttacks.GetOffensiveBombCount + (int)ammount);
                     UpdateOffensiveBomb(playerAttacks.GetOffensiveBombCount);
                 }
                 break;
@@ -30,7 +30,7 @@ public class BombUI : MonoBehaviour {
                 //only if we have room to add
                 if (playerAttacks.GetDefensiveBombCount < playerAttacks.GetMaxDefensiveBombs)
                 {
-                    playerAttacks.SetDefensiveBombCount(playerAttacks.GetDefensiveBombCount + ammount);
+                    playerAttacks.SetDefensiveBombCount(playerAttacks.GetDefensiveBombCount + (int)ammount);
                     UpdateDefensiveBomb(playerAttacks.GetDefensiveBombCount);
                 }
                 break;

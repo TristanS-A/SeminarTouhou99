@@ -52,8 +52,8 @@ public static class EventSystem
     public static void SendGameStartState() => OnSendGameStart?.Invoke();
 
     //score
-    public static event UnityAction<DropType, int> OnPickUpUpdate;
-    public static void OnPickUp(DropType type, int ammount) => OnPickUpUpdate?.Invoke(type, ammount);
+    public static event UnityAction<DropType, float> OnPickUpUpdate;
+    public static void OnPickUp(DropType type, float ammount) => OnPickUpUpdate?.Invoke(type, ammount);
 
     public static event UnityAction<ServerHandler.ResultContext> OnSendPlayerResultData;
     public static void SendPlayerResultData(ServerHandler.ResultContext resultContext) => OnSendPlayerResultData?.Invoke(resultContext);

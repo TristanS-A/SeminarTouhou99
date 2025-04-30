@@ -12,11 +12,11 @@ public class ScoreUI : MonoBehaviour
     {
         EventSystem.OnPickUpUpdate += UpdateDrop;
     }
-    void UpdateDrop(DropType type, int ammount)
+    void UpdateDrop(DropType type, float ammount)
     {
         if (type == DropType.SCORE)
         {
-            PlayerInfo.PlayerPoints += ammount;
+            PlayerInfo.PlayerPoints += (int)ammount;
             text.text = PlayerInfo.PlayerPoints.ToString();
         }
        

@@ -27,7 +27,7 @@ public class TempEnemy : MonoBehaviour {
     public List<BossStage> stages;
     public bool IsDead { get; private set; }
 
-    private int currentHealth;
+    private float currentHealth;
     protected int currentStage = 0;
     private float currentRespawnTime;
     private bool isInvincible = false;
@@ -98,7 +98,7 @@ public class TempEnemy : MonoBehaviour {
         SoundManager.Instance.PlaySFXClip(m_BossSpawnSFX, transform, 1f);
     }
 
-    public void TakeDamage(int stage, int damage) {
+    public void TakeDamage(int stage, float damage) {
         // CHECKING IF PLAYER IS ALREADY DEAD
         if (IsDead || isInvincible) return;
 

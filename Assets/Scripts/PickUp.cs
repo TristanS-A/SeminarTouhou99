@@ -7,7 +7,7 @@ public class PickUp : MonoBehaviour
     //make them move and destroy after a while
     [SerializeField] private DropType dropType;
     // Will asked me to do this, idk what for ¯\_(ツ)_/¯ <- thank you jerry :)
-    [SerializeField] private int amount = 1;
+    [SerializeField] private float amount = 1;
     float lifeTime = 10.0f;
     private Rigidbody2D rb;
     // Start is called before the first frame update
