@@ -9,7 +9,7 @@ public class ButtonHandler : MonoBehaviour
     enum ButtonType
     {
         START_GAME,
-        MAIN_MENU
+        MAIN_MENU,
     }
 
     [SerializeField] private ButtonType mButtonType;
