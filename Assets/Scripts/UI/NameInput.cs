@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class NameInput : MonoBehaviour
 {
+    [SerializeField] private TMP_InputField mNameField;
     [SerializeField] private GameObject mJoinOptions;
+    [SerializeField] private GameObject mNameTextOBJ;
+    [SerializeField] private GameObject mNameButtonOBJ;
 
     // Start is called before the first frame update
     void Start()
     {
-        TMP_InputField nameField = GetComponentInChildren<TMP_InputField>();
-        nameField.onSubmit.AddListener(submit);
+        mNameField.onSubmit.AddListener(submit);
     }
 
     // Update is called once per frame
@@ -24,6 +26,7 @@ public class NameInput : MonoBehaviour
     {
         mJoinOptions.SetActive(true);
         PlayerInfo.PlayerName = name;
-        Destroy(gameObject);
+        mNameTextOBJ.SetActive(false);
+        mNameButtonOBJ.SetActive(false);
     }
 }
