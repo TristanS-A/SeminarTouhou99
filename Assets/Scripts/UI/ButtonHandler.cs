@@ -10,7 +10,6 @@ public class ButtonHandler : MonoBehaviour
     {
         START_GAME,
         MAIN_MENU,
-        LOBBY
     }
 
     [SerializeField] private ButtonType mButtonType;
@@ -35,9 +34,6 @@ public class ButtonHandler : MonoBehaviour
             case ButtonType.MAIN_MENU:
                 mButton.onClick.AddListener(GoToMainMenu);
                 break;
-            case ButtonType.LOBBY:
-                mButton.onClick.AddListener(GoToJoinScene);
-                break;
         }
     }
 
@@ -56,10 +52,6 @@ public class ButtonHandler : MonoBehaviour
         PlayerInfo.ResetPlayerPointInfo();
 
         //Goes to main menu scene
-        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 0;
-    }
-
-    private void GoToJoinScene() {
         Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 0;
     }
 }

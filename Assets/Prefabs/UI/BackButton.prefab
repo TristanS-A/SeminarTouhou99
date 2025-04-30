@@ -268,7 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ec2ed689ec1a494f9fe6ff1a616dc57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mButtonType: 2
+  mButtonType: 1
   mButton: {fileID: 5401673540197442551}
   mOnlyServerButton: 0
   m_SceneTransition: {fileID: 710756667194598483, guid: dc4ebcf92cacdd249a822c81cdfdea66, type: 3}
