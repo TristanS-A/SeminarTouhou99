@@ -4,13 +4,20 @@ using UnityEngine.Events;
 
 public static class EventSystem
 {
-    public static event Action<GameObject> gameStarted; //Rename this to game start event
-    public static event Action<string, string> ipReceived;
-    public static event Action<int> numberOfJoinedPlayersChanged;
-    public static event Action<int, int> playerResultReveived;
-    public static event Action<ClientHandler.PlayerSendResultData> onReceiveResult;
+
+    //Game Events
+    public static event Action<GameObject> gameStarted;
+    public static void StartGame(GameObject player) { gameStarted?.Invoke(player); }
+
     public static event Action onEndGameSession;
+    public static void EndGameSession() { onEndGameSession?.Invoke(); }
+
     public static event Action<DropTypes> dropEvent;
+    public static void TriggerDrop(DropTypes dropType) { dropEvent?.Invoke(dropType); }
+
+    //Networking Events
+    public static event Action<string, string> ipReceived;
+    public static void ReceiveIP(string ip, string connectionName) { ipReceived?.Invoke(ip, connectionName); }
 
     // Player Events
     public static event UnityAction<int> OnHealthUpdate;
@@ -21,6 +28,15 @@ public static class EventSystem
 
     public static UnityEvent<float> OnRespawnUpdate;
     public static void RespawnUpdate(float health) => OnRespawnUpdate?.Invoke(health);
+
+    public static event Action<int> numberOfJoinedPlayersChanged;
+    public static void NumberOfJoinedPlayersChanged(int newNumberOfPlayers) { numberOfJoinedPlayersChanged?.Invoke(newNumberOfPlayers); }
+    
+    public static event Action<int, int> playerResultReveived;
+    public static void RegisterPlayerResults(int time, int score) { playerResultReveived?.Invoke(time, score); }
+
+    public static event Action<ClientHandler.PlayerSendResultData> onReceiveResult;
+    public static void RegisterOtherPlayerResult(ClientHandler.PlayerSendResultData playerData) { onReceiveResult?.Invoke(playerData); }
 
     // Bomb Events
     public static event UnityAction<int> OnDefensiveBombAttack;
@@ -66,44 +82,4 @@ public static class EventSystem
 
     public static event UnityAction<int, int, int> OnTransitionBG;
     public static void TransitionBGEvent(int bgIndex, int cloudLevIndex, int cloudShadowIndex) => OnTransitionBG?.Invoke(bgIndex, cloudLevIndex, cloudShadowIndex);
-
-    public static void fireEvent(EventType type)
-    {
-        switch (type.getEventType())
-        {
-            case EventType.EventTypes.START_GAME:
-                GameStartEvent player = (GameStartEvent)(type);
-                gameStarted.Invoke(player.getPlayer());    //THIS BREAKS WHEN STARTING A SCENE AND TRIGERING THE EVENT ON START FOR SOME REASON <-- sub scripting timing(most likly calling a event befor it is subscriped)
-                break;
-            case EventType.EventTypes.RECEIVED_IP:
-                ReceiveIPEvent ip = (ReceiveIPEvent)(type);
-                ipReceived.Invoke(ip.getIP(), ip.getConnectionName());   
-                break;
-            case EventType.EventTypes.NUMBER_OF_PLAYERS_JOINED_CHANGED:
-                PlayerCountChangedEvent newPlayerCountEvent = (PlayerCountChangedEvent)(type);
-                numberOfJoinedPlayersChanged.Invoke(newPlayerCountEvent.getNewPlayerCount());
-                break;
-            case EventType.EventTypes.PLAYER_RESULT_RECEIVED:
-                PlayerResultEvent playerSendResultData = (PlayerResultEvent)(type);
-                playerResultReveived.Invoke(playerSendResultData.getTime(), playerSendResultData.getPoints());
-                break;
-            case EventType.EventTypes.RESULT_SENT:
-                try
-                {
-                    ReceiveResultEvent result = (ReceiveResultEvent)(type);
-                    onReceiveResult.Invoke(result.getResult());
-                }
-                catch{ }
-                break;
-            case EventType.EventTypes.END_GAME_SESSION:
-                onEndGameSession.Invoke();
-                break;
-            case EventType.EventTypes.ENEMY_KILLED:
-                DropEvent drop = (DropEvent)(type);
-                dropEvent.Invoke(drop.GetDropObject());
-                break;
-            default:
-                break;
-        }
-    }
 }

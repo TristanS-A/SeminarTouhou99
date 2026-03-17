@@ -85,9 +85,8 @@ public class BaseEnemy : MonoBehaviour
             Destroy(gameObject.GetComponent<BoxCollider2D>());
 
             //trigger drop event
-            DropEvent evt = new DropEvent(dropType);
             dropType.SetLocation(this.transform.position);
-            EventSystem.fireEvent(evt);
+            EventSystem.TriggerDrop(dropType);
 
             //turn the sprite render off before chaning the game state
             gameObject.GetComponent<SpriteRenderer>().enabled = false;

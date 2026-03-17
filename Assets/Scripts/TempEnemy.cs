@@ -128,8 +128,7 @@ public class TempEnemy : MonoBehaviour {
                 if (itemToDrop != null)
                 {
                     itemToDrop.SetLocation(gameObject.transform.position);
-                    DropEvent evt = new(itemToDrop);
-                    EventSystem.fireEvent(evt);
+                    EventSystem.TriggerDrop(itemToDrop);
                 }
 
                 StartCoroutine(Respawn());
@@ -161,8 +160,7 @@ public class TempEnemy : MonoBehaviour {
         if (itemToDrop != null)
         {
             itemToDrop.SetLocation(gameObject.transform.position);
-            DropEvent evt = new(itemToDrop);
-            EventSystem.fireEvent(evt);
+            EventSystem.TriggerDrop(itemToDrop);
         }
 
         GameObject deathAni = Instantiate(m_DeathAni, transform.position, Quaternion.identity);

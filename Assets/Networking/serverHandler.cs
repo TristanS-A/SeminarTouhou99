@@ -484,7 +484,7 @@ public class ServerHandler : MonoBehaviour
                     }
                 }
 
-                EventSystem.fireEvent(new ReceiveResultEvent(playerSendResultData));
+                EventSystem.RegisterOtherPlayerResult(playerSendResultData);
             }
         }
     }
@@ -528,7 +528,7 @@ public class ServerHandler : MonoBehaviour
             }
 
             //Refactor to use player dictionary
-            EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); 
+            EventSystem.NumberOfJoinedPlayersChanged(connectedClients.Count + 1); 
         }
     }
 
@@ -548,7 +548,7 @@ public class ServerHandler : MonoBehaviour
             if (mGameState == GameState.SEARCHING_FOR_PLAYERS)
             {
                 // Refactor to use player dictionary
-                EventSystem.fireEvent(new PlayerCountChangedEvent(connectedClients.Count + 1)); 
+                EventSystem.NumberOfJoinedPlayersChanged(connectedClients.Count + 1); 
             }
         }
     }

@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour {
         //for movment animations
         animator = GetComponent<Animator>();
 
-        EventSystem.fireEvent(new GameStartEvent(gameObject));
+        EventSystem.StartGame(gameObject);
 
         PlayerInfo.PlayerTime = Time.time;
     }

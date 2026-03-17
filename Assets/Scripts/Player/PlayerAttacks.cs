@@ -84,7 +84,9 @@ public class PlayerAttacks : MonoBehaviour {
             }
 
             //Assigns target
-            if (target == null || (target.gameObject.GetComponent<BaseEnemy>() != null && (target.gameObject.GetComponent<BaseEnemy>().isAtEnd || target.gameObject.GetComponent<BaseEnemy>().isDead))) {
+            if (target == null || (target.gameObject.GetComponent<BaseEnemy>() != null 
+                && (target.gameObject.GetComponent<BaseEnemy>().isAtEnd 
+                || target.gameObject.GetComponent<BaseEnemy>().isDead))) {
                 GameObject waveManager = GameObject.FindGameObjectWithTag("WaveManager");
                 //if the active list is empty then do another thing
                 List<Tuple<GameObject, BaseEnemy>> list = waveManager.GetComponent<WaveManager>().GetActiveList();

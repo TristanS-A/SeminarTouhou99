@@ -371,11 +371,11 @@ public class ClientHandler : MonoBehaviour
                         break;
                     case PacketType.PLAYER_COUNT:
                         PlayerCountData playerCountData = (PlayerCountData)Marshal.PtrToStructure(ptPoit, typeof(PlayerCountData));
-                        EventSystem.fireEvent(new PlayerCountChangedEvent(playerCountData.playerCount));
+                        EventSystem.NumberOfJoinedPlayersChanged(playerCountData.playerCount);
                         break;
                     case PacketType.SEND_RESULT:
                         PlayerSendResultData playerSendResultData = (PlayerSendResultData)Marshal.PtrToStructure(ptPoit, typeof(PlayerSendResultData));
-                        EventSystem.fireEvent(new ReceiveResultEvent(playerSendResultData));
+                        EventSystem.RegisterOtherPlayerResult(playerSendResultData);
                         break;
                     case PacketType.GAME_STATE:
                         GameStateData gameStateData = (GameStateData)Marshal.PtrToStructure(ptPoit, typeof(GameStateData));

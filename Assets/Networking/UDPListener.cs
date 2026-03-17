@@ -12,7 +12,7 @@ public static class UDPListener
     public static IPEndPoint ip;
     public static string data;
 
-    private static IPAddress groupAddress = IPAddress.Parse("233.255.255.255");
+    //private static IPAddress groupAddress = IPAddress.Parse("233.255.255.255");
     private static UdpClient client;
 
     private const int PORT = 20000;
@@ -39,7 +39,7 @@ public static class UDPListener
         if (client == null)
         {
             client = new UdpClient(ip);
-            client.JoinMulticastGroup(groupAddress);
+            //client.JoinMulticastGroup(groupAddress);
 
             isReciving = receive;
 
@@ -73,7 +73,7 @@ public static class UDPListener
         }
         finally
         {
-            client.BeginSend(bytes, bytes.Length, "233.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
+            client.BeginSend(bytes, bytes.Length, "255.255.255.255", PORT, new AsyncCallback(RecieveServerInfo), null);
             Marshal.FreeHGlobal(ptr);
         }
     }
@@ -100,7 +100,7 @@ public static class UDPListener
 
                 if (isReciving)
                 {
-                    EventSystem.fireEvent(new ReceiveIPEvent(newIPData.ip, newIPData.name));
+                    EventSystem.ReceiveIP(newIPData.ip, newIPData.name);
                 }
 
                 client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
