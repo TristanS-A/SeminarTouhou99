@@ -30,7 +30,7 @@ public class BaseBullet : MonoBehaviour
     public void initProj(Vector2 origin, Transform parnet)
     {
         //gets the inital direction 
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         direction = origin - (Vector2)this.transform.position;
         direction.Normalize();
 

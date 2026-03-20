@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour {
 
         // Switches between two movement
         currentMoveSpeed = isInFocusTime ? focusSpeed : movementSpeed;
-        rb.velocity = input * currentMoveSpeed;
+        rb.linearVelocity = input * currentMoveSpeed;
 
         if (input.x < 0)
         {

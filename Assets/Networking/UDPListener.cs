@@ -1,9 +1,11 @@
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
+using Valve.Sockets;
 using static ClientHandler;
 using static ServerHandler;
 
@@ -100,7 +102,37 @@ public static class UDPListener
 
                 if (isReciving)
                 {
-                    EventSystem.ReceiveIP(newIPData.ip, newIPData.name);
+                    bool notOnSameLocalNetwork = true;
+                    foreach (NetworkInterface nt in NetworkInterface.GetAllNetworkInterfaces())
+                    {
+                        if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                        {
+                            foreach (UnicastIPAddressInformation ip in nt.GetIPProperties().UnicastAddresses)
+                            {
+                                if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                                {
+                                    string mask = ip.IPv4Mask.ToString();
+                                    for (int i = 0; i < mask.Length; i++)
+                                    {
+                                        if (mask[i] == '0'){
+                                            break;
+                                        }
+
+                                        if (newIPData.ip[i] != ip.Address.ToString()[i])
+                                        {
+                                            notOnSameLocalNetwork = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!notOnSameLocalNetwork)
+                        {
+                            EventSystem.ReceiveIP(newIPData.ip, newIPData.name);
+                        }
+                    }
                 }
 
                 client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);

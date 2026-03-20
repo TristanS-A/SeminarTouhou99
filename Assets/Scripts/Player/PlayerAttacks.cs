@@ -143,7 +143,7 @@ public class PlayerAttacks : MonoBehaviour {
 
                     float rotation = Vector3.Cross(direction, bullet.transform.up).z;
                     bulletRB.angularVelocity = -rotation * (rotateSpeed * 100);
-                    bulletRB.velocity = bullet.transform.up * bulletSpeed;
+                    bulletRB.linearVelocity = bullet.transform.up * bulletSpeed;
                 }
 
                 // Check if the bullet is out of the y range of the reference object
