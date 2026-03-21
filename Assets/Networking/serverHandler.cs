@@ -179,6 +179,7 @@ public class ServerHandler : MonoBehaviour
 
         //Gets IP address to host from
         //mServerIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+        mServerIP = null;
         foreach (NetworkInterface nt in NetworkInterface.GetAllNetworkInterfaces())
         {
             if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
@@ -190,6 +191,11 @@ public class ServerHandler : MonoBehaviour
                         mServerIP = ip.Address;
                         break;
                     }
+                }
+
+                if (mServerIP != null)
+                {
+                    break;
                 }
             }
         }

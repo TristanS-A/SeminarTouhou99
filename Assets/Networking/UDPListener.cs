@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using Valve.Sockets;
 using static ClientHandler;
 using static ServerHandler;
@@ -107,23 +108,37 @@ public static class UDPListener
                     {
                         if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
                         {
+
                             foreach (UnicastIPAddressInformation ip in nt.GetIPProperties().UnicastAddresses)
                             {
+                                int newIPIndexPrev = 0;
+                                int ipIndexPrev = 0;
+                                int maskIndexPrev = 0;
+
                                 if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                                 {
                                     string mask = ip.IPv4Mask.ToString();
+
+                                    int newIPIndex = ip.Address.ToString().IndexOf('.');
+                                    int ipIndex = newIPData.ip.IndexOf('.');
+                                    int maskIndex = mask.IndexOf('.');
+
                                     for (int i = 0; i < mask.Length; i++)
                                     {
-                                        if (mask[i] == '0'){
+                                        if (int.Parse(mask.Substring(maskIndexPrev, maskIndex)) == 0){
                                             break;
                                         }
 
-                                        if (newIPData.ip[i] != ip.Address.ToString()[i])
+                                        if (int.Parse(newIPData.ip.Substring(newIPIndexPrev, newIPIndex)) != int.Parse(ip.Address.ToString().Substring(ipIndexPrev, ipIndex)))
                                         {
                                             onSameLocalNetwork = false;
                                             break;
                                         }
                                     }
+
+                                    newIPIndexPrev = newIPIndex + 1;
+                                    ipIndexPrev = ipIndex + 1;
+                                    maskIndexPrev = maskIndex + 1;
                                 }
                             }
                         }
