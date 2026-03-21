@@ -102,7 +102,7 @@ public static class UDPListener
 
                 if (isReciving)
                 {
-                    bool notOnSameLocalNetwork = true;
+                    bool onSameLocalNetwork = true;
                     foreach (NetworkInterface nt in NetworkInterface.GetAllNetworkInterfaces())
                     {
                         if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
@@ -120,7 +120,7 @@ public static class UDPListener
 
                                         if (newIPData.ip[i] != ip.Address.ToString()[i])
                                         {
-                                            notOnSameLocalNetwork = false;
+                                            onSameLocalNetwork = false;
                                             break;
                                         }
                                     }
@@ -128,7 +128,7 @@ public static class UDPListener
                             }
                         }
 
-                        if (!notOnSameLocalNetwork)
+                        if (onSameLocalNetwork)
                         {
                             EventSystem.ReceiveIP(newIPData.ip, newIPData.name);
                         }
