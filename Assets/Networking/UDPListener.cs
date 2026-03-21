@@ -119,26 +119,29 @@ public static class UDPListener
                                 {
                                     string mask = ip.IPv4Mask.ToString();
 
-                                    int newIPIndex = ip.Address.ToString().IndexOf('.');
-                                    int ipIndex = newIPData.ip.IndexOf('.');
-                                    int maskIndex = mask.IndexOf('.');
+                                    int newIPSegmentLength = ip.Address.ToString().IndexOf('.');
+                                    int ipSegmentLength = newIPData.ip.IndexOf('.');
+                                    int maskSegmentLength = mask.IndexOf('.');
 
-                                    for (int i = 0; i < mask.Length; i++)
+                                    while(maskSegmentLength != 0 && int.Parse(mask.Substring(maskIndexPrev, maskSegmentLength)) != 0)
                                     {
-                                        if (int.Parse(mask.Substring(maskIndexPrev, maskIndex)) == 0){
-                                            break;
-                                        }
-
-                                        if (int.Parse(newIPData.ip.Substring(newIPIndexPrev, newIPIndex)) != int.Parse(ip.Address.ToString().Substring(ipIndexPrev, ipIndex)))
+                                        if (int.Parse(newIPData.ip.Substring(newIPIndexPrev, newIPSegmentLength)) != 
+                                            int.Parse(ip.Address.ToString().Substring(ipIndexPrev, ipSegmentLength)))
                                         {
                                             onSameLocalNetwork = false;
                                             break;
                                         }
-                                    }
 
-                                    newIPIndexPrev = newIPIndex + 1;
-                                    ipIndexPrev = ipIndex + 1;
-                                    maskIndexPrev = maskIndex + 1;
+                                        newIPIndexPrev = newIPIndexPrev + newIPSegmentLength + 1;
+                                        ipIndexPrev = ipIndexPrev + ipSegmentLength + 1;
+                                        maskIndexPrev = maskIndexPrev + maskSegmentLength + 1;
+
+                                        newIPSegmentLength = ip.Address.ToString().Substring(newIPIndexPrev).IndexOf('.');
+                                        ipSegmentLength = newIPData.ip.Substring(ipIndexPrev).IndexOf('.');
+                                        maskSegmentLength = mask.Substring(maskIndexPrev).IndexOf('.');
+
+                                        if (maskSegmentLength == -1) { maskSegmentLength = mask.Length - maskIndexPrev; }
+                                    }
                                 }
                             }
                         }
