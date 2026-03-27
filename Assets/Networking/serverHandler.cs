@@ -188,8 +188,11 @@ public class ServerHandler : MonoBehaviour
                 {
                     if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                     {
-                        mServerIP = ip.Address;
-                        break;
+                        if ("192.168.124.1" == ip.Address.ToString())
+                        {
+                            mServerIP = ip.Address;
+                            break;
+                        }
                     }
                 }
 
@@ -516,7 +519,7 @@ public class ServerHandler : MonoBehaviour
     {
         if (mServerIP != null && !mDebugMode)
         {
-            UDPListener.SendIP(mServerIP.ToString(), PlayerInfo.PlayerName);
+            UDPListener.SendIP_LAN(mServerIP.ToString(), PlayerInfo.PlayerName);
         }
     }
 

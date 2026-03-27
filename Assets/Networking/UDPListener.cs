@@ -60,7 +60,7 @@ public static class UDPListener
         }
     }
 
-    public static void SendIP(string ip, string serverName)
+    public static void SendIP_LAN(string ip, string serverName)
     {
         //byte[] bytes = Encoding.ASCII.GetBytes(ip);
         IPData newIPData = new IPData { ip = ip , name = serverName };

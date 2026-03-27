@@ -44,7 +44,7 @@ public class ClientHandler : MonoBehaviour
 
     //Debug mode for running multiple games on a single computer (Needs manual input IP to connect)
     [SerializeField] public bool mDebugMode = false;
-    [SerializeField] public string mDebugDebugIP;
+    [SerializeField] public string mServerIP_WAN;
 
     [SerializeField] private GameObject m_SceneTransition;
 
