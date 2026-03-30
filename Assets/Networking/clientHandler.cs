@@ -12,8 +12,7 @@ using Valve.Sockets;
 
 public class ClientHandler : MonoBehaviour
 {
-    //Serialized buttons and prefabs
-    [SerializeField] private Button testClientButton;
+    //Serialized prefabs
     [SerializeField] private GameObject m_PlayerHologramPrefab;
 
     //Networking members (client)
@@ -42,8 +41,6 @@ public class ClientHandler : MonoBehaviour
     private NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
     private byte[] messageDataBuffer = new byte[256];
 
-    //Debug mode for running multiple games on a single computer (Needs manual input IP to connect)
-    [SerializeField] public bool mDebugMode = false;
     [SerializeField] public string mServerIP_WAN;
 
     [SerializeField] private GameObject m_SceneTransition;
@@ -177,15 +174,10 @@ public class ClientHandler : MonoBehaviour
 
     private void HandleCloseConnection()
     {
-        Debug.Log("Closing Connection");
+        Debug.Log("Closing Client Connection");
         if (client != null)
         {
             client.CloseConnection(serverConnection);
-        }
-
-        if (!mDebugMode)
-        {
-            UDPListener.CloseClient();
         }
 
         Valve.Sockets.Library.Deinitialize();
@@ -204,10 +196,7 @@ public class ClientHandler : MonoBehaviour
 
         Valve.Sockets.Library.Initialize();
 
-        if (testClientButton != null)
-        {
-            testClientButton.onClick.AddListener(SwitchToLobbyScene);
-        }
+        DontDestroyOnLoad(transform.gameObject);
 
         DebugCallback debugCallback = (DebugType type, string message) =>
         {
@@ -222,23 +211,12 @@ public class ClientHandler : MonoBehaviour
         instance = null;
     }
 
-    private void SwitchToLobbyScene()
-    {
-        DontDestroyOnLoad(transform.gameObject);
-        SceneManager.LoadScene(1);
-    }
-
     public void RunClientSetUp()
     {
         Debug.Log("Starting Client...");
 
         client = new NetworkingSockets();
         clientNetworkingUtils = OnClientStatusUpdate;
-
-        if (!mDebugMode)
-        {
-            UDPListener.StartClient(true);
-        }
 
         mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
     }
@@ -269,8 +247,16 @@ public class ClientHandler : MonoBehaviour
 
         NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 #endif
+    }
 
-        SceneManager.LoadScene(2);
+    private void CompleteJoinConnection()
+    {
+        mGameState = ServerHandler.GameState.SEARCHING_FOR_PLAYERS;
+
+        //The client has connected, don't need the discovery client anymore
+        LAN_DiscoveryClient.CloseClient();
+
+        SceneManager.LoadScene(3);
     }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
@@ -283,6 +269,8 @@ public class ClientHandler : MonoBehaviour
             case ConnectionState.Connected:
                 serverConnection = info.connection;
                 Debug.Log("Client connected to server - ID: " + serverConnection);
+
+                CompleteJoinConnection();
                 break;
 
             case ConnectionState.ClosedByPeer:
@@ -299,7 +287,6 @@ public class ClientHandler : MonoBehaviour
         if (eventData.selectedObject != null)
         {
             InitClientJoin(eventData.selectedObject.GetComponent<IPStorageAttachment>().IP);
-            mGameState = ServerHandler.GameState.SEARCHING_FOR_PLAYERS;
         }
     }
 

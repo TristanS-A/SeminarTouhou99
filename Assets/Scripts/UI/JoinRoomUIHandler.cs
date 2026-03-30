@@ -20,7 +20,6 @@ public class JoinRoomUIHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("HERE");
         EventSystem.ipReceived += AddIP;
     }
 
@@ -31,11 +30,9 @@ public class JoinRoomUIHandler : MonoBehaviour
 
     private void Start()
     {
-        ClientHandler.instance.RunClientSetUp();
-
-        if (ClientHandler.instance.mDebugMode)
+        if (ClientHandler.instance != null)
         {
-            AddIP(ClientHandler.instance.mDebugDebugIP, "Debug Room");
+            ClientHandler.instance.RunClientSetUp();
         }
     }
 
@@ -47,33 +44,25 @@ public class JoinRoomUIHandler : MonoBehaviour
 
             JoinIPData joinIPData = new() { name = connectionName, joinUIOBJ = null };
             mJoinableIPs.Add(ip, joinIPData);
-        }
-    }
 
-    private void Update()
-    {
-        if (mIPInfo != null)
-        {
             GameObject newIPDisplay = Instantiate(m_IPDisplay, mResultsContent.transform);
 
             TextMeshProUGUI joinName = newIPDisplay.GetComponentInChildren<TextMeshProUGUI>();
             Button joinB = newIPDisplay.GetComponentInChildren<Button>();
             TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
 
+            //Sets the name of the room in UI
             joinName.text = mIPInfo.Item2;
 
+            //Adds Join Host listener to join button
             EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry();
             entry.eventID = EventTriggerType.PointerDown;
             entry.callback.AddListener((data) => { ClientHandler.instance.JoinHost((BaseEventData)data); });
             trigger.triggers.Add(entry);
 
+            //Adds IP data to join button
             joinB.gameObject.AddComponent<IPStorageAttachment>().IP = mIPInfo.Item1;
-
-            JoinIPData joinIPData = new() { name = mIPInfo.Item2, joinUIOBJ = newIPDisplay };
-            mJoinableIPs[mIPInfo.Item1] = joinIPData;
-
-            mIPInfo = null;
         }
     }
 }

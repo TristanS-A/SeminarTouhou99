@@ -78,9 +78,6 @@ public class ServerHandler : MonoBehaviour
     //Singleton instance
     public static ServerHandler instance;
 
-    //Debug mode for running multiple games on a single computer
-    [SerializeField] private bool mDebugMode = false;
-
     [SerializeField] private GameObject m_SceneTransition;
     private bool mGameDone = false;
 
@@ -152,12 +149,7 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleCloseConnection()
     {
-        Debug.Log("Closing Connection");
-        if (!mDebugMode)
-        {
-            UDPListener.CloseClient();
-            Debug.Log("Quit and Socket Lib Deanitialized");
-        }
+        Debug.Log("Quit and Socket Lib Deanitialized");
 
         Valve.Sockets.Library.Deinitialize();
     }
@@ -188,7 +180,7 @@ public class ServerHandler : MonoBehaviour
                 {
                     if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                     {
-                        if ("192.168.124.1" == ip.Address.ToString())
+                        //if ("192.168.124.1" == ip.Address.ToString())
                         {
                             mServerIP = ip.Address;
                             break;
@@ -207,16 +199,13 @@ public class ServerHandler : MonoBehaviour
 
         listenSocket = server.CreateListenSocket(address);
 
-        if (!mDebugMode)
-        {
-            //Starts UDP client to broadcast host IP
-            UDPListener.StartClient(false);
-        }
+        //Starts LAN discovery client to broadcast host IP 
+        LAN_DiscoveryClient.StartClient(false);
 
         mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
         //Switches to lobby scene
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) => {
@@ -517,9 +506,9 @@ public class ServerHandler : MonoBehaviour
     //Broadcasts joining IP to clients wanting to join
     private void SendGameJoinMessage()
     {
-        if (mServerIP != null && !mDebugMode)
+        if (mServerIP != null)
         {
-            UDPListener.SendIP_LAN(mServerIP.ToString(), PlayerInfo.PlayerName);
+            LAN_DiscoveryClient.SendIP_LAN(mServerIP.ToString(), PlayerInfo.PlayerName);
         }
     }
 

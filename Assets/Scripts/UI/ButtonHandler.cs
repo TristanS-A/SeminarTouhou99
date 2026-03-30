@@ -9,6 +9,9 @@ public class ButtonHandler : MonoBehaviour
     enum ButtonType
     {
         START_GAME,
+        JOIN_LAN_ROOM,
+        JOIN_WAN_ROOM,
+        HOST_ROOM,
         MAIN_MENU,
     }
 
@@ -34,19 +37,44 @@ public class ButtonHandler : MonoBehaviour
             case ButtonType.MAIN_MENU:
                 mButton.onClick.AddListener(GoToMainMenu);
                 break;
+            case ButtonType.JOIN_LAN_ROOM:
+                mButton.onClick.AddListener(SwitchToJoinLANLobbyScene);
+                break;
+            case ButtonType.JOIN_WAN_ROOM:
+                mButton.onClick.AddListener(SwitchToJoinWANLobbyScene);
+                break;
+            case ButtonType.HOST_ROOM:
+                mButton.onClick.AddListener(SwitchToJoinWANLobbyScene);
+                break;
         }
     }
 
     private void StartGame()
     {
         EventSystem.SendGameStartState();
-        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 3;
+
+        LAN_DiscoveryClient.CloseClient();
+
+        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 4;
+    }
+
+    private void SwitchToJoinLANLobbyScene()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    private void SwitchToJoinWANLobbyScene()
+    {
+        SceneManager.LoadScene(2);
     }
 
     private void GoToMainMenu()
     {
         //Starts ending session flow
         EventSystem.EndGameSession();
+
+        //Closes LAN discovery client if it exists
+        LAN_DiscoveryClient.CloseClient();
 
         //Resets static values
         PlayerInfo.ResetPlayerPointInfo();

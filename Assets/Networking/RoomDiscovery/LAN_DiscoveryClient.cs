@@ -10,7 +10,7 @@ using Valve.Sockets;
 using static ClientHandler;
 using static ServerHandler;
 
-public static class UDPListener
+public static class LAN_DiscoveryClient
 {
     public static IPEndPoint ip;
     public static string data;
@@ -34,17 +34,18 @@ public static class UDPListener
         public string name;
     };
 
-    public static void StartClient(bool receive)
+    public static void StartClient(bool isServer)
     {
-        Debug.Log("UDP - Starting Client");
-        ip = new IPEndPoint(IPAddress.Any, PORT);
-
         if (client == null)
         {
+            Debug.Log("Starting LAN disocvery client");
+
+            ip = new IPEndPoint(IPAddress.Any, PORT);
+
             client = new UdpClient(ip);
             //client.JoinMulticastGroup(groupAddress);
 
-            isReciving = receive;
+            isReciving = !isServer;
 
             client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
         }
@@ -54,6 +55,8 @@ public static class UDPListener
     {
         if (client != null)
         {
+            Debug.Log("Closing LAN Discovery Connection");
+
             client.Close();
             client.Dispose();
             client = null;
@@ -62,6 +65,8 @@ public static class UDPListener
 
     public static void SendIP_LAN(string ip, string serverName)
     {
+        if (client == null) { return; }
+
         //byte[] bytes = Encoding.ASCII.GetBytes(ip);
         IPData newIPData = new IPData { ip = ip , name = serverName };
 
