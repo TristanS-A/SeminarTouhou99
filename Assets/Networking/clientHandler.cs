@@ -175,10 +175,13 @@ public class ClientHandler : MonoBehaviour
     private void HandleCloseConnection()
     {
         Debug.Log("Closing Client Connection");
+
         if (client != null)
         {
             client.CloseConnection(serverConnection);
         }
+
+        client = null;
 
         Valve.Sockets.Library.Deinitialize();
     }

@@ -149,6 +149,15 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleCloseConnection()
     {
+        WAN_Discovery.RemoveRoomToActiveRooms();
+
+        if (server != null)
+        {
+            server.CloseListenSocket(listenSocket);
+        }
+
+        server = null;
+
         Debug.Log("Quit and Socket Lib Deanitialized");
 
         Valve.Sockets.Library.Deinitialize();
@@ -201,6 +210,9 @@ public class ServerHandler : MonoBehaviour
 
         //Starts LAN discovery client to broadcast host IP 
         LAN_DiscoveryClient.StartClient(false);
+
+        //Adds room to active rooms on stun server
+        WAN_Discovery.AddRoomToActiveRooms();
 
         mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
