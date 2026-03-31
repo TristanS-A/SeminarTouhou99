@@ -16,7 +16,7 @@ public static class EventSystem
     public static void TriggerDrop(DropTypes dropType) { dropEvent?.Invoke(dropType); }
 
     //Networking Events
-    public static event Action<string, string> ipReceived;
+    public static event UnityAction<string, string> ipReceived;
     public static void ReceiveIP(string ip, string connectionName) { ipReceived?.Invoke(ip, connectionName); }
 
     // Player Events

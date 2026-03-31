@@ -39,8 +39,8 @@ public class WAN_DiscoveryHandler : MonoBehaviour
                 roomListData = GetStringToRoomDataList(request.downloadHandler.text);
                 foreach (RoomData roomData in roomListData.roomDataList)
                 {
-                    EventSystem.ReceiveIP(roomData.roomIP, roomData.roomName);
                     Debug.Log("Room Data: Name: " + roomData.roomName + " IP: " + roomData.roomIP);
+                    EventSystem.ReceiveIP(roomData.roomIP, roomData.roomName);
                 }
             }
             catch (Exception e)

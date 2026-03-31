@@ -4,7 +4,7 @@ public class LAN_DiscoveryHandler : MonoBehaviour
 {
     void Start()
     {
-        LAN_DiscoveryClient.StartClient(true);
+        LAN_DiscoveryClient.StartClient(false);
     }
 
     private void OnApplicationQuit()

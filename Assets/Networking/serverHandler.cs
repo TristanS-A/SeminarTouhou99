@@ -209,7 +209,7 @@ public class ServerHandler : MonoBehaviour
         listenSocket = server.CreateListenSocket(address);
 
         //Starts LAN discovery client to broadcast host IP 
-        LAN_DiscoveryClient.StartClient(false);
+        LAN_DiscoveryClient.StartClient(true);
 
         //Adds room to active rooms on stun server
         WAN_Discovery.AddRoomToActiveRooms();

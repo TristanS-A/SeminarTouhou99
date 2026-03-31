@@ -1382,7 +1382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd4a838dc999ed4297dadd61c5fe11c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mResultsContent: {fileID: 799436048}
+  mResultsContent_T: {fileID: 799436049}
   m_IPDisplay: {fileID: 6862158428339172979, guid: ff24a004bcea3a949b84f0bb7a039903, type: 3}
 --- !u!1 &1932142016
 GameObject:

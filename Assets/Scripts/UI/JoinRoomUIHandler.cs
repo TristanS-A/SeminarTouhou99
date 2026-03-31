@@ -10,13 +10,16 @@ using static ClientHandler;
 
 public class JoinRoomUIHandler : MonoBehaviour
 {
-    [SerializeField] private GameObject mResultsContent;
+    [SerializeField] private Transform mResultsContent_T;
     [SerializeField] private GameObject m_IPDisplay;
+
+    private List<Tuple<string, string>> mRoomsToAddToUI = new();
+
 
     //Joinable IP storage for lobby searching scene
     private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
 
-    private Tuple<string, string> mIPInfo;
+    private bool mIPsToProcess = false;
 
     private void OnEnable()
     {
@@ -40,19 +43,35 @@ public class JoinRoomUIHandler : MonoBehaviour
     {
         if (!mJoinableIPs.ContainsKey(ip))
         {
-            mIPInfo = new Tuple<string, string>(ip, connectionName);
+            Tuple<string, string>  ipInfo = new Tuple<string, string>(ip, connectionName);
 
-            JoinIPData joinIPData = new() { name = connectionName, joinUIOBJ = null };
-            mJoinableIPs.Add(ip, joinIPData);
+            mRoomsToAddToUI.Add(ipInfo); 
 
-            GameObject newIPDisplay = Instantiate(m_IPDisplay, mResultsContent.transform);
+            mIPsToProcess = true;
+        }
+    }
+
+    private void Update()
+    {
+        if (mIPsToProcess)
+        {
+            AddToIPList();
+        }
+    }
+
+    //This function is seperate from the AddIP because you cannot Instantiate a gameobject from an event call 
+    private void AddToIPList()
+    {
+        foreach (Tuple<string, string> ipInfo in mRoomsToAddToUI)
+        {
+            GameObject newIPDisplay = Instantiate(m_IPDisplay, mResultsContent_T);
 
             TextMeshProUGUI joinName = newIPDisplay.GetComponentInChildren<TextMeshProUGUI>();
             Button joinB = newIPDisplay.GetComponentInChildren<Button>();
             TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
 
             //Sets the name of the room in UI
-            joinName.text = mIPInfo.Item2;
+            joinName.text = ipInfo.Item2;
 
             //Adds Join Host listener to join button
             EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
@@ -62,7 +81,13 @@ public class JoinRoomUIHandler : MonoBehaviour
             trigger.triggers.Add(entry);
 
             //Adds IP data to join button
-            joinB.gameObject.AddComponent<IPStorageAttachment>().IP = mIPInfo.Item1;
+            joinB.gameObject.AddComponent<IPStorageAttachment>().IP = ipInfo.Item1;
+
+            JoinIPData joinIPData = new() { name = ipInfo.Item2, joinUIOBJ = newIPDisplay };
+            mJoinableIPs.Add(ipInfo.Item1, joinIPData);
         }
+
+        mRoomsToAddToUI.Clear();
+        mIPsToProcess = false;
     }
 }
