@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -74,6 +75,8 @@ public class ServerHandler : MonoBehaviour
 
     //Gamestate storage
     private GameState mGameState = GameState.NONE;
+
+    private string mRoomID = "";
 
     //Singleton instance
     public static ServerHandler instance;
@@ -149,7 +152,7 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleCloseConnection()
     {
-        WAN_Discovery.RemoveRoomToActiveRooms();
+        WAN_Discovery.RemoveRoomToActiveRooms(mRoomID);
 
         if (server != null)
         {
@@ -211,8 +214,8 @@ public class ServerHandler : MonoBehaviour
         //Starts LAN discovery client to broadcast host IP 
         LAN_DiscoveryClient.StartClient(true);
 
-        //Adds room to active rooms on stun server
-        WAN_Discovery.AddRoomToActiveRooms();
+        //Registers the server room
+        RegisterRoom();
 
         mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
@@ -227,6 +230,14 @@ public class ServerHandler : MonoBehaviour
         NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
 #endif
     }
+
+    private void RegisterRoom()
+    {
+        mRoomID = WAN_Discovery.GenerateRoomID(mServerIP.ToString());
+
+        //Adds room to active rooms on stun server
+        WAN_Discovery.AddRoomToActiveRooms(mRoomID, PlayerInfo.PlayerName, mServerIP.ToString());
+    } 
 
     //Connection callbacks for connection status on clients
     [MonoPInvokeCallback(typeof(StatusCallback))]
