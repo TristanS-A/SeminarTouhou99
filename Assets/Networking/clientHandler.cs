@@ -149,7 +149,7 @@ public class ClientHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        EventSystem.gameStarted += HandleGameStart;
+        EventSystem.OnRegisterPlayer += HandleRegisterPlayer;
         EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombData;
@@ -157,7 +157,7 @@ public class ClientHandler : MonoBehaviour
 
     private void OnDisable()
     {
-        EventSystem.gameStarted -= HandleGameStart;
+        EventSystem.OnRegisterPlayer -= HandleRegisterPlayer;
         EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
         EventSystem.OnFireOffensiveBomb -= SendBombData;
@@ -279,7 +279,7 @@ public class ClientHandler : MonoBehaviour
             case ConnectionState.ClosedByPeer:
             case ConnectionState.ProblemDetectedLocally:
                 client.CloseConnection(serverConnection);
-                Debug.Log("Client disconnected from server");
+                Debug.Log("Client disconnected from server " + info.connectionInfo.userData);
                 break;
         }
     }
@@ -484,7 +484,7 @@ public class ClientHandler : MonoBehaviour
         }
     }
 
-    private void HandleGameStart(GameObject player)
+    private void HandleRegisterPlayer(GameObject player)
     {
         mGameState = ServerHandler.GameState.GAME_STARTED;
 

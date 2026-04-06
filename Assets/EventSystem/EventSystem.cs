@@ -6,8 +6,11 @@ public static class EventSystem
 {
 
     //Game Events
-    public static event Action<GameObject> gameStarted;
-    public static void StartGame(GameObject player) { gameStarted?.Invoke(player); }
+    public static UnityAction OnStartGame;
+    public static void StartGame() {  OnStartGame?.Invoke(); }
+
+    public static event Action<GameObject> OnRegisterPlayer;
+    public static void RegisterPlayer(GameObject player) { OnRegisterPlayer?.Invoke(player); }
 
     public static event Action onEndGameSession;
     public static void EndGameSession() { onEndGameSession?.Invoke(); }

@@ -44,13 +44,13 @@ public static class WAN_Discovery
             encodedString += "0";
         }
 
-        return encodedOctet.ToString();
+        return encodedString.ToString();
     }
 
     public static async Task<bool> AddRoomToActiveRooms(string roomID, string roomName, string ip)
     {
         UnityWebRequest request = UnityWebRequest.Post("https://touhou99stun.vercel.app/addRoom", 
-            "{\"roomName\":\"" + roomName + "\", \"roomID\":\"Hi\", \"roomIP\":\"" + ip + "\"}", "application/json");
+            "{\"roomName\":\"" + roomName + "\", \"roomID\":\"" + roomID + "\", \"roomIP\":\"" + ip + "\"}", "application/json");
 
         //request.SetRequestHeader("Authorization", "Bearer: " + key);
 
@@ -66,7 +66,7 @@ public static class WAN_Discovery
         return false;
     }
 
-    public static async Task<bool> RemoveRoomToActiveRooms(string roomID)
+    public static async Task<bool> RemoveRoomFromActiveRooms(string roomID)
     {
         if (roomID == "") { return false; }
 
@@ -77,7 +77,7 @@ public static class WAN_Discovery
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("Succesfully removed room from stun server");
+            Debug.Log("Succesfully removed room from stun server: " + request.downloadHandler.text);
             return true;
         }
 

@@ -95,19 +95,21 @@ public class ServerHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        EventSystem.gameStarted += HandleGameStart;
+        EventSystem.OnRegisterPlayer += HandleRegisterPlayer;
         EventSystem.OnSendPlayerResultData += HandleSendPlayerResults;
         EventSystem.onEndGameSession += EndSession;
         EventSystem.OnFireOffensiveBomb += SendBombDataFromServer;
         EventSystem.OnSendGameStart += HandleBroadcastGameStart;
+        EventSystem.OnStartGame += HandleGameStart;
     }
 
     private void OnDisable()
     {
-        EventSystem.gameStarted -= HandleGameStart;
+        EventSystem.OnRegisterPlayer -= HandleRegisterPlayer;
         EventSystem.OnSendPlayerResultData -= HandleSendPlayerResults;
         EventSystem.onEndGameSession -= EndSession;
         EventSystem.OnSendGameStart -= HandleBroadcastGameStart;
+        EventSystem.OnStartGame -= HandleGameStart;
     }
 
     //Handle singleton instance no-replication and networking setup
@@ -152,7 +154,7 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleCloseConnection()
     {
-        WAN_Discovery.RemoveRoomToActiveRooms(mRoomID);
+        WAN_Discovery.RemoveRoomFromActiveRooms(mRoomID);
 
         if (server != null)
         {
@@ -235,6 +237,8 @@ public class ServerHandler : MonoBehaviour
     {
         mRoomID = WAN_Discovery.GenerateRoomID(mServerIP.ToString());
 
+        Debug.Log(mRoomID);
+
         //Adds room to active rooms on stun server
         WAN_Discovery.AddRoomToActiveRooms(mRoomID, PlayerInfo.PlayerName, mServerIP.ToString());
     } 
@@ -264,6 +268,11 @@ public class ServerHandler : MonoBehaviour
         }
     }
 
+    private void HandleGameStart()
+    {
+        WAN_Discovery.RemoveRoomFromActiveRooms(mRoomID);
+    }
+
     private void HandleBroadcastGameStart()
     {
         for (int i = 0; i < connectedClients.Count; i++)
@@ -286,7 +295,7 @@ public class ServerHandler : MonoBehaviour
         }
     }
 
-    private void HandleGameStart(GameObject player)
+    private void HandleRegisterPlayer(GameObject player)
     {
         mGameState = GameState.GAME_STARTED;
 

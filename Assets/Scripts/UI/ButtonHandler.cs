@@ -55,6 +55,8 @@ public class ButtonHandler : MonoBehaviour
 
         LAN_DiscoveryClient.CloseClient();
 
+        EventSystem.StartGame();
+
         Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 4;
     }
 
