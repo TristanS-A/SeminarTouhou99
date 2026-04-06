@@ -233,6 +233,42 @@ public class ServerHandler : MonoBehaviour
 #endif
     }
 
+    /*
+     * private async void HandleSetUpConnection()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            Address address = new(); 
+
+            // Use a service that returns the IP address in plain text
+            mServerIP = await client.GetStringAsync("https://api.ipify.org");
+
+            Debug.Log(mServerIP.ToString());
+            address.SetAddress(mServerIP.ToString(), 5000);
+
+            listenSocket = server.CreateListenSocket(address);
+
+            //Starts LAN discovery client to broadcast host IP 
+            LAN_DiscoveryClient.StartClient(true);
+
+            //Registers the server room
+            RegisterRoom();
+
+            mGameState = GameState.SEARCHING_FOR_PLAYERS;
+
+            //Switches to lobby scene
+            SceneManager.LoadScene(3);
+
+#if VALVESOCKETS_SPAN
+        message = (in NetworkingMessage netMessage) => {
+            Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+        };
+#else
+            NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
+#endif
+        }
+    }*/
+
     private void RegisterRoom()
     {
         mRoomID = WAN_Discovery.GenerateRoomID(mServerIP.ToString());

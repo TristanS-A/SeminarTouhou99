@@ -233,7 +233,7 @@ public class ClientHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress(ip, 5000);
+        address.SetAddress("38.69.197.232", 5000);
 
         serverConnection = client.Connect(address);
 

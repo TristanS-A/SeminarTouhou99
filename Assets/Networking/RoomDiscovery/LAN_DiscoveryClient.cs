@@ -108,57 +108,10 @@ public static class LAN_DiscoveryClient
 
                 if (isReciving)
                 {
-                    bool onSameLocalNetwork = true;
-                    foreach (NetworkInterface nt in NetworkInterface.GetAllNetworkInterfaces())
-                    {
-                        if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
-                        {
+                    EventSystem.ReceiveIP(newIPData.ip, newIPData.name);
 
-                            foreach (UnicastIPAddressInformation ip in nt.GetIPProperties().UnicastAddresses)
-                            {
-                                int newIPIndexPrev = 0;
-                                int ipIndexPrev = 0;
-                                int maskIndexPrev = 0;
-
-                                if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                                {
-                                    string mask = ip.IPv4Mask.ToString();
-
-                                    int newIPSegmentLength = ip.Address.ToString().IndexOf('.');
-                                    int ipSegmentLength = newIPData.ip.IndexOf('.');
-                                    int maskSegmentLength = mask.IndexOf('.');
-
-                                    while(maskSegmentLength != 0 && int.Parse(mask.Substring(maskIndexPrev, maskSegmentLength)) != 0)
-                                    {
-                                        if (int.Parse(newIPData.ip.Substring(newIPIndexPrev, newIPSegmentLength)) != 
-                                            int.Parse(ip.Address.ToString().Substring(ipIndexPrev, ipSegmentLength)))
-                                        {
-                                            onSameLocalNetwork = false;
-                                            break;
-                                        }
-
-                                        newIPIndexPrev = newIPIndexPrev + newIPSegmentLength + 1;
-                                        ipIndexPrev = ipIndexPrev + ipSegmentLength + 1;
-                                        maskIndexPrev = maskIndexPrev + maskSegmentLength + 1;
-
-                                        newIPSegmentLength = ip.Address.ToString().Substring(newIPIndexPrev).IndexOf('.');
-                                        ipSegmentLength = newIPData.ip.Substring(ipIndexPrev).IndexOf('.');
-                                        maskSegmentLength = mask.Substring(maskIndexPrev).IndexOf('.');
-
-                                        if (maskSegmentLength == -1) { maskSegmentLength = mask.Length - maskIndexPrev; }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (onSameLocalNetwork)
-                        {
-                            EventSystem.ReceiveIP(newIPData.ip, newIPData.name);
-                        }
-                    }
+                    client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
                 }
-
-                client.BeginReceive(new AsyncCallback(RecieveServerInfo), null);
             }
         }
     }
