@@ -216,12 +216,15 @@ public class ClientHandler : MonoBehaviour
 
     public void RunClientSetUp()
     {
-        Debug.Log("Starting Client...");
+        if (client == null)
+        {
+            Debug.Log("Starting Client...");
 
-        client = new NetworkingSockets();
-        clientNetworkingUtils = OnClientStatusUpdate;
+            client = new NetworkingSockets();
+            clientNetworkingUtils = OnClientStatusUpdate;
 
-        mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
+            mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
+        }
     }
 
     private void InitClientJoin(string ip)

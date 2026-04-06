@@ -17,9 +17,11 @@ public class JoinRoomUIHandler : MonoBehaviour
 
 
     //Joinable IP storage for lobby searching scene
-    private Dictionary<string, JoinIPData> mJoinableIPs = new Dictionary<string, JoinIPData>();
+    private Dictionary<string, JoinIPData> mJoinableIPs;
 
     private bool mIPsToProcess = false;
+    private bool mProcessingIPs = false;
+    private bool mCanAddIPs = true;
 
     private void OnEnable()
     {
@@ -37,11 +39,14 @@ public class JoinRoomUIHandler : MonoBehaviour
         {
             ClientHandler.instance.RunClientSetUp();
         }
+
+        mJoinableIPs = new Dictionary<string, JoinIPData>();
     }
 
     private void AddIP(string ip, string connectionName)
     {
-        if (!mJoinableIPs.ContainsKey(ip))
+        mCanAddIPs = false;
+        if (!mJoinableIPs.ContainsKey(ip) && !mProcessingIPs)
         {
             Tuple<string, string>  ipInfo = new Tuple<string, string>(ip, connectionName);
 
@@ -49,13 +54,18 @@ public class JoinRoomUIHandler : MonoBehaviour
 
             mIPsToProcess = true;
         }
+
+        mCanAddIPs = true;
     }
 
     private void Update()
     {
-        if (mIPsToProcess)
+        if (mIPsToProcess && mCanAddIPs)
         {
+            mProcessingIPs = true;
             AddToIPList();
+            mIPsToProcess = false;
+            mProcessingIPs = false;
         }
     }
 
@@ -71,7 +81,7 @@ public class JoinRoomUIHandler : MonoBehaviour
             TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
 
             //Sets the name of the room in UI
-            joinName.text = ipInfo.Item2;
+            joinName.text = ipInfo.Item1;
 
             //Adds Join Host listener to join button
             EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
@@ -88,6 +98,5 @@ public class JoinRoomUIHandler : MonoBehaviour
         }
 
         mRoomsToAddToUI.Clear();
-        mIPsToProcess = false;
     }
 }
