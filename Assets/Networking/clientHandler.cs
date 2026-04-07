@@ -233,7 +233,7 @@ public class ClientHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress("38.69.197.232", 5000);
+        address.SetAddress(ip, 5000);
 
         serverConnection = client.Connect(address);
 
@@ -375,10 +375,10 @@ public class ClientHandler : MonoBehaviour
                         switch ((EventType.EventTypes)gameStateData.gameState)
                         {
                             case EventType.EventTypes.START_GAME:
-                                Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 3;
+                                Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 4;
                                 break;
                             case EventType.EventTypes.GAME_FINISHED:
-                                Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 4;
+                                Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 5;
                                 mGameState = ServerHandler.GameState.RESULTS_SCREEN;
                                 break;
                         }
@@ -386,7 +386,10 @@ public class ClientHandler : MonoBehaviour
                     case PacketType.OFFENSIVE_BOMB_DATA:
                         OffensiveBombData data = (OffensiveBombData)Marshal.PtrToStructure(ptPoit, typeof(OffensiveBombData));
                         //EventSystem.OffensiveBombAttack(data.pos);
-                        mPlayers[data.playerID].playerOBJ.GetComponent<HologramPlayer>().SpawnOffensiveBomb(data.pos);
+                        if (mPlayers[data.playerID].playerOBJ != null)
+                        {
+                            mPlayers[data.playerID].playerOBJ.GetComponent<HologramPlayer>().SpawnOffensiveBomb(data.pos);
+                        }
                         break;
                     case PacketType.OTHER_PLAYER_FINISH:
                         OtherClientFinishState otherPlayerData = (OtherClientFinishState)Marshal.PtrToStructure(ptPoit, typeof(OtherClientFinishState));

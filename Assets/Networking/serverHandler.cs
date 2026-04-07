@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ public class ServerHandler : MonoBehaviour
     private uint listenSocket;
     private float mPacketSendTime = 0.0f;
     private const float PACKET_TARGET_SEND_TIME = 0.033f;
-    private System.Net.IPAddress mServerIP;
+    private string mServerIP;
     private List<uint> connectedClients = new();
 
     //Netowrking packet message data
@@ -185,56 +186,50 @@ public class ServerHandler : MonoBehaviour
 
         //Gets IP address to host from
         //mServerIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-        mServerIP = null;
-        foreach (NetworkInterface nt in NetworkInterface.GetAllNetworkInterfaces())
-        {
-            if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
-            {
-                foreach (UnicastIPAddressInformation ip in nt.GetIPProperties().UnicastAddresses)
-                {
-                    if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                    {
-                        //if ("192.168.124.1" == ip.Address.ToString())
-                        {
-                            mServerIP = ip.Address;
-                            break;
-                        }
-                    }
-                }
+        //mServerIP = null;
+        //foreach (NetworkInterface nt in NetworkInterface.GetAllNetworkInterfaces())
+        //{
+        //    if (nt.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || nt.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+        //    {
+        //        foreach (UnicastIPAddressInformation ip in nt.GetIPProperties().UnicastAddresses)
+        //        {
+        //            if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+        //            {
+        //                //if ("192.168.124.1" == ip.Address.ToString())
+        //                {
+        //                    mServerIP = ip.Address;
+        //                    break;
+        //                }
+        //            }
+        //        }
 
-                if (mServerIP != null)
-                {
-                    break;
-                }
-            }
-        }
+        //        if (mServerIP != null)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //}
 
-        address.SetAddress(mServerIP.ToString(), 5000);
+        //address.SetAddress(mServerIP.ToString(), 5000);
 
-        listenSocket = server.CreateListenSocket(address);
+        //listenSocket = server.CreateListenSocket(address);
 
         //Starts LAN discovery client to broadcast host IP 
-        LAN_DiscoveryClient.StartClient(true);
+        //LAN_DiscoveryClient.StartClient(true);
 
         //Registers the server room
-        RegisterRoom();
+        //RegisterRoom();
 
-        mGameState = GameState.SEARCHING_FOR_PLAYERS;
+        //mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
         //Switches to lobby scene
-        SceneManager.LoadScene(3);
+        //SceneManager.LoadScene(3);
 
-#if VALVESOCKETS_SPAN
-        message = (in NetworkingMessage netMessage) => {
-            Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-        };
-#else
-        NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
-#endif
+        HandleSetUpConnection();
     }
 
-    /*
-     * private async void HandleSetUpConnection()
+    
+    private async void HandleSetUpConnection()
     {
         using (HttpClient client = new HttpClient())
         {
@@ -267,7 +262,7 @@ public class ServerHandler : MonoBehaviour
             NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
 #endif
         }
-    }*/
+    }
 
     private void RegisterRoom()
     {

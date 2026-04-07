@@ -82,7 +82,7 @@ public class JoinRoomUIHandler : MonoBehaviour
             TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
 
             //Sets the name of the room in UI
-            joinName.text = ipInfo.Item1;
+            joinName.text = ipInfo.Item2;
 
             //Adds Join Host listener to join button
             EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
