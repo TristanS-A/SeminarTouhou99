@@ -18,7 +18,7 @@ public static class LAN_DiscoveryClient
     //private static IPAddress groupAddress = IPAddress.Parse("233.255.255.255");
     private static UdpClient client;
 
-    private const int PORT = 20000;
+    private const int PORT = 5000;
 
     private static bool isReciving = false;
 

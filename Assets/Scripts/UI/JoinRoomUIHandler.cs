@@ -14,7 +14,7 @@ public class JoinRoomUIHandler : MonoBehaviour
     [SerializeField] private Transform mResultsContent_T;
     [SerializeField] private GameObject m_IPDisplay;
 
-    private List<Tuple<string, string>> mRoomsToAddToUI = new();
+    private Queue<Tuple<string, string>> mRoomsToAddToUI = new Queue<Tuple<string, string>>();
 
 
     //Joinable IP storage for lobby searching scene
@@ -46,58 +46,44 @@ public class JoinRoomUIHandler : MonoBehaviour
 
     private void AddIP(string ip, string connectionName)
     {
-        mCanAddIPs = false;
-        if (!mJoinableIPs.ContainsKey(ip) && !mProcessingIPs)
-        {
-            Tuple<string, string>  ipInfo = new Tuple<string, string>(ip, connectionName);
-
-            mRoomsToAddToUI.Add(ipInfo); 
-
-            mIPsToProcess = true;
-        }
-
-        mCanAddIPs = true;
+        Tuple<string, string> ipInfo = new Tuple<string, string>(ip, connectionName);
+        mRoomsToAddToUI.Enqueue(ipInfo);
     }
 
     private void Update()
     {
-        if (mIPsToProcess && mCanAddIPs)
+        while (mRoomsToAddToUI.Count > 0)
         {
-            mProcessingIPs = true;
-            AddToIPList();
-            mIPsToProcess = false;
-            mProcessingIPs = false;
+            Tuple<string, string> ipInfo = mRoomsToAddToUI.Dequeue();
+
+            if (!mJoinableIPs.ContainsKey(ipInfo.Item1))
+            {
+
+                JoinIPData joinIPData = new() { name = ipInfo.Item2, joinUIOBJ = null };
+                mJoinableIPs.Add(ipInfo.Item1, joinIPData);
+
+                GameObject newIPDisplay = Instantiate(m_IPDisplay, mResultsContent_T);
+
+                joinIPData = new() { name = ipInfo.Item2, joinUIOBJ = newIPDisplay };
+                mJoinableIPs[ipInfo.Item1] = joinIPData;
+
+                TextMeshProUGUI joinName = newIPDisplay.GetComponentInChildren<TextMeshProUGUI>();
+                Button joinB = newIPDisplay.GetComponentInChildren<Button>();
+                TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
+
+                //Sets the name of the room in UI
+                joinName.text = ipInfo.Item2;
+
+                //Adds Join Host listener to join button
+                EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
+                EventTrigger.Entry entry = new EventTrigger.Entry();
+                entry.eventID = EventTriggerType.PointerDown;
+                entry.callback.AddListener((data) => { ClientHandler.instance.JoinHost((BaseEventData)data); });
+                trigger.triggers.Add(entry);
+
+                //Adds IP data to join button
+                joinB.gameObject.AddComponent<IPStorageAttachment>().IP = ipInfo.Item1;
+            }
         }
-    }
-
-    //This function is seperate from the AddIP because you cannot Instantiate a gameobject from an event call 
-    private void AddToIPList()
-    {
-        foreach (Tuple<string, string> ipInfo in mRoomsToAddToUI)
-        {
-            GameObject newIPDisplay = Instantiate(m_IPDisplay, mResultsContent_T);
-
-            TextMeshProUGUI joinName = newIPDisplay.GetComponentInChildren<TextMeshProUGUI>();
-            Button joinB = newIPDisplay.GetComponentInChildren<Button>();
-            TextMeshProUGUI joinBText = joinB.GetComponentInChildren<TextMeshProUGUI>();
-
-            //Sets the name of the room in UI
-            joinName.text = ipInfo.Item2;
-
-            //Adds Join Host listener to join button
-            EventTrigger trigger = newIPDisplay.GetComponentInChildren<EventTrigger>();
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerDown;
-            entry.callback.AddListener((data) => { ClientHandler.instance.JoinHost((BaseEventData)data); });
-            trigger.triggers.Add(entry);
-
-            //Adds IP data to join button
-            joinB.gameObject.AddComponent<IPStorageAttachment>().IP = ipInfo.Item1;
-
-            JoinIPData joinIPData = new() { name = ipInfo.Item2, joinUIOBJ = newIPDisplay };
-            mJoinableIPs.Add(ipInfo.Item1, joinIPData);
-        }
-
-        mRoomsToAddToUI.Clear();
     }
 }
