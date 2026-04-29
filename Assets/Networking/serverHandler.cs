@@ -70,6 +70,9 @@ public class ServerHandler : MonoBehaviour
     private IPAddress mServerIP;
     private List<uint> connectedClients = new();
 
+    private bool mUsingRelay = false;
+    private uint mRelayConnection;
+
     //Netowrking packet message data
     private const int MAX_MESSAGES = 20;
     private NetworkingMessage[] netMessages = new NetworkingMessage[MAX_MESSAGES];
@@ -79,6 +82,7 @@ public class ServerHandler : MonoBehaviour
     private GameState mGameState = GameState.NONE;
 
     private string mRoomID = "";
+    private uint mRoomID_Test = 1;
 
     //Singleton instance
     public static ServerHandler instance;
@@ -184,7 +188,7 @@ public class ServerHandler : MonoBehaviour
         serverNetworkingUtils = serverStatusCallback;
 
         Address address = new();
-
+        
         //Gets IP address to host from
         var host = Dns.GetHostEntry(Dns.GetHostName());
         foreach (var ip in host.AddressList)
@@ -195,15 +199,27 @@ public class ServerHandler : MonoBehaviour
             }
         }
 
-        address.SetAddress(mServerIP.ToString(), 5000);
+        if (mUsingRelay)
+        {
+            string relayIP = "192.168.137.247";
+            address.SetAddress(relayIP, 8095);
 
-        listenSocket = server.CreateListenSocket(address);
+            mRoomID = WAN_Discovery.GenerateRoomID(mServerIP.ToString());
+            
+            mRelayConnection = server.Connect(address);
+        }
+        else
+        {
+            address.SetAddress(mServerIP.ToString(), 8095);
 
-        //Starts LAN discovery client to broadcast host IP
-        LAN_DiscoveryClient.StartClient(true);
+            listenSocket = server.CreateListenSocket(address);
 
-        //Registers the server room
-        RegisterRoom();
+            //Starts LAN discovery client to broadcast host IP
+            LAN_DiscoveryClient.StartClient(true);
+
+            //Registers the server room
+            RegisterRoom();
+        }
 
         mGameState = GameState.SEARCHING_FOR_PLAYERS;
 
@@ -224,7 +240,7 @@ public class ServerHandler : MonoBehaviour
            // mServerIP = await client.GetStringAsync("https://api.ipify.org");
 
             Debug.Log(mServerIP.ToString());
-            address.SetAddress(mServerIP.ToString(), 5000);
+            address.SetAddress(mServerIP.ToString(), 8095);
 
             listenSocket = server.CreateListenSocket(address);
 
@@ -269,10 +285,17 @@ public class ServerHandler : MonoBehaviour
                 break;
             case ConnectionState.Connecting:
                 server.AcceptConnection(info.connection);
+                Debug.Log("Connecting to - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
             case ConnectionState.Connected:
-                handlePlayerJoining(info.connection);
-                Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
+                if (!mUsingRelay)
+                {
+                    handlePlayerJoining(info.connection);
+                }
+                else
+                {
+                    HandleRegisterRelayRoom();
+                }
                 break;
             case ConnectionState.ClosedByPeer:
             case ConnectionState.ProblemDetectedLocally:
@@ -291,23 +314,62 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleBroadcastGameStart()
     {
+        ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
+        gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
+        gameState.gameState = (int)EventType.EventTypes.START_GAME;
+        gameState.roomID = mRoomID_Test;
+
+        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
+        GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
+        try
+        {
+            Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+            return;
+        }
+
+        if (mUsingRelay)
+        {
+            server.SendMessageToConnection(mRelayConnection, bytes);
+        }
         for (int i = 0; i < connectedClients.Count; i++)
         {
-            ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
-            gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
-            gameState.gameState = (int)EventType.EventTypes.START_GAME;
+            server.SendMessageToConnection(connectedClients[i], bytes);
+        }
+        
+        pinStructure.Free();
+    }
+    
+    private void HandleRegisterRelayRoom()
+    {
+        ClientHandler.RegisterRoom roomData = new ClientHandler.RegisterRoom();
+        roomData.type = (int)ClientHandler.PacketType.REGISTER_ROOM;
 
-            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
-            GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
-            try
-            {
-                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-            }
-            finally
-            {
-                server.SendMessageToConnection(connectedClients[i], bytes);
-                pinStructure.Free();
-            }
+        // if (uint.TryParse(mRoomID, out uint parsedID))
+        // {
+        //     roomData.roomID = parsedID;
+        // }
+        // else
+        {
+            roomData.roomID = mRoomID_Test;
+        }
+        
+        IntPtr ptr = IntPtr.Zero;
+        byte[] bytes = new byte[Marshal.SizeOf(typeof(RegisterRoom))];
+
+        try
+        {
+            ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(RegisterRoom)));
+            Marshal.StructureToPtr(roomData, ptr, true);
+            Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(RegisterRoom)));
+        }
+        finally
+        {
+            server.SendMessageToConnection(mRelayConnection, bytes);
+            Marshal.FreeHGlobal(ptr);
         }
     }
 
@@ -336,30 +398,41 @@ public class ServerHandler : MonoBehaviour
 
     private void HandleGameFinish()
     {
-        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 4;
+        Instantiate(m_SceneTransition).GetComponentInChildren<TransitionHandler>().sceneToTransitionTo = 5;
         mGameState = GameState.RESULTS_SCREEN;
 
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
-            {
-                ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
-                gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
-                gameState.gameState = (int)EventType.EventTypes.GAME_FINISHED;
+            ClientHandler.GameStateData gameState = new ClientHandler.GameStateData();
+            gameState.type = (int)ClientHandler.PacketType.GAME_STATE;
+            gameState.gameState = (int)EventType.EventTypes.GAME_FINISHED;
+            gameState.roomID = mRoomID_Test;
 
-                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
-                ////CONVERT THIS SENDING CODE INTO A FUNCTION MAYBE
-                GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
-                try                                                                                 
-                {
-                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                }
-                finally
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.GameStateData))];
+            ////CONVERT THIS SENDING CODE INTO A FUNCTION MAYBE
+            GCHandle pinStructure = GCHandle.Alloc(gameState, GCHandleType.Pinned);
+            try                                                                                 
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            } catch (Exception e)
+            {
+                Debug.Log(e.Message);
+                return;
+            }
+
+            if (mUsingRelay)
+            {
+                server.SendMessageToConnection(mRelayConnection, bytes);
+            }
+            else
+            {
+                for (int i = 0; i < connectedClients.Count; i++)
                 {
                     server.SendMessageToConnection(connectedClients[i], bytes);
-                    pinStructure.Free();
                 }
             }
+
+            pinStructure.Free();
         }
     }
 
@@ -367,6 +440,7 @@ public class ServerHandler : MonoBehaviour
     {
         if (server != null)
         {
+            int netMessagesCount = 0;
             switch (mGameState)
             {
                 case GameState.GAME_STARTED:
@@ -384,7 +458,15 @@ public class ServerHandler : MonoBehaviour
 #if VALVESOCKETS_SPAN
                 server.ReceiveMessagesOnPollGroup(pollGroup, message, 20);
 #else
-                    int netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, MAX_MESSAGES);
+                    if (mUsingRelay)
+                    {
+                        netMessagesCount = server.ReceiveMessagesOnConnection(mRelayConnection, netMessages, MAX_MESSAGES);
+                    }
+                    else
+                    {
+                        netMessagesCount = server.ReceiveMessagesOnListenSocket(listenSocket, netMessages, MAX_MESSAGES);
+                    }
+
                     if (netMessagesCount > 0)
                     {
                         for (int i = 0; i < netMessagesCount; i++)
@@ -436,6 +518,46 @@ public class ServerHandler : MonoBehaviour
                         mPacketSendTime = 0.0f;
                     }
                     mPacketSendTime += Time.deltaTime;
+                    
+                    if (mUsingRelay)
+                    {
+                        netMessagesCount = server.ReceiveMessagesOnConnection(mRelayConnection, netMessages, MAX_MESSAGES);
+
+                        if (netMessagesCount > 0)
+                        {
+                            for (int i = 0; i < netMessagesCount; i++)
+                            {
+                                ref NetworkingMessage netMessage = ref netMessages[i];
+
+                                Debug.Log("Message received from - ID: " + netMessage.connection + ", Channel ID: " +
+                                          netMessage.channel + ", Data length: " + netMessage.length);
+
+                                netMessage.CopyTo(messageDataBuffer);
+                                netMessage.Destroy();
+
+                                ////REFERENCE: https://stackoverflow.com/questions/17840552/c-sharp-cast-a-byte-array-to-an-array-of-struct-and-vice-versa-reverse
+
+                                IntPtr ptPoit = Marshal.AllocHGlobal(messageDataBuffer.Length);
+                                Marshal.Copy(messageDataBuffer, 0, ptPoit, messageDataBuffer.Length);
+
+                                ClientHandler.TypeFinder packetType =
+                                    (ClientHandler.TypeFinder)Marshal.PtrToStructure(ptPoit,
+                                        typeof(ClientHandler.TypeFinder));
+
+                                switch ((ClientHandler.PacketType)packetType.type)
+                                {
+                                    case ClientHandler.PacketType.REGISTER_PLAYER:
+                                        ClientHandler.RegisterPlayer packetData =
+                                            (ClientHandler.RegisterPlayer)Marshal.PtrToStructure(ptPoit,
+                                                typeof(ClientHandler.RegisterPlayer));
+                                        handlePlayerJoining(packetData.playerID);
+                                        break;
+                                }
+
+                                Marshal.FreeHGlobal(ptPoit);
+                            }
+                        }
+                    }
                     break;
                 case GameState.RESULTS_SCREEN:          
                     //Handles result screen logic
@@ -451,32 +573,46 @@ public class ServerHandler : MonoBehaviour
     {
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
+            foreach (uint playerID in mPlayers.Keys)
             {
-                foreach (uint playerID in mPlayers.Keys)
+                PlayerGameData player = mPlayers[playerID];
+                if (player.playerOBJ != null)
                 {
-                    PlayerGameData player = mPlayers[playerID];
-                    if (playerID != connectedClients[i] && player.playerOBJ != null)
-                    {
-                        ClientHandler.PlayerData playerData = new ClientHandler.PlayerData();
-                        playerData.pos = player.playerOBJ.transform.position;
-                        playerData.speed = 12;
-                        playerData.type = (int)ClientHandler.PacketType.PLAYER_DATA;
-                        playerData.playerID = playerID;
+                    ClientHandler.PlayerData playerData = new ClientHandler.PlayerData();
+                    playerData.pos = player.playerOBJ.transform.position;
+                    playerData.speed = 12;
+                    playerData.type = (int)ClientHandler.PacketType.PLAYER_DATA;
+                    playerData.playerID = playerID;
+                    playerData.roomID = mRoomID_Test;
 
-                        Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.PlayerData))];
-                        GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
-                        try
+                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.PlayerData))];
+                    GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+                    try
+                    {
+                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                    } catch (Exception e)
+                    {
+                        Debug.Log(e.Message);
+                        return;
+                    }
+
+                    if (mUsingRelay)
+                    {
+                        server.SendMessageToConnection(mRelayConnection, bytes);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < connectedClients.Count; i++)
                         {
-                            Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                        }
-                        finally
-                        {
-                            Debug.Log("SENDING PLAYER DATA FOR PLAYER: " + playerID);
-                            server.SendMessageToConnection(connectedClients[i], bytes);
-                            pinStructure.Free();
+                            if (playerID != connectedClients[i])
+                            {
+                                Debug.Log("SENDING PLAYER DATA FOR PLAYER: " + playerID);
+                                server.SendMessageToConnection(connectedClients[i], bytes);
+                            }
                         }
                     }
+                    
+                    pinStructure.Free();
                 }
             }
         }
@@ -487,27 +623,35 @@ public class ServerHandler : MonoBehaviour
     {
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
-            {
-                foreach (uint playerID in mPlayers.Keys)
-                {
-                    ClientHandler.PlayerCountData playerCount = new ClientHandler.PlayerCountData();
-                    playerCount.type = (int)ClientHandler.PacketType.PLAYER_COUNT;
-                    playerCount.playerCount = connectedClients.Count + 1;
+            ClientHandler.PlayerCountData playerCount = new ClientHandler.PlayerCountData();
+            playerCount.type = (int)ClientHandler.PacketType.PLAYER_COUNT;
+            playerCount.playerCount = connectedClients.Count + 1;
+            playerCount.roomID = mRoomID_Test;
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.PlayerCountData))];
-                    GCHandle pinStructure = GCHandle.Alloc(playerCount, GCHandleType.Pinned);
-                    try
-                    {
-                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                    }
-                    finally
-                    {
-                        server.SendMessageToConnection(connectedClients[i], bytes);
-                        pinStructure.Free();
-                    }
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.PlayerCountData))];
+            GCHandle pinStructure = GCHandle.Alloc(playerCount, GCHandleType.Pinned);
+            try
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            } catch (Exception e)
+            {
+                Debug.Log(e.Message);
+                return;
+            }
+
+            if (mUsingRelay)
+            {
+                server.SendMessageToConnection(mRelayConnection, bytes);
+            }
+            else
+            {
+                for (int i = 0; i < connectedClients.Count; i++)
+                {
+                    server.SendMessageToConnection(connectedClients[i], bytes);
                 }
             }
+            
+            pinStructure.Free();
         }
     }
 
@@ -527,25 +671,36 @@ public class ServerHandler : MonoBehaviour
                 playerSendResultData.points = player.points;
                 playerSendResultData.name = player.name;
                 playerSendResultData.score = player.score;
+                playerSendResultData.roomID = mRoomID_Test;
 
-                for (int i = 0; i < connectedClients.Count; i++)
+                IntPtr ptr = IntPtr.Zero;
+                byte[] bytes = new byte[Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData))];
+
+                try
                 {
-                    IntPtr ptr = IntPtr.Zero;
-                    byte[] bytes = new byte[Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData))];
+                    ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData)));
+                    Marshal.StructureToPtr(playerSendResultData, ptr, true);
+                    Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData)));
+                } catch (Exception e)
+                {
+                    Debug.Log(e.Message);
+                    return;
+                }
 
-                    try
-                    {
-                        ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData)));
-                        Marshal.StructureToPtr(playerSendResultData, ptr, true);
-                        Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(ClientHandler.PlayerSendResultData)));
-                    }
-                    finally
+                if (mUsingRelay)
+                {
+                    server.SendMessageToConnection(mRelayConnection, bytes);
+                }
+                else
+                {
+                    for (int i = 0; i < connectedClients.Count; i++)
                     {
                         server.SendMessageToConnection(connectedClients[i], bytes);
-                        Marshal.FreeHGlobal(ptr);
                     }
                 }
 
+                Marshal.FreeHGlobal(ptr);
+                
                 EventSystem.RegisterOtherPlayerResult(playerSendResultData);
             }
         }
@@ -572,20 +727,25 @@ public class ServerHandler : MonoBehaviour
 
             mPlayers.Add(playerID, player);
 
-            ClientHandler.RegisterPlayer playerData = new ClientHandler.RegisterPlayer();
-            playerData.type = (int)ClientHandler.PacketType.REGISTER_PLAYER;
-            playerData.playerID = playerID;
+            if (!mUsingRelay)
+            {
+                ClientHandler.RegisterPlayer playerData = new ClientHandler.RegisterPlayer();
+                playerData.type = (int)ClientHandler.PacketType.REGISTER_PLAYER;
+                playerData.playerID = playerID;
+                playerData.roomID = mRoomID_Test;
 
-            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.RegisterPlayer))];
-            GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
-            try
-            {
-                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-            }
-            finally
-            {
-                Debug.Log("SENDING PLAYER DATA");
-                server.SendMessageToConnection(playerID, bytes);
+                Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.RegisterPlayer))];
+                GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
+                try
+                {
+                    Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+                }
+                finally
+                {
+                    Debug.Log("SENDING PLAYER DATA");
+                    server.SendMessageToConnection(playerID, bytes);
+                }
+                
                 pinStructure.Free();
             }
 
@@ -729,31 +889,42 @@ public class ServerHandler : MonoBehaviour
     {
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
+            OffensiveBombData bombData = new()
             {
-                if (connectedClients[i] != owningClient)
-                {
-                    ClientHandler.OffensiveBombData bombData = new()
-                    {
-                        pos = pos,
-                        playerID = owningClient,
-                        type = (int)ClientHandler.PacketType.OFFENSIVE_BOMB_DATA
-                    };
+                pos = pos,
+                playerID = owningClient,
+                type = (int)ClientHandler.PacketType.OFFENSIVE_BOMB_DATA,
+                roomID = mRoomID_Test,
+            };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.OffensiveBombData))];
-                    GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
-                    try
-                    {
-                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                    }
-                    finally
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.OffensiveBombData))];
+            GCHandle pinStructure = GCHandle.Alloc(bombData, GCHandleType.Pinned);
+            try
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            } catch (Exception e)
+            {
+                Debug.Log(e.Message);
+                return;
+            }
+
+            if (mUsingRelay)
+            {
+                server.SendMessageToConnection(mRelayConnection, bytes);
+            }
+            else
+            {
+                for (int i = 0; i < connectedClients.Count; i++)
+                {
+                    if (connectedClients[i] != owningClient)
                     {
                         Debug.Log("SENDING BOMB DATA");
                         server.SendMessageToConnection(connectedClients[i], bytes);
-                        pinStructure.Free();
                     }
                 }
             }
+            
+            pinStructure.Free();
         }
     }
 
@@ -816,30 +987,41 @@ public class ServerHandler : MonoBehaviour
     {
         if (server != null)
         {
-            for (int i = 0; i < connectedClients.Count; i++)
+            ClientHandler.OtherClientFinishState data = new()
             {
-                if (connectedClients[i] != clientThatDied)
-                {
-                    ClientHandler.OtherClientFinishState data = new()
-                    {
-                        playerID = clientThatDied,
-                        type = (int)ClientHandler.PacketType.OTHER_PLAYER_FINISH,
-                        finishState = finishReason
-                    };
+                playerID = clientThatDied,
+                type = (int)ClientHandler.PacketType.OTHER_PLAYER_FINISH,
+                finishState = finishReason,
+                roomID = mRoomID_Test,
+            };
 
-                    Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.OtherClientFinishState))];
-                    GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
-                    try
-                    {
-                        Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-                    }
-                    finally
+            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(ClientHandler.OtherClientFinishState))];
+            GCHandle pinStructure = GCHandle.Alloc(data, GCHandleType.Pinned);
+            try
+            {
+                Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
+            } catch (Exception e)
+            {
+                Debug.Log(e.Message);
+                return;
+            }
+
+            if (mUsingRelay)
+            {
+                server.SendMessageToConnection(mRelayConnection, bytes);
+            }
+            else
+            {
+                for (int i = 0; i < connectedClients.Count; i++)
+                {
+                    if (connectedClients[i] != clientThatDied)
                     {
                         server.SendMessageToConnection(connectedClients[i], bytes);
-                        pinStructure.Free();
                     }
                 }
             }
+            
+            pinStructure.Free();
         }
     }
 

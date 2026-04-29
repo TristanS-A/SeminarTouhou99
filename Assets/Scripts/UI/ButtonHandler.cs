@@ -62,11 +62,13 @@ public class ButtonHandler : MonoBehaviour
 
     private void SwitchToJoinLANLobbyScene()
     {
+        DontDestroyOnLoad(ClientHandler.instance.transform.gameObject);
         SceneManager.LoadScene(1);
     }
 
     private void SwitchToJoinWANLobbyScene()
     {
+        DontDestroyOnLoad(ClientHandler.instance.transform.gameObject);
         SceneManager.LoadScene(2);
     }
 

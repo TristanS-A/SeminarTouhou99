@@ -44,6 +44,10 @@ public class ClientHandler : MonoBehaviour
     [SerializeField] public string mServerIP_WAN;
 
     [SerializeField] private GameObject m_SceneTransition;
+    
+    private bool mUsingRelay = false;
+    
+    private uint mRoomID_Test = 1;
 
     //IP Joining struct
     public struct JoinIPData
@@ -67,7 +71,9 @@ public class ClientHandler : MonoBehaviour
         STORE_PLAYER_RESULTS,
         SEND_RESULT,
         OFFENSIVE_BOMB_DATA,
-        OTHER_PLAYER_FINISH
+        OTHER_PLAYER_FINISH,
+        REGISTER_ROOM,
+        JOIN_ROOM
     }
 
     ////Packet structs
@@ -82,6 +88,7 @@ public class ClientHandler : MonoBehaviour
     public struct PlayerData
     {
         public int type;
+        public uint roomID;
         public uint playerID;
         public Vector3 pos;
         public float speed;
@@ -91,6 +98,7 @@ public class ClientHandler : MonoBehaviour
     public struct PlayerName
     {
         public int type;
+        public uint roomID;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
         public string name;
@@ -100,6 +108,7 @@ public class ClientHandler : MonoBehaviour
     public struct RegisterPlayer
     {
         public int type;
+        public uint roomID;
         public uint playerID;
     };
 
@@ -107,6 +116,7 @@ public class ClientHandler : MonoBehaviour
     public struct PlayerCountData
     {
         public int type;
+        public uint roomID;
         public int playerCount;
     };
 
@@ -114,6 +124,7 @@ public class ClientHandler : MonoBehaviour
     public struct PlayerSendResultData
     {
         public int type;
+        public uint roomID;
         public uint playerID;
         public float time;
         public int points;
@@ -128,13 +139,23 @@ public class ClientHandler : MonoBehaviour
     public struct GameStateData
     {
         public int type;
+        public uint roomID;
         public int gameState;
     };
+    
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RegisterRoom
+    {
+        public int type;
+
+        public uint roomID;
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct OffensiveBombData
     {
         public int type;
+        public uint roomID;
         public uint playerID;
         public Vector3 pos;
     }
@@ -142,7 +163,8 @@ public class ClientHandler : MonoBehaviour
     [StructLayout(LayoutKind.Sequential)]
     public struct OtherClientFinishState
     {
-        public int type;
+        public int type; 
+        public uint roomID;
         public uint playerID;
         public ServerHandler.ResultContext finishState;
     }
@@ -198,9 +220,7 @@ public class ClientHandler : MonoBehaviour
         instance = this;
 
         Valve.Sockets.Library.Initialize();
-
-        DontDestroyOnLoad(transform.gameObject);
-
+        
         DebugCallback debugCallback = (DebugType type, string message) =>
         {
             //Debug.Log("Client Debug - Type: " + type + ", Message: " + message);
@@ -221,6 +241,7 @@ public class ClientHandler : MonoBehaviour
             Debug.Log("Starting Client...");
 
             client = new NetworkingSockets();
+            
             clientNetworkingUtils = OnClientStatusUpdate;
 
             mGameState = ServerHandler.GameState.LOOKING_FOR_HOST;
@@ -233,9 +254,23 @@ public class ClientHandler : MonoBehaviour
 
         Address address = new Address();
 
-        address.SetAddress(ip, 5000);
+        if (mUsingRelay)
+        {
+            string relayIP = "192.168.137.247";
+            address.SetAddress(relayIP, 8095);
 
-        serverConnection = client.Connect(address);
+            serverConnection = client.Connect(address);
+
+            //mRoomID = WAN_Discovery.GenerateRoomID(mServerIP.ToString());
+            
+            HandleRegisterRelayRoom();
+        }
+        else
+        {
+            address.SetAddress(ip, 8095);
+
+            serverConnection = client.Connect(address);
+        }
 
 #if VALVESOCKETS_SPAN
         message = (in NetworkingMessage netMessage) =>
@@ -253,6 +288,28 @@ public class ClientHandler : MonoBehaviour
 
         NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 #endif
+    }
+    
+    private void HandleRegisterRelayRoom()
+    {
+        ClientHandler.RegisterRoom roomData = new ClientHandler.RegisterRoom();
+        roomData.type = (int)ClientHandler.PacketType.JOIN_ROOM;
+        roomData.roomID = mRoomID_Test;
+        
+        IntPtr ptr = IntPtr.Zero;
+        byte[] bytes = new byte[Marshal.SizeOf(typeof(RegisterRoom))];
+
+        try
+        {
+            ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(RegisterRoom)));
+            Marshal.StructureToPtr(roomData, ptr, true);
+            Marshal.Copy(ptr, bytes, 0, Marshal.SizeOf(typeof(RegisterRoom)));
+        }
+        finally
+        {
+            client.SendMessageToConnection(serverConnection, bytes);
+            Marshal.FreeHGlobal(ptr);
+        }
     }
 
     private void CompleteJoinConnection()
@@ -414,7 +471,7 @@ public class ClientHandler : MonoBehaviour
             playerData.speed = 12;
             playerData.type = (int)PacketType.PLAYER_DATA;
             playerData.playerID = connectionIDOnServer;
-
+            playerData.roomID = mRoomID_Test;
 
             Byte[] bytes = new Byte[Marshal.SizeOf(typeof(PlayerData))];
             GCHandle pinStructure = GCHandle.Alloc(playerData, GCHandleType.Pinned);
@@ -533,6 +590,7 @@ public class ClientHandler : MonoBehaviour
         playerResults.points = PlayerInfo.PlayerPoints;
         playerResults.score = PlayerInfo.CalculateScore();
         playerResults.resultContext = resContext;
+        playerResults.roomID = mRoomID_Test;
 
         IntPtr ptr = IntPtr.Zero;
         byte[] bytes = new byte[Marshal.SizeOf(typeof(PlayerSendResultData))];
@@ -568,7 +626,8 @@ public class ClientHandler : MonoBehaviour
             {
                 pos = pos,
                 playerID = connectionIDOnServer,
-                type = (int)PacketType.OFFENSIVE_BOMB_DATA
+                type = (int)PacketType.OFFENSIVE_BOMB_DATA,
+                roomID = mRoomID_Test
             };
 
             Byte[] bytes = new Byte[Marshal.SizeOf(typeof(OffensiveBombData))];

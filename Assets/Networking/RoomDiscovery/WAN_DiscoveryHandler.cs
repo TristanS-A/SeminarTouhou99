@@ -22,6 +22,8 @@ public class WAN_DiscoveryHandler : MonoBehaviour
     void Start()
     {
         RetreiveAllActiveRooms();
+        
+        //EventSystem.ReceiveIP("65.183.141.222", "Relay");
     }
 
     private async Task<RoomListDataHolder> RetreiveAllActiveRooms()
